@@ -15,6 +15,8 @@ Build a small but executable **Adaptive Recursive Architecture Design (ARAD)** e
 
 The goal is a **reviewable architecture draft**, not a claim of universally correct architecture.
 
+**Confirmed product scope (Option A):** Speccanopy is an architecture-design engine, not an automatic application builder. The engine may produce implementation instructions, testing strategies, and deployment designs, but it does not itself generate, build, test or deploy the applications being designed. Automated tests in this MVP evaluate **Speccanopy's engine**, not the generated application's code. See [the confirmed vision](vision-and-goal.md).
+
 ## First implementation decision
 
 **Use Python for the initial CLI proof of concept**, keeping the AI/LLM provider behind an interface.
