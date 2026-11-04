@@ -1,0 +1,19 @@
+{
+  "system": "Text normalization CLI utility",
+  "goals": ["Normalize local UTF-8 text files and save normalized output"],
+  "actors": ["CLI user"],
+  "functional_requirements": [
+    {"id": "FR-001", "statement": "Read a user-provided local UTF-8 text file", "mandatory": true},
+    {"id": "FR-002", "statement": "Normalize whitespace and line endings", "mandatory": true},
+    {"id": "FR-003", "statement": "Write normalized text to a requested destination", "mandatory": true}
+  ],
+  "quality_requirements": [
+    {"id": "NFR-001", "attribute": "reliability", "statement": "Report input/output errors clearly without silently losing the original file", "mandatory": true}
+  ],
+  "constraints": {
+    "preferred_architecture": "single-process modular CLI",
+    "max_depth": 4,
+    "max_nodes": 20,
+    "max_refinement_rounds": 2
+  }
+}

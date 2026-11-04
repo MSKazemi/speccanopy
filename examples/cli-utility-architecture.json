@@ -1,0 +1,57 @@
+{
+  "brief": {
+    "system": "Text normalization CLI utility",
+    "goals": ["Normalize local UTF-8 text files and save normalized output"],
+    "actors": ["CLI user"],
+    "functional_requirements": [
+      {"id": "FR-001", "statement": "Read a user-provided local UTF-8 text file", "mandatory": true},
+      {"id": "FR-002", "statement": "Normalize whitespace and line endings", "mandatory": true},
+      {"id": "FR-003", "statement": "Write normalized text to a requested destination", "mandatory": true}
+    ],
+    "quality_requirements": [
+      {"id": "NFR-001", "attribute": "reliability", "statement": "Report input/output errors clearly without silently losing the original file", "mandatory": true}
+    ],
+    "constraints": {"preferred_architecture": "single-process modular CLI", "max_depth": 4, "max_nodes": 20, "max_refinement_rounds": 2}
+  },
+  "selected_style": "single-process modular CLI",
+  "components": [
+    {
+      "id": "system", "name": "CLI application", "responsibility": "Coordinate input, normalization and output",
+      "boundary": "Single local process; no network or background service required", "parent_id": null,
+      "requirement_ids": ["FR-001", "FR-002", "FR-003", "NFR-001"], "status": "needs_decomposition"
+    },
+    {
+      "id": "input", "name": "Input reader", "responsibility": "Validate and read user-selected UTF-8 file",
+      "boundary": "Input path, encoding and read errors", "parent_id": "system", "requirement_ids": ["FR-001", "NFR-001"],
+      "interfaces": [{"name": "read_input", "direction": "inbound", "kind": "function", "description": "Path to decoded text", "failure_behavior": "Explicit error for unreadable or invalid input"}],
+      "data_not_applicable_reason": "Stateless reader", "quality_targets": {"NFR-001": "Fail with a clear error without modifying the input"},
+      "validation_evidence": ["Reviewed input boundary and expected read-error outcomes"], "stop_reason": "Interface and error contract are specified", "status": "ready"
+    },
+    {
+      "id": "normalize", "name": "Text normalizer", "responsibility": "Normalize whitespace and line endings",
+      "boundary": "Pure text transformation without filesystem access", "parent_id": "system", "requirement_ids": ["FR-002"],
+      "interfaces": [{"name": "normalize_text", "direction": "inbound", "kind": "function", "description": "Input text to normalized text"}],
+      "data_not_applicable_reason": "Pure, stateless function",
+      "validation_evidence": ["Specified deterministic transformation input/output behavior"], "stop_reason": "Pure function contract specified", "status": "ready"
+    },
+    {
+      "id": "output", "name": "Output writer", "responsibility": "Write normalized output to destination",
+      "boundary": "Destination path validation and safe file writing", "parent_id": "system", "requirement_ids": ["FR-003", "NFR-001"],
+      "interfaces": [{"name": "write_output", "direction": "inbound", "kind": "function", "description": "Write normalized text to destination", "failure_behavior": "Explicit error on write failure"}],
+      "owned_data": ["Output file"], "quality_targets": {"NFR-001": "Do not overwrite source file on failed write"},
+      "validation_evidence": ["Reviewed output boundary and failure behavior"], "stop_reason": "Write contract specified", "status": "ready"
+    }
+  ],
+  "relationships": [
+    {"id": "REL-001", "source_id": "input", "target_id": "normalize", "kind": "data_flow", "description": "Decoded UTF-8 text", "requirement_ids": ["FR-001", "FR-002"]},
+    {"id": "REL-002", "source_id": "normalize", "target_id": "output", "kind": "data_flow", "description": "Normalized text", "requirement_ids": ["FR-002", "FR-003"]}
+  ],
+  "verification_cases": [
+    {"id": "VC-001", "description": "Review input handling and read-error behavior", "method": "design_review", "requirement_ids": ["FR-001", "NFR-001"], "component_ids": ["input"], "status": "verified", "evidence": "Reviewed component interface and explicit failure behavior"},
+    {"id": "VC-002", "description": "Plan transformation invariant checks", "method": "test_plan", "requirement_ids": ["FR-002"], "component_ids": ["normalize"], "status": "planned"},
+    {"id": "VC-003", "description": "Plan output/error and data-preservation review", "method": "design_review", "requirement_ids": ["FR-003", "NFR-001"], "component_ids": ["output"], "status": "planned"}
+  ],
+  "decisions": [{"id": "ADR-001", "title": "Single-process architecture", "choice": "Modular CLI", "rationale": "Small local tool does not require services", "alternatives": ["Microservices"], "tradeoffs": ["Easy deployment; single-process scalability"], "status": "accepted"}],
+  "findings": [{"id": "FIND-001", "severity": "medium", "description": "Confirm atomic write strategy before architecture approval", "requirement_ids": ["NFR-001"], "component_ids": ["output"], "status": "open"}],
+  "status": "draft"
+}

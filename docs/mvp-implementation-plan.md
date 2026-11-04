@@ -82,11 +82,15 @@ Use separate IDs for requirements, components, edges, decisions, and tests. Do n
 
 ## Milestone 1: Core schema and recursion
 
+**2026-11-04 progress:** Initial typed models, deterministic proposer, and contract tests implemented. 31 tests passed locally on Python 3.13; continuous integration was configured but its GitHub run has not yet been verified. The decomposer, priority queue, automatic stop logic, generated output, and full cross-domain fixtures are still pending.
+
+Milestone 1: Core schema and recursion
+
 **Implementation tasks (in recommended order):**
 
-- [ ] Create package structure (`src/speccanopy/`) and test runner.
-- [ ] Define typed `SystemBrief`, `Requirement`, `Component`, `Relationship`, `Decision`, and `ValidationFinding` models.
-- [ ] Implement a `ComponentProposer` protocol, initially backed by deterministic in-memory fixtures.
+- [x] Create package structure (`src/speccanopy/`) and test runner.
+- [x] Define typed `SystemBrief`, `Requirement`, `Component`, `Relationship`, `Decision`, and `ValidationFinding` models.
+- [x] Implement a `ComponentProposer` protocol, initially backed by deterministic in-memory fixtures.
 - [ ] Implement a priority queue for nodes needing decomposition; support independent child counts and depths.
 - [ ] Implement loop termination: sufficiently specified, blocked, budget exceeded, cycle/duplicate found.
 - [ ] Implement stable component IDs, local coverage checks and parent-child consistency checks.
