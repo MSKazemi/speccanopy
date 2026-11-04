@@ -18,6 +18,8 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **MVP delivery plan:** [docs/mvp-implementation-plan.md](docs/mvp-implementation-plan.md).
 
+**Execution roadmap:** [docs/execution-roadmap.md](docs/execution-roadmap.md).
+
 ## Status
 
 This repository currently contains the ARAD **design proposal**, not a tested or implemented general-purpose architecture generator. Its scoring weights, depth guidelines, and stopping conditions are initial heuristics to be evaluated against real-world examples.
