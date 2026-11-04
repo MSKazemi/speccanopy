@@ -12,6 +12,8 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Read the complete design proposal:** [docs/adaptive-recursive-architecture-design.md](docs/adaptive-recursive-architecture-design.md).
 
+**Vision and scope:** [docs/vision-and-goal.md](docs/vision-and-goal.md).
+
 **MVP delivery plan:** [docs/mvp-implementation-plan.md](docs/mvp-implementation-plan.md).
 
 ## Status
