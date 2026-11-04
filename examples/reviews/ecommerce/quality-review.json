@@ -1,0 +1,128 @@
+{
+  "status": "requires_review",
+  "coverage": {
+    "verified": [],
+    "planned_only": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "FR-004",
+      "FR-005",
+      "NFR-001",
+      "NFR-002"
+    ],
+    "uncovered": []
+  },
+  "scenario_assessments": [
+    {
+      "scenario_id": "SC-EC-AUTH",
+      "requirement_id": "NFR-001",
+      "status": "verification_pending",
+      "missing_design_elements": [],
+      "verification_status": "planned_only",
+      "description": "Scenario response: Deny unauthorized operations across the payments-to-identity boundary; acceptance measure: An architecture review traces the authorization check and failure behavior at the boundary"
+    },
+    {
+      "scenario_id": "SC-EC-IDEMPOTENCY",
+      "requirement_id": "NFR-002",
+      "status": "verification_pending",
+      "missing_design_elements": [],
+      "verification_status": "planned_only",
+      "description": "Scenario response: Reuse the same payment intent and avoid a duplicate charge; acceptance measure: Architecture review verifies idempotency key lifecycle and retry semantics"
+    }
+  ],
+  "findings": [
+    {
+      "id": "REVIEW-001",
+      "severity": "medium",
+      "category": "verification_pending",
+      "description": "Verification is planned but not evidenced for: ['FR-001', 'FR-002', 'FR-003', 'FR-004', 'FR-005', 'NFR-001', 'NFR-002']",
+      "recommendation": "Review the architecture and record credible, requirement-linked evidence.",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "component_ids": []
+    },
+    {
+      "id": "REVIEW-002",
+      "severity": "medium",
+      "category": "scenario_evidence",
+      "description": "Scenario SC-EC-AUTH lacks documented completed architectural verification.",
+      "recommendation": "Carry out the stated architecture review or analysis and attach evidence.",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "payments",
+        "identity",
+        "payment_auth"
+      ]
+    },
+    {
+      "id": "REVIEW-003",
+      "severity": "medium",
+      "category": "scenario_evidence",
+      "description": "Scenario SC-EC-IDEMPOTENCY lacks documented completed architectural verification.",
+      "recommendation": "Carry out the stated architecture review or analysis and attach evidence.",
+      "requirement_ids": [
+        "NFR-002"
+      ],
+      "component_ids": [
+        "payment_gateway"
+      ]
+    },
+    {
+      "id": "REVIEW-004",
+      "severity": "medium",
+      "category": "interaction_contract",
+      "description": "REL-EC-02 lacks outbound contract on orders.",
+      "recommendation": "Specify directional contracts, message semantics and failure behavior.",
+      "requirement_ids": [
+        "FR-002",
+        "FR-003"
+      ],
+      "component_ids": [
+        "orders",
+        "payments"
+      ]
+    },
+    {
+      "id": "REVIEW-005",
+      "severity": "medium",
+      "category": "interaction_contract",
+      "description": "REL-EC-03 lacks outbound contract on orders and inbound contract on inventory.",
+      "recommendation": "Specify directional contracts, message semantics and failure behavior.",
+      "requirement_ids": [
+        "FR-005"
+      ],
+      "component_ids": [
+        "orders",
+        "inventory"
+      ]
+    },
+    {
+      "id": "REVIEW-006",
+      "severity": "medium",
+      "category": "interaction_contract",
+      "description": "REL-EC-06 lacks outbound contract on order_lifecycle and inbound contract on order_tracking.",
+      "recommendation": "Specify directional contracts, message semantics and failure behavior.",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "component_ids": [
+        "order_lifecycle",
+        "order_tracking"
+      ]
+    }
+  ],
+  "source_findings": [
+    "FIND-EC-01"
+  ],
+  "caveat": "Independent deterministic checks assess documentation/traceability only; authored evidence and scenarios require expert scrutiny. No application implementation was tested."
+}

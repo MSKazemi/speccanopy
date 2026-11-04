@@ -1,0 +1,74 @@
+{
+  "status": "requires_review",
+  "coverage": {
+    "verified": [],
+    "planned_only": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "FR-004",
+      "NFR-001"
+    ],
+    "uncovered": []
+  },
+  "scenario_assessments": [
+    {
+      "scenario_id": "SC-FT-SECRETS",
+      "requirement_id": "NFR-001",
+      "status": "verification_pending",
+      "missing_design_elements": [],
+      "verification_status": "planned_only",
+      "description": "Scenario response: Refresh scoped credentials safely without leaking secrets or bypassing access checks; acceptance measure: Review expiry, renewal, and redaction paths in the credential boundary"
+    }
+  ],
+  "findings": [
+    {
+      "id": "REVIEW-001",
+      "severity": "medium",
+      "category": "verification_pending",
+      "description": "Verification is planned but not evidenced for: ['FR-001', 'FR-002', 'FR-003', 'FR-004', 'NFR-001']",
+      "recommendation": "Review the architecture and record credible, requirement-linked evidence.",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "NFR-001"
+      ],
+      "component_ids": []
+    },
+    {
+      "id": "REVIEW-002",
+      "severity": "medium",
+      "category": "scenario_evidence",
+      "description": "Scenario SC-FT-SECRETS lacks documented completed architectural verification.",
+      "recommendation": "Carry out the stated architecture review or analysis and attach evidence.",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "access",
+        "s3_credentials"
+      ]
+    },
+    {
+      "id": "REVIEW-003",
+      "severity": "medium",
+      "category": "interaction_contract",
+      "description": "REL-FT-02 lacks outbound contract on intake and inbound contract on planner.",
+      "recommendation": "Specify directional contracts, message semantics and failure behavior.",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002"
+      ],
+      "component_ids": [
+        "intake",
+        "planner"
+      ]
+    }
+  ],
+  "source_findings": [
+    "FIND-FT-01"
+  ],
+  "caveat": "Independent deterministic checks assess documentation/traceability only; authored evidence and scenarios require expert scrutiny. No application implementation was tested."
+}

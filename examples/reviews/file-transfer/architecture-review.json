@@ -1,0 +1,365 @@
+{
+  "system": "Multi-backend file transfer service",
+  "source_architecture_status": "draft",
+  "overall_status": "requires_review",
+  "style_comparison": {
+    "status": "recommendation",
+    "recommendation": "event_driven",
+    "declared_style": "event-driven modular service",
+    "declared_style_family": "event_driven",
+    "candidates": [
+      {
+        "style": "event_driven",
+        "score": 9.62,
+        "driver_fits": [
+          {
+            "key": "asynchronous_workflows",
+            "importance": 5,
+            "desired": 5,
+            "profile_fit": 5,
+            "compatibility": 10.0,
+            "explanation": "Jobs are accepted and processed asynchronously; requested 5/5, heuristic style fit 5/5"
+          },
+          {
+            "key": "elastic_scaling",
+            "importance": 3,
+            "desired": 5,
+            "profile_fit": 4,
+            "compatibility": 8.0,
+            "explanation": "Concurrent transfers may vary with queued work; requested 5/5, heuristic style fit 4/5"
+          },
+          {
+            "key": "modular_boundaries",
+            "importance": 3,
+            "desired": 4,
+            "profile_fit": 4,
+            "compatibility": 10.0,
+            "explanation": "Storage adapters should be replaceable; requested 4/5, heuristic style fit 4/5"
+          },
+          {
+            "key": "independent_deployment",
+            "importance": 2,
+            "desired": 3,
+            "profile_fit": 3,
+            "compatibility": 10.0,
+            "explanation": "Transfers and job scheduling may evolve separately; requested 3/5, heuristic style fit 3/5"
+          },
+          {
+            "key": "operational_simplicity",
+            "importance": 2,
+            "desired": 2,
+            "profile_fit": 2,
+            "compatibility": 10.0,
+            "explanation": "A queued service can tolerate moderate complexity; requested 2/5, heuristic style fit 2/5"
+          },
+          {
+            "key": "strong_consistency",
+            "importance": 1,
+            "desired": 2,
+            "profile_fit": 2,
+            "compatibility": 10.0,
+            "explanation": "Eventual job status is acceptable but must be explicit; requested 2/5, heuristic style fit 2/5"
+          }
+        ],
+        "tradeoff": "Loose asynchronous coupling and buffering, but ordering, replay and delivery semantics need explicit design."
+      },
+      {
+        "style": "serverless",
+        "score": 8.5,
+        "driver_fits": [
+          {
+            "key": "asynchronous_workflows",
+            "importance": 5,
+            "desired": 5,
+            "profile_fit": 4,
+            "compatibility": 8.0,
+            "explanation": "Jobs are accepted and processed asynchronously; requested 5/5, heuristic style fit 4/5"
+          },
+          {
+            "key": "elastic_scaling",
+            "importance": 3,
+            "desired": 5,
+            "profile_fit": 5,
+            "compatibility": 10.0,
+            "explanation": "Concurrent transfers may vary with queued work; requested 5/5, heuristic style fit 5/5"
+          },
+          {
+            "key": "modular_boundaries",
+            "importance": 3,
+            "desired": 4,
+            "profile_fit": 3,
+            "compatibility": 8.0,
+            "explanation": "Storage adapters should be replaceable; requested 4/5, heuristic style fit 3/5"
+          },
+          {
+            "key": "independent_deployment",
+            "importance": 2,
+            "desired": 3,
+            "profile_fit": 4,
+            "compatibility": 8.0,
+            "explanation": "Transfers and job scheduling may evolve separately; requested 3/5, heuristic style fit 4/5"
+          },
+          {
+            "key": "operational_simplicity",
+            "importance": 2,
+            "desired": 2,
+            "profile_fit": 3,
+            "compatibility": 8.0,
+            "explanation": "A queued service can tolerate moderate complexity; requested 2/5, heuristic style fit 3/5"
+          },
+          {
+            "key": "strong_consistency",
+            "importance": 1,
+            "desired": 2,
+            "profile_fit": 2,
+            "compatibility": 10.0,
+            "explanation": "Eventual job status is acceptable but must be explicit; requested 2/5, heuristic style fit 2/5"
+          }
+        ],
+        "tradeoff": "Managed execution and elastic capacity, but platform limits, cold starts and state handling require review."
+      },
+      {
+        "style": "microservices",
+        "score": 8.25,
+        "driver_fits": [
+          {
+            "key": "asynchronous_workflows",
+            "importance": 5,
+            "desired": 5,
+            "profile_fit": 4,
+            "compatibility": 8.0,
+            "explanation": "Jobs are accepted and processed asynchronously; requested 5/5, heuristic style fit 4/5"
+          },
+          {
+            "key": "elastic_scaling",
+            "importance": 3,
+            "desired": 5,
+            "profile_fit": 5,
+            "compatibility": 10.0,
+            "explanation": "Concurrent transfers may vary with queued work; requested 5/5, heuristic style fit 5/5"
+          },
+          {
+            "key": "modular_boundaries",
+            "importance": 3,
+            "desired": 4,
+            "profile_fit": 5,
+            "compatibility": 8.0,
+            "explanation": "Storage adapters should be replaceable; requested 4/5, heuristic style fit 5/5"
+          },
+          {
+            "key": "independent_deployment",
+            "importance": 2,
+            "desired": 3,
+            "profile_fit": 5,
+            "compatibility": 6.0,
+            "explanation": "Transfers and job scheduling may evolve separately; requested 3/5, heuristic style fit 5/5"
+          },
+          {
+            "key": "operational_simplicity",
+            "importance": 2,
+            "desired": 2,
+            "profile_fit": 1,
+            "compatibility": 8.0,
+            "explanation": "A queued service can tolerate moderate complexity; requested 2/5, heuristic style fit 1/5"
+          },
+          {
+            "key": "strong_consistency",
+            "importance": 1,
+            "desired": 2,
+            "profile_fit": 2,
+            "compatibility": 10.0,
+            "explanation": "Eventual job status is acceptable but must be explicit; requested 2/5, heuristic style fit 2/5"
+          }
+        ],
+        "tradeoff": "Service-level deployment and scaling at the cost of distributed coordination, observability and consistency."
+      },
+      {
+        "style": "modular_monolith",
+        "score": 5.88,
+        "driver_fits": [
+          {
+            "key": "asynchronous_workflows",
+            "importance": 5,
+            "desired": 5,
+            "profile_fit": 3,
+            "compatibility": 6.0,
+            "explanation": "Jobs are accepted and processed asynchronously; requested 5/5, heuristic style fit 3/5"
+          },
+          {
+            "key": "elastic_scaling",
+            "importance": 3,
+            "desired": 5,
+            "profile_fit": 2,
+            "compatibility": 4.0,
+            "explanation": "Concurrent transfers may vary with queued work; requested 5/5, heuristic style fit 2/5"
+          },
+          {
+            "key": "modular_boundaries",
+            "importance": 3,
+            "desired": 4,
+            "profile_fit": 5,
+            "compatibility": 8.0,
+            "explanation": "Storage adapters should be replaceable; requested 4/5, heuristic style fit 5/5"
+          },
+          {
+            "key": "independent_deployment",
+            "importance": 2,
+            "desired": 3,
+            "profile_fit": 1,
+            "compatibility": 6.0,
+            "explanation": "Transfers and job scheduling may evolve separately; requested 3/5, heuristic style fit 1/5"
+          },
+          {
+            "key": "operational_simplicity",
+            "importance": 2,
+            "desired": 2,
+            "profile_fit": 4,
+            "compatibility": 6.0,
+            "explanation": "A queued service can tolerate moderate complexity; requested 2/5, heuristic style fit 4/5"
+          },
+          {
+            "key": "strong_consistency",
+            "importance": 1,
+            "desired": 2,
+            "profile_fit": 5,
+            "compatibility": 4.0,
+            "explanation": "Eventual job status is acceptable but must be explicit; requested 2/5, heuristic style fit 5/5"
+          }
+        ],
+        "tradeoff": "Clear internal boundaries and simple transactions, but modules share a deployment lifecycle."
+      },
+      {
+        "style": "single_process",
+        "score": 3.62,
+        "driver_fits": [
+          {
+            "key": "asynchronous_workflows",
+            "importance": 5,
+            "desired": 5,
+            "profile_fit": 1,
+            "compatibility": 2.0,
+            "explanation": "Jobs are accepted and processed asynchronously; requested 5/5, heuristic style fit 1/5"
+          },
+          {
+            "key": "elastic_scaling",
+            "importance": 3,
+            "desired": 5,
+            "profile_fit": 1,
+            "compatibility": 2.0,
+            "explanation": "Concurrent transfers may vary with queued work; requested 5/5, heuristic style fit 1/5"
+          },
+          {
+            "key": "modular_boundaries",
+            "importance": 3,
+            "desired": 4,
+            "profile_fit": 2,
+            "compatibility": 6.0,
+            "explanation": "Storage adapters should be replaceable; requested 4/5, heuristic style fit 2/5"
+          },
+          {
+            "key": "independent_deployment",
+            "importance": 2,
+            "desired": 3,
+            "profile_fit": 1,
+            "compatibility": 6.0,
+            "explanation": "Transfers and job scheduling may evolve separately; requested 3/5, heuristic style fit 1/5"
+          },
+          {
+            "key": "operational_simplicity",
+            "importance": 2,
+            "desired": 2,
+            "profile_fit": 5,
+            "compatibility": 4.0,
+            "explanation": "A queued service can tolerate moderate complexity; requested 2/5, heuristic style fit 5/5"
+          },
+          {
+            "key": "strong_consistency",
+            "importance": 1,
+            "desired": 2,
+            "profile_fit": 5,
+            "compatibility": 4.0,
+            "explanation": "Eventual job status is acceptable but must be explicit; requested 2/5, heuristic style fit 5/5"
+          }
+        ],
+        "tradeoff": "Minimal operational overhead, but one deployment unit and limited independent scaling."
+      }
+    ],
+    "reason": "Highest weighted fit to explicitly supplied drivers; recommendation is advisory only.",
+    "methodology": "Heuristic 1-5 profiles and user-authored drivers; scores are not measured benchmarks and do not constitute proof of architectural fitness. Orthogonal patterns may be combined."
+  },
+  "quality_review": {
+    "status": "requires_review",
+    "coverage": {
+      "verified": [],
+      "planned_only": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "NFR-001"
+      ],
+      "uncovered": []
+    },
+    "scenario_assessments": [
+      {
+        "scenario_id": "SC-FT-SECRETS",
+        "requirement_id": "NFR-001",
+        "status": "verification_pending",
+        "missing_design_elements": [],
+        "verification_status": "planned_only",
+        "description": "Scenario response: Refresh scoped credentials safely without leaking secrets or bypassing access checks; acceptance measure: Review expiry, renewal, and redaction paths in the credential boundary"
+      }
+    ],
+    "findings": [
+      {
+        "id": "REVIEW-001",
+        "severity": "medium",
+        "category": "verification_pending",
+        "description": "Verification is planned but not evidenced for: ['FR-001', 'FR-002', 'FR-003', 'FR-004', 'NFR-001']",
+        "recommendation": "Review the architecture and record credible, requirement-linked evidence.",
+        "requirement_ids": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "NFR-001"
+        ],
+        "component_ids": []
+      },
+      {
+        "id": "REVIEW-002",
+        "severity": "medium",
+        "category": "scenario_evidence",
+        "description": "Scenario SC-FT-SECRETS lacks documented completed architectural verification.",
+        "recommendation": "Carry out the stated architecture review or analysis and attach evidence.",
+        "requirement_ids": [
+          "NFR-001"
+        ],
+        "component_ids": [
+          "access",
+          "s3_credentials"
+        ]
+      },
+      {
+        "id": "REVIEW-003",
+        "severity": "medium",
+        "category": "interaction_contract",
+        "description": "REL-FT-02 lacks outbound contract on intake and inbound contract on planner.",
+        "recommendation": "Specify directional contracts, message semantics and failure behavior.",
+        "requirement_ids": [
+          "FR-001",
+          "FR-002"
+        ],
+        "component_ids": [
+          "intake",
+          "planner"
+        ]
+      }
+    ],
+    "source_findings": [
+      "FIND-FT-01"
+    ],
+    "caveat": "Independent deterministic checks assess documentation/traceability only; authored evidence and scenarios require expert scrutiny. No application implementation was tested."
+  },
+  "provenance": "Heuristic style profiles plus explicit reviewer drivers/scenarios. No LLM inference, production-code generation, or independent expert signoff."
+}

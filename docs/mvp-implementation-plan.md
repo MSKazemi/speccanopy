@@ -84,7 +84,7 @@ Use separate IDs for requirements, components, edges, decisions, and tests. Do n
 
 ## Milestone 1: Core schema and recursion
 
-**2026-11-04 update:** Phase 1 models and Phase 2 deterministic priority-first recursion are implemented, including evidence-based stopping, three contrasting fixtures, diagrams, output reports and a command-line interface. 57 tests pass locally; see [the Phase 2 implementation guide](phase2-engine.md). AI-backed architecture discovery, automated architecture-style comparison, quality-attribute analysis and iterative critique/refinement remain future work. The `max_refinement_rounds` input is reserved but not yet used.
+**2026-11-04 update:** Phases 1–3 are implemented: typed architecture contracts, fixture-driven recursive generation, and a separate advisory style/quality review module with explicit drivers, scenario checks and trade-offs. **91 tests pass locally.** Style comparison remains advisory; AI-generated proposals, independent empirical validation, and a bounded architectural redesign/refinement loop remain future work. See [Phase 3 review](phase3-review.md).
 
 **Implementation tasks (in recommended order):**
 
@@ -105,9 +105,9 @@ Use separate IDs for requirements, components, edges, decisions, and tests. Do n
 
 ## Milestone 2: Architecture reasoning and validation
 
-- [ ] Add optional architecture-style candidates with justification: modular monolith, microservices, event-driven, layered, hexagonal, or hybrid.
-- [ ] Introduce a configurable design priority score (value, risk, dependency, quality impact, uncertainty); do not treat the score as permission to omit required functionality.
-- [ ] Add relationship graph modeling: calls, events, data ownership and trust boundaries.
+- [x] Add advisory primary style comparisons (single process, modular monolith, microservices, event-driven, serverless); layered/hexagonal/hybrid analysis remains open.
+- [x] Introduce a configurable design priority score (value, risk, dependency, quality impact, uncertainty); do not treat the score as permission to omit required functionality.
+- [x] Add relationship graph modeling: calls, events, data ownership and trust boundaries.
 - [ ] Add quality-attribute and end-to-end scenario validation.
 - [ ] Record ADR-style decisions and tradeoffs.
 - [ ] Implement a bounded targeted-refinement loop.

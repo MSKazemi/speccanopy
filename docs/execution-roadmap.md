@@ -1,6 +1,6 @@
 # Speccanopy execution roadmap — Universal Software Architect
 
-**Status:** Active implementation roadmap; deterministic Phase 1 contract and Phase 2 recursive core completed on 2026-11-04  
+**Status:** Active roadmap; Phases 1–3 (contract, deterministic recursion, advisory quality/style review) implemented on 2026-11-04  
 **Date:** 2026-11-04  
 **Product boundary:** Speccanopy designs and validates architecture; it does not autonomously implement, build, test or deploy the software applications being designed.
 
@@ -49,6 +49,8 @@ Use Python with typed models and a replaceable `ComponentProposer` interface, in
 **Gate:** All three fixtures produce schema-valid and deterministic artifacts; branching and depth vary; no infinite recursion; incomplete results are labeled correctly.
 
 ### 4 — Add style selection, dependency graph and architectural views
+
+**Progress (2026-11-04):** Primary style comparison and deterministic quality-scenario/interaction checks are available through `speccanopy review`. The authored architecture is not overridden. Complete runtime, deployment, threat-analysis and data consistency views are still pending. See [Phase 3 review](phase3-review.md).
 
 Compare candidate architecture styles based on functional constraints, team/operational complexity, data consistency, scaling, reliability and costs. Allow hybrid choices and decisions at subsystem level. Add:
 - Typed dependencies (calls, events, shared resources and trust boundaries).
@@ -109,4 +111,4 @@ The first release should provide a CLI and structured artifacts. Only after the 
 
 ## Decision summary
 
-**Completed:** architecture contract, three curated benchmark fixtures and the bounded deterministic recursive engine with audited outputs. **Next:** introduce architecture-style comparison and measurable, independent quality review, followed by an AI-backed component proposer. The goal remains an architecture design engine, not an application builder. See [Phase 2 engine](phase2-engine.md).
+**Completed:** architecture contracts, three curated recursive architecture fixtures, and an advisory style/quality reviewer with explicit driver scoring, scenario checks and auditable outputs. **Next:** a schema-constrained AI component proposer, source provenance, targeted refinement and human approval. The goal remains architecture design, not autonomous application building. See [Phase 3 review](phase3-review.md).

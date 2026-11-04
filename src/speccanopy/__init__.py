@@ -42,3 +42,26 @@ __all__ = [
     "generate_architecture",
     "score_priority",
 ]
+
+from .review import (
+    ArchitectureReview,
+    ExpectedInteraction,
+    QualityReview,
+    QualityScenario,
+    ReviewConfig,
+    ReviewFinding,
+    ScenarioAssessment,
+    StyleComparison,
+    StyleDriver,
+    assess_architecture,
+    compare_styles,
+    review_quality,
+)
+from .review_exporters import export_review, review_markdown
+
+__all__ += [
+    "ArchitectureReview", "ExpectedInteraction", "QualityReview", "QualityScenario",
+    "ReviewConfig", "ReviewFinding", "ScenarioAssessment", "StyleComparison",
+    "StyleDriver", "assess_architecture", "compare_styles", "review_quality",
+    "export_review", "review_markdown",
+]

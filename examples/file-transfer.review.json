@@ -1,0 +1,60 @@
+{
+  "drivers": [
+    {
+      "key": "asynchronous_workflows",
+      "importance": 5,
+      "desired": 5,
+      "rationale": "Jobs are accepted and processed asynchronously"
+    },
+    {
+      "key": "elastic_scaling",
+      "importance": 3,
+      "desired": 5,
+      "rationale": "Concurrent transfers may vary with queued work"
+    },
+    {
+      "key": "modular_boundaries",
+      "importance": 3,
+      "desired": 4,
+      "rationale": "Storage adapters should be replaceable"
+    },
+    {
+      "key": "independent_deployment",
+      "importance": 2,
+      "desired": 3,
+      "rationale": "Transfers and job scheduling may evolve separately"
+    },
+    {
+      "key": "operational_simplicity",
+      "importance": 2,
+      "desired": 2,
+      "rationale": "A queued service can tolerate moderate complexity"
+    },
+    {
+      "key": "strong_consistency",
+      "importance": 1,
+      "desired": 2,
+      "rationale": "Eventual job status is acceptable but must be explicit"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "SC-FT-SECRETS",
+      "requirement_id": "NFR-001",
+      "stimulus": "Transfer credentials expire during multipart upload",
+      "expected_response": "Refresh scoped credentials safely without leaking secrets or bypassing access checks",
+      "measure": "Review expiry, renewal, and redaction paths in the credential boundary",
+      "component_ids": [
+        "access",
+        "s3_credentials"
+      ],
+      "expected_interactions": [
+        {
+          "source_id": "access",
+          "target_id": "s3_credentials",
+          "kind": "trust_boundary"
+        }
+      ]
+    }
+  ]
+}

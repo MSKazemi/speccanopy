@@ -1,0 +1,65 @@
+{
+  "drivers": [
+    {
+      "key": "operational_simplicity",
+      "importance": 5,
+      "desired": 5,
+      "rationale": "An initial application with a small operations team"
+    },
+    {
+      "key": "modular_boundaries",
+      "importance": 5,
+      "desired": 5,
+      "rationale": "Orders, payments and inventory must remain cohesive modules"
+    },
+    {
+      "key": "strong_consistency",
+      "importance": 5,
+      "desired": 5,
+      "rationale": "Order and charge invariants need well-defined transactions"
+    },
+    {
+      "key": "independent_deployment",
+      "importance": 2,
+      "desired": 1,
+      "rationale": "No documented need for independent service releases"
+    },
+    {
+      "key": "asynchronous_workflows",
+      "importance": 2,
+      "desired": 3,
+      "rationale": "Inventory and status notifications can be asynchronous"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "SC-EC-AUTH",
+      "requirement_id": "NFR-001",
+      "stimulus": "An unauthorized actor requests payment or order modification",
+      "expected_response": "Deny unauthorized operations across the payments-to-identity boundary",
+      "measure": "An architecture review traces the authorization check and failure behavior at the boundary",
+      "component_ids": [
+        "payments",
+        "identity",
+        "payment_auth"
+      ],
+      "expected_interactions": [
+        {
+          "source_id": "payments",
+          "target_id": "identity",
+          "kind": "trust_boundary"
+        }
+      ]
+    },
+    {
+      "id": "SC-EC-IDEMPOTENCY",
+      "requirement_id": "NFR-002",
+      "stimulus": "Client repeats the same payment request after a timeout",
+      "expected_response": "Reuse the same payment intent and avoid a duplicate charge",
+      "measure": "Architecture review verifies idempotency key lifecycle and retry semantics",
+      "component_ids": [
+        "payment_gateway"
+      ]
+    }
+  ]
+}

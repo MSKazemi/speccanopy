@@ -1,0 +1,57 @@
+{
+  "status": "requires_review",
+  "coverage": {
+    "verified": [],
+    "planned_only": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "NFR-001"
+    ],
+    "uncovered": []
+  },
+  "scenario_assessments": [
+    {
+      "scenario_id": "SC-CLI-RELIABILITY",
+      "requirement_id": "NFR-001",
+      "status": "verification_pending",
+      "missing_design_elements": [],
+      "verification_status": "planned_only",
+      "description": "Scenario response: Report the failure while preserving the original file; acceptance measure: Architecture review confirms explicit failure paths and an atomic output strategy"
+    }
+  ],
+  "findings": [
+    {
+      "id": "REVIEW-001",
+      "severity": "medium",
+      "category": "verification_pending",
+      "description": "Verification is planned but not evidenced for: ['FR-001', 'FR-002', 'FR-003', 'NFR-001']",
+      "recommendation": "Review the architecture and record credible, requirement-linked evidence.",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "component_ids": []
+    },
+    {
+      "id": "REVIEW-002",
+      "severity": "medium",
+      "category": "scenario_evidence",
+      "description": "Scenario SC-CLI-RELIABILITY lacks documented completed architectural verification.",
+      "recommendation": "Carry out the stated architecture review or analysis and attach evidence.",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "input",
+        "output"
+      ]
+    }
+  ],
+  "source_findings": [
+    "FIND-CLI-01"
+  ],
+  "caveat": "Independent deterministic checks assess documentation/traceability only; authored evidence and scenarios require expert scrutiny. No application implementation was tested."
+}

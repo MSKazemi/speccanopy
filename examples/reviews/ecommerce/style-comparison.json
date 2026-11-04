@@ -1,0 +1,245 @@
+{
+  "status": "recommendation",
+  "recommendation": "modular_monolith",
+  "declared_style": "modular monolith",
+  "declared_style_family": "modular_monolith",
+  "candidates": [
+    {
+      "style": "modular_monolith",
+      "score": 9.47,
+      "driver_fits": [
+        {
+          "key": "operational_simplicity",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 4,
+          "compatibility": 8.0,
+          "explanation": "An initial application with a small operations team; requested 5/5, heuristic style fit 4/5"
+        },
+        {
+          "key": "modular_boundaries",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 5,
+          "compatibility": 10.0,
+          "explanation": "Orders, payments and inventory must remain cohesive modules; requested 5/5, heuristic style fit 5/5"
+        },
+        {
+          "key": "strong_consistency",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 5,
+          "compatibility": 10.0,
+          "explanation": "Order and charge invariants need well-defined transactions; requested 5/5, heuristic style fit 5/5"
+        },
+        {
+          "key": "independent_deployment",
+          "importance": 2,
+          "desired": 1,
+          "profile_fit": 1,
+          "compatibility": 10.0,
+          "explanation": "No documented need for independent service releases; requested 1/5, heuristic style fit 1/5"
+        },
+        {
+          "key": "asynchronous_workflows",
+          "importance": 2,
+          "desired": 3,
+          "profile_fit": 3,
+          "compatibility": 10.0,
+          "explanation": "Inventory and status notifications can be asynchronous; requested 3/5, heuristic style fit 3/5"
+        }
+      ],
+      "tradeoff": "Clear internal boundaries and simple transactions, but modules share a deployment lifecycle."
+    },
+    {
+      "style": "single_process",
+      "score": 8.0,
+      "driver_fits": [
+        {
+          "key": "operational_simplicity",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 5,
+          "compatibility": 10.0,
+          "explanation": "An initial application with a small operations team; requested 5/5, heuristic style fit 5/5"
+        },
+        {
+          "key": "modular_boundaries",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 2,
+          "compatibility": 4.0,
+          "explanation": "Orders, payments and inventory must remain cohesive modules; requested 5/5, heuristic style fit 2/5"
+        },
+        {
+          "key": "strong_consistency",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 5,
+          "compatibility": 10.0,
+          "explanation": "Order and charge invariants need well-defined transactions; requested 5/5, heuristic style fit 5/5"
+        },
+        {
+          "key": "independent_deployment",
+          "importance": 2,
+          "desired": 1,
+          "profile_fit": 1,
+          "compatibility": 10.0,
+          "explanation": "No documented need for independent service releases; requested 1/5, heuristic style fit 1/5"
+        },
+        {
+          "key": "asynchronous_workflows",
+          "importance": 2,
+          "desired": 3,
+          "profile_fit": 1,
+          "compatibility": 6.0,
+          "explanation": "Inventory and status notifications can be asynchronous; requested 3/5, heuristic style fit 1/5"
+        }
+      ],
+      "tradeoff": "Minimal operational overhead, but one deployment unit and limited independent scaling."
+    },
+    {
+      "style": "event_driven",
+      "score": 5.47,
+      "driver_fits": [
+        {
+          "key": "operational_simplicity",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 2,
+          "compatibility": 4.0,
+          "explanation": "An initial application with a small operations team; requested 5/5, heuristic style fit 2/5"
+        },
+        {
+          "key": "modular_boundaries",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 4,
+          "compatibility": 8.0,
+          "explanation": "Orders, payments and inventory must remain cohesive modules; requested 5/5, heuristic style fit 4/5"
+        },
+        {
+          "key": "strong_consistency",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 2,
+          "compatibility": 4.0,
+          "explanation": "Order and charge invariants need well-defined transactions; requested 5/5, heuristic style fit 2/5"
+        },
+        {
+          "key": "independent_deployment",
+          "importance": 2,
+          "desired": 1,
+          "profile_fit": 3,
+          "compatibility": 6.0,
+          "explanation": "No documented need for independent service releases; requested 1/5, heuristic style fit 3/5"
+        },
+        {
+          "key": "asynchronous_workflows",
+          "importance": 2,
+          "desired": 3,
+          "profile_fit": 5,
+          "compatibility": 6.0,
+          "explanation": "Inventory and status notifications can be asynchronous; requested 3/5, heuristic style fit 5/5"
+        }
+      ],
+      "tradeoff": "Loose asynchronous coupling and buffering, but ordering, replay and delivery semantics need explicit design."
+    },
+    {
+      "style": "serverless",
+      "score": 5.47,
+      "driver_fits": [
+        {
+          "key": "operational_simplicity",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 3,
+          "compatibility": 6.0,
+          "explanation": "An initial application with a small operations team; requested 5/5, heuristic style fit 3/5"
+        },
+        {
+          "key": "modular_boundaries",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 3,
+          "compatibility": 6.0,
+          "explanation": "Orders, payments and inventory must remain cohesive modules; requested 5/5, heuristic style fit 3/5"
+        },
+        {
+          "key": "strong_consistency",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 2,
+          "compatibility": 4.0,
+          "explanation": "Order and charge invariants need well-defined transactions; requested 5/5, heuristic style fit 2/5"
+        },
+        {
+          "key": "independent_deployment",
+          "importance": 2,
+          "desired": 1,
+          "profile_fit": 4,
+          "compatibility": 4.0,
+          "explanation": "No documented need for independent service releases; requested 1/5, heuristic style fit 4/5"
+        },
+        {
+          "key": "asynchronous_workflows",
+          "importance": 2,
+          "desired": 3,
+          "profile_fit": 4,
+          "compatibility": 8.0,
+          "explanation": "Inventory and status notifications can be asynchronous; requested 3/5, heuristic style fit 4/5"
+        }
+      ],
+      "tradeoff": "Managed execution and elastic capacity, but platform limits, cold starts and state handling require review."
+    },
+    {
+      "style": "microservices",
+      "score": 5.26,
+      "driver_fits": [
+        {
+          "key": "operational_simplicity",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 1,
+          "compatibility": 2.0,
+          "explanation": "An initial application with a small operations team; requested 5/5, heuristic style fit 1/5"
+        },
+        {
+          "key": "modular_boundaries",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 5,
+          "compatibility": 10.0,
+          "explanation": "Orders, payments and inventory must remain cohesive modules; requested 5/5, heuristic style fit 5/5"
+        },
+        {
+          "key": "strong_consistency",
+          "importance": 5,
+          "desired": 5,
+          "profile_fit": 2,
+          "compatibility": 4.0,
+          "explanation": "Order and charge invariants need well-defined transactions; requested 5/5, heuristic style fit 2/5"
+        },
+        {
+          "key": "independent_deployment",
+          "importance": 2,
+          "desired": 1,
+          "profile_fit": 5,
+          "compatibility": 2.0,
+          "explanation": "No documented need for independent service releases; requested 1/5, heuristic style fit 5/5"
+        },
+        {
+          "key": "asynchronous_workflows",
+          "importance": 2,
+          "desired": 3,
+          "profile_fit": 4,
+          "compatibility": 8.0,
+          "explanation": "Inventory and status notifications can be asynchronous; requested 3/5, heuristic style fit 4/5"
+        }
+      ],
+      "tradeoff": "Service-level deployment and scaling at the cost of distributed coordination, observability and consistency."
+    }
+  ],
+  "reason": "Highest weighted fit to explicitly supplied drivers; recommendation is advisory only.",
+  "methodology": "Heuristic 1-5 profiles and user-authored drivers; scores are not measured benchmarks and do not constitute proof of architectural fitness. Orthogonal patterns may be combined."
+}

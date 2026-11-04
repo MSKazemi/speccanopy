@@ -24,15 +24,17 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 2 recursive engine guide:** [docs/phase2-engine.md](docs/phase2-engine.md).
 
+**Phase 3 architecture review guide:** [docs/phase3-review.md](docs/phase3-review.md).
+
 ## Status
 
-**Phases 1–2 are implemented:** validated architecture contracts and a deterministic recursive generator using curated proposal fixtures. It supports variable depth/breadth, priority scoring, budget-aware stopping, requirement traceability, typed relationships, Mermaid diagrams, CLI exports, and 57 locally passing tests. **AI-driven proposals, independent architecture-quality evaluation, and automatic style selection are not implemented yet.**
+**Phases 1–3 are implemented:** validated architecture models, the deterministic recursive generator, and a separate rule-based architecture review CLI. Phase 3 compares primary architecture style candidates using explicit drivers, explains trade-offs, audits quality scenarios and interface/data risks, and records open evidence gaps. **91 tests passed locally.** Reviews do not automatically approve or alter a design. **AI-generated proposals and real-world architecture certification are not implemented yet.**
 
 ## Next implementation steps
 
-1. Add architecture-style comparisons and explicit quality-attribute review beyond structural validation.
-2. Introduce an AI-backed proposer behind the existing `ComponentProposer` interface with provenance, schema checks and human review.
-3. Benchmark on additional held-out application types; calibrate priority heuristics and quality scores.
+1. Add an optional, provider-neutral AI proposer for architectural component candidates, with schema checks and provenance.
+2. Evaluate proposed designs with human review and targeted refinement; keep acceptance separate from heuristic scores.
+3. Expand held-out benchmarks, domain-specific quality rules, and support for hybrid architectural patterns.
 
 ## Run Speccanopy
 
@@ -45,9 +47,19 @@ speccanopy design examples/ecommerce.json --output out/ecommerce
 speccanopy design examples/file-transfer.json --output out/file-transfer
 ```
 
+Run an **advisory architecture review** on an existing draft:
+
+```bash
+speccanopy review out/ecommerce/architecture.json \
+  --config examples/ecommerce.review.json \
+  --output out/ecommerce-review
+```
+
+This produces architecture-style comparisons, quality scenario findings, coverage reports and a Markdown review packet. Without explicit style drivers the reviewer abstains from style selection.
+
 Alternatively run `PYTHONPATH=src python -m speccanopy.cli design examples/cli-utility.json --output out/cli-utility` without installing a console script.
 
-**Important:** The current `design` command reads a brief plus a curated `<brief>.design.json` proposal fixture; it does **not** independently design arbitrary new applications from prose. Each run writes `architecture.json`, two Mermaid diagrams, a requirement coverage report, an ADR/findings report, and a generation trace. The included examples remain `draft` rather than being independently verified.
+**Important:** The `design` command uses curated `<brief>.design.json` proposal fixtures; it does **not** independently design arbitrary applications from prose. The new `review` command uses explicit `<brief>.review.json` drivers and quality scenarios; its recommendations are heuristic, not certifications. The included architectures remain `draft` and require human approval.
 
 ## Background
 

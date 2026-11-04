@@ -69,3 +69,7 @@ Implement a bounded recursive decomposer that takes `SystemBrief` and `Component
 A deterministic priority-first recursive engine now consumes a `SystemBrief` and a **curated** `FixtureDesign` (with `ComponentProposal` children) and emits a bounded `ArchitectureSpec`, Mermaid containment/relationship diagrams, a traceability report and an audit trail. See [Phase 2 engine](phase2-engine.md) for commands, example outputs, explicit incomplete-state semantics and remaining limitations.
 
 This does **not** change Phase 1's distinction between component `ready` (structural design evidence), verification `planned` vs `verified`, and overall `validated_for_scope`. The Phase 2 engine intentionally generates `draft` or `incomplete_requires_review`, never unilaterally promotes an architecture to independently validated.
+
+## Phase 3 advisory review extension
+
+See [Phase 3 review](phase3-review.md). Style comparison accepts explicit weighted design drivers; quality rules inspect requirement-linked scenarios, documented evidence, data ownership and directional interaction contracts. Reviews are separate artifacts and **never upgrade** a draft to `validated_for_scope`. Heuristic recommendations and rule-based findings require human interpretation.
