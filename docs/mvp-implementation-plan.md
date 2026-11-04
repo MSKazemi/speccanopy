@@ -65,10 +65,12 @@ Output directory:
 
 ```text
 out/
-  architecture.json       # normalized components, hierarchy, relationships and selected style
-  architecture.mmd        # diagram of component tree (initially) plus links when practical
-  requirements-report.json # mandatory requirements mapped to components and validation results
-  decisions.json          # architectural decisions, tradeoffs and unresolved questions
+  architecture.json         # normalized components, hierarchy, relationships and selected style
+  architecture.mmd          # Mermaid containment tree
+  relationships.mmd         # Mermaid dependency and interaction diagram
+  requirements-report.json # mandatory requirements, planned reviews, coverage and ownership
+  decisions.json            # authored ADRs, selected style and open findings
+  generation-trace.json     # expansion/stop reasons, rankings and budget events
 ```
 
 **Architecture schema:**
@@ -82,20 +84,20 @@ Use separate IDs for requirements, components, edges, decisions, and tests. Do n
 
 ## Milestone 1: Core schema and recursion
 
-**2026-11-04 progress:** Initial typed models, deterministic proposer, and contract tests implemented. 31 tests passed locally on Python 3.13; continuous integration was configured but its GitHub run has not yet been verified. The decomposer, priority queue, automatic stop logic, generated output, and full cross-domain fixtures are still pending.
+**2026-11-04 update:** Phase 1 models and Phase 2 deterministic priority-first recursion are implemented, including evidence-based stopping, three contrasting fixtures, diagrams, output reports and a command-line interface. 57 tests pass locally; see [the Phase 2 implementation guide](phase2-engine.md). AI-backed architecture discovery, automated architecture-style comparison, quality-attribute analysis and iterative critique/refinement remain future work. The `max_refinement_rounds` input is reserved but not yet used.
 
 **Implementation tasks (in recommended order):**
 
 - [x] Create package structure (`src/speccanopy/`) and test runner.
 - [x] Define typed `SystemBrief`, `Requirement`, `Component`, `Relationship`, `Decision`, and `ValidationFinding` models.
 - [x] Implement a `ComponentProposer` protocol, initially backed by deterministic in-memory fixtures.
-- [ ] Implement a priority queue for nodes needing decomposition; support independent child counts and depths.
-- [ ] Implement loop termination: sufficiently specified, blocked, budget exceeded, cycle/duplicate found.
-- [ ] Implement stable component IDs, local coverage checks and parent-child consistency checks.
-- [ ] Generate normalized JSON and Mermaid tree output from one input file.
-- [ ] Add basic mandatory-requirement coverage checks and report missing coverage.
-- [ ] Add structured traces explaining why each component was expanded or stopped.
-- [ ] Add CLI: `speccanopy design examples/ecommerce.json --output out`.
+- [x] Implement a priority queue for nodes needing decomposition; support independent child counts and depths.
+- [x] Implement loop termination: sufficiently specified, blocked, budget exceeded, cycle/duplicate found.
+- [x] Implement stable component IDs, local coverage checks and parent-child consistency checks.
+- [x] Generate normalized JSON and Mermaid tree output from one input file.
+- [x] Add basic mandatory-requirement coverage checks and report missing coverage.
+- [x] Add structured traces explaining why each component was expanded or stopped.
+- [x] Add CLI: `speccanopy design examples/ecommerce.json --output out`.
 
 **Initial stop predicate:** a node has well-defined scope, necessary interface contracts, dependencies/data ownership (or explicit N/A), relevant quality targets, and implementation/test readiness evidence. If a decision cannot be resolved, label the node `blocked` or `requires_review`. Never mark a node `ready` merely because a depth or token budget was hit.
 
@@ -173,4 +175,4 @@ UI, hosted workflows, PR automation, production infrastructure, optimization cla
 
 ## First coding action
 
-**Create `src/speccanopy/models.py`, `src/speccanopy/proposer.py`, and `tests/test_models.py` together.** Define validated models and a deterministic proposer fixture before adding recursive AI prompting. This creates a testable foundation and constrains the rest of the system.
+**Next coding slice:** Add comparison of architecture-style candidates and independent quality-attribute review scenarios, then integrate an optional AI-backed proposer with strict schemas, provenance and human approval. The deterministic engine already consumes provider-neutral proposals. The next work should not claim universal correctness or implement target application code.
