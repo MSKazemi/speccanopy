@@ -1,0 +1,29 @@
+# Speccanopy
+
+**Speccanopy** is a workspace for designing and evaluating adaptive software architecture methods.
+
+## Adaptive Recursive Architecture Design (ARAD)
+
+ARAD is a proposed, architecture-style-independent method for developing software architecture by recursively identifying and specifying the most important subcomponents of a system.
+
+The algorithm is **adaptive in breadth and depth**: a component may be decomposed into zero to ten children, and decomposition stops when a component is sufficiently specified, not when an arbitrary number of levels has been reached.
+
+The decomposition tree is complemented by a dependency/interaction graph, multiple architecture views, explicit quality-attribute analysis, validation, and an implementation roadmap.
+
+**Read the complete design proposal:** [docs/adaptive-recursive-architecture-design.md](docs/adaptive-recursive-architecture-design.md).
+
+## Status
+
+This repository currently contains the ARAD **design proposal**, not a tested or implemented general-purpose architecture generator. Its scoring weights, depth guidelines, and stopping conditions are initial heuristics to be evaluated against real-world examples.
+
+## Next implementation steps
+
+1. Define a machine-readable schema for requirements, architecture nodes, relationships, and validation evidence.
+2. Implement candidate-style evaluation, priority scoring, and adaptive decomposition.
+3. Generate structural, runtime, data, deployment, and security/quality views.
+4. Add requirement coverage checks, architecture decision records, and quality-attribute validation.
+5. Test against contrasting applications: simple utility, modular monolith, event-driven system, microservices platform, and embedded system.
+
+## Background
+
+Documented from the architecture-design discussion on 2026-11-04.
