@@ -22,34 +22,32 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Executable architecture contract:** [docs/architecture-contract.md](docs/architecture-contract.md).
 
+**Phase 2 recursive engine guide:** [docs/phase2-engine.md](docs/phase2-engine.md).
+
 ## Status
 
-**Phase 1 executable foundation is implemented:** typed application and architecture schemas, a deterministic component-proposer interface, an example architecture fixture, and 31 locally passing contract tests. **The adaptive recursive architecture generator is not implemented yet.** Its scoring weights, depth guidelines, and stopping conditions remain heuristics to evaluate on real-world examples.
+**Phases 1–2 are implemented:** validated architecture contracts and a deterministic recursive generator using curated proposal fixtures. It supports variable depth/breadth, priority scoring, budget-aware stopping, requirement traceability, typed relationships, Mermaid diagrams, CLI exports, and 57 locally passing tests. **AI-driven proposals, independent architecture-quality evaluation, and automatic style selection are not implemented yet.**
 
 ## Next implementation steps
 
-1. Define a machine-readable schema for requirements, architecture nodes, relationships, and validation evidence.
-2. Implement candidate-style evaluation, priority scoring, and adaptive decomposition.
-3. Generate structural, runtime, data, deployment, and security/quality views.
-4. Add requirement coverage checks, architecture decision records, and quality-attribute validation.
-5. Test against contrasting applications: simple utility, modular monolith, event-driven system, microservices platform, and embedded system.
+1. Add architecture-style comparisons and explicit quality-attribute review beyond structural validation.
+2. Introduce an AI-backed proposer behind the existing `ComponentProposer` interface with provenance, schema checks and human review.
+3. Benchmark on additional held-out application types; calibrate priority heuristics and quality scores.
 
-## Run the Phase 1 foundation
+## Run Speccanopy
 
-Python 3.11+:
+Requires Python 3.11+ and Pydantic 2:
 
 ```bash
 python -m pip install -e '.[dev]'
 pytest -q
+speccanopy design examples/ecommerce.json --output out/ecommerce
+speccanopy design examples/file-transfer.json --output out/file-transfer
 ```
 
-Validate the example input and architecture draft:
+Alternatively run `PYTHONPATH=src python -m speccanopy.cli design examples/cli-utility.json --output out/cli-utility` without installing a console script.
 
-```bash
-python -c "from pathlib import Path; from speccanopy.models import SystemBrief, ArchitectureSpec; brief=SystemBrief.model_validate_json(Path('examples/cli-utility.json').read_text()); arch=ArchitectureSpec.model_validate_json(Path('examples/cli-utility-architecture.json').read_text()); print(brief.system, arch.status, arch.coverage_report().model_dump())"
-```
-
-The local tests were run with Python 3.13 and Pydantic v2; the GitHub Actions workflow tests Python 3.11 and 3.13.
+**Important:** The current `design` command reads a brief plus a curated `<brief>.design.json` proposal fixture; it does **not** independently design arbitrary new applications from prose. Each run writes `architecture.json`, two Mermaid diagrams, a requirement coverage report, an ADR/findings report, and a generation trace. The included examples remain `draft` rather than being independently verified.
 
 ## Background
 
