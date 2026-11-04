@@ -1,6 +1,6 @@
 # Speccanopy execution roadmap — Universal Software Architect
 
-**Status:** Proposed execution sequence aligned with the confirmed Option A product goal  
+**Status:** Active implementation roadmap; deterministic Phase 1 contract and Phase 2 recursive core completed on 2026-11-04  
 **Date:** 2026-11-04  
 **Product boundary:** Speccanopy designs and validates architecture; it does not autonomously implement, build, test or deploy the software applications being designed.
 
@@ -109,4 +109,4 @@ The first release should provide a CLI and structured artifacts. Only after the 
 
 ## Decision summary
 
-The **very next step** is **architecture contract + measurable benchmark cases**, immediately followed by an executable typed-model/fixture slice. The recursive algorithm should be implemented only against a testable notion of architecture readiness, otherwise more levels may create more output without a better design.
+**Completed:** architecture contract, three curated benchmark fixtures and the bounded deterministic recursive engine with audited outputs. **Next:** introduce architecture-style comparison and measurable, independent quality review, followed by an AI-backed component proposer. The goal remains an architecture design engine, not an application builder. See [Phase 2 engine](phase2-engine.md).
