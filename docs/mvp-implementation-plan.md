@@ -84,8 +84,6 @@ Use separate IDs for requirements, components, edges, decisions, and tests. Do n
 
 **2026-11-04 progress:** Initial typed models, deterministic proposer, and contract tests implemented. 31 tests passed locally on Python 3.13; continuous integration was configured but its GitHub run has not yet been verified. The decomposer, priority queue, automatic stop logic, generated output, and full cross-domain fixtures are still pending.
 
-Milestone 1: Core schema and recursion
-
 **Implementation tasks (in recommended order):**
 
 - [x] Create package structure (`src/speccanopy/`) and test runner.
