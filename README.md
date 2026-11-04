@@ -1,6 +1,8 @@
 # Speccanopy
 
-**Speccanopy** is a workspace for designing and evaluating adaptive software architecture methods.
+**Speccanopy** aims to become a **universal, AI-assisted software architecture design engine** that turns requirements into coherent, validated, implementation-ready architecture specifications across application types and architecture styles.
+
+**Confirmed product boundary:** Speccanopy designs software architecture; it does **not** autonomously implement, build, test, or deploy the software applications it designs.
 
 ## Adaptive Recursive Architecture Design (ARAD)
 
