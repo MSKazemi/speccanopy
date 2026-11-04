@@ -1,0 +1,46 @@
+{
+  "system": "Multi-backend file transfer service",
+  "goals": [
+    "Securely transfer files across storage backends with recovery"
+  ],
+  "actors": [
+    "Transfer operator",
+    "Automation client"
+  ],
+  "functional_requirements": [
+    {
+      "id": "FR-001",
+      "statement": "Accept transfer job requests",
+      "mandatory": true
+    },
+    {
+      "id": "FR-002",
+      "statement": "Transfer files over local and remote backends",
+      "mandatory": true
+    },
+    {
+      "id": "FR-003",
+      "statement": "Recover and retry interrupted transfers",
+      "mandatory": true
+    },
+    {
+      "id": "FR-004",
+      "statement": "Persist transfer status and metadata",
+      "mandatory": true
+    }
+  ],
+  "quality_requirements": [
+    {
+      "id": "NFR-001",
+      "attribute": "security",
+      "statement": "Credential handling must protect transfer access",
+      "mandatory": true
+    }
+  ],
+  "constraints": {
+    "preferred_architecture": "event-driven modular service",
+    "max_depth": 6,
+    "max_nodes": 150,
+    "max_refinement_rounds": 3
+  }
+}

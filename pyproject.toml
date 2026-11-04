@@ -4,11 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "speccanopy"
-version = "0.1.0"
-description = "Adaptive recursive software architecture design engine (foundation)"
+version = "0.2.0"
+description = "Adaptive recursive software architecture design engine (deterministic prototype)"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2.9,<3"]
+
+[project.scripts]
+speccanopy = "speccanopy.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]

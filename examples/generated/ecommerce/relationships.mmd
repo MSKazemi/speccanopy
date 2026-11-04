@@ -1,0 +1,20 @@
+flowchart LR
+    N0["E-commerce order platform"]
+    N1["Product Catalog"]
+    N2["Order Management"]
+    N3["Payments"]
+    N4["Inventory"]
+    N5["Identity and Authorization"]
+    N6["Payment Authorization"]
+    N7["Payment Gateway Adapter"]
+    N8["Order Validation"]
+    N9["Order Lifecycle"]
+    N10["Order Tracking"]
+    N11["Order State Machine"]
+    N12["Order Notifications"]
+    N1 -->|"dependency"| N2
+    N2 -->|"synchronous call"| N3
+    N2 -->|"event"| N4
+    N3 -->|"trust boundary"| N5
+    N7 -->|"dependency"| N6
+    N9 -->|"event"| N10

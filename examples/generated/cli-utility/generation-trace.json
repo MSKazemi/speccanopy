@@ -1,0 +1,102 @@
+{
+  "generator": "deterministic-fixture",
+  "statistics": {
+    "components": 4,
+    "relationships": 2,
+    "max_depth": 1,
+    "processed": 4,
+    "status": "draft"
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "component_id": "system",
+      "depth": 0,
+      "action": "expanded",
+      "details": "Accepted 3 proposed children",
+      "child_ids": [
+        "input",
+        "normalize",
+        "output"
+      ],
+      "child_rationales": {
+        "input": "Explicit responsibility boundary for Input Reader",
+        "normalize": "Explicit responsibility boundary for Text Normalizer",
+        "output": "Explicit responsibility boundary for Output Writer"
+      }
+    },
+    {
+      "sequence": 2,
+      "component_id": "output",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 3,
+      "component_id": "input",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 4,
+      "component_id": "normalize",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 5,
+      "component_id": "output",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 6,
+      "component_id": "normalize",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 7,
+      "component_id": "input",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 8,
+      "component_id": "system",
+      "depth": 0,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 9,
+      "component_id": "system",
+      "depth": 0,
+      "action": "completed",
+      "details": "Generated draft; verified=0, planned=4, uncovered=0",
+      "child_ids": [],
+      "child_rationales": {}
+    }
+  ],
+  "note": "Curated proposals and design-level verification plans; not AI-generated or independently validated."
+}

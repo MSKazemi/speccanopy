@@ -1,0 +1,33 @@
+{
+  "selected_style": "single-process modular CLI",
+  "decisions": [
+    {
+      "id": "ADR-CLI-01",
+      "title": "Single-process modular CLI",
+      "choice": "Single process with three cohesive modules",
+      "rationale": "Local processing requires no distributed communication",
+      "alternatives": [
+        "Microservices"
+      ],
+      "tradeoffs": [
+        "Simpler deployment; not horizontally distributed"
+      ],
+      "requirement_ids": [],
+      "status": "accepted"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-CLI-01",
+      "severity": "low",
+      "description": "Atomic replacement semantics need implementation review",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "output"
+      ],
+      "status": "open"
+    }
+  ]
+}

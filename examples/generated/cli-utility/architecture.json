@@ -1,0 +1,291 @@
+{
+  "brief": {
+    "system": "Text normalization CLI utility",
+    "goals": [
+      "Normalize local UTF-8 text files and save normalized output"
+    ],
+    "actors": [
+      "CLI user"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Read a user-provided local UTF-8 text file",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Normalize whitespace and line endings",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Write normalized text to a requested destination",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "reliability",
+        "statement": "Report input/output errors clearly without silently losing the original file",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "single-process modular CLI",
+      "max_depth": 4,
+      "max_nodes": 20,
+      "max_refinement_rounds": 2
+    }
+  },
+  "selected_style": "single-process modular CLI",
+  "components": [
+    {
+      "id": "system",
+      "name": "Text normalization CLI utility",
+      "responsibility": "Coordinate the application capabilities and system-wide requirements",
+      "boundary": "Single-process command-line application",
+      "parent_id": null,
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "system_entry",
+          "direction": "inbound",
+          "kind": "cli",
+          "description": "Architectural contract for system_entry",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Application state is owned by designated child components",
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated architecture fixture identifies the entry boundary, responsibility and component allocation"
+      ],
+      "stop_reason": "System-level decomposition and child boundaries are represented by the fixture",
+      "priority_score": null,
+      "status": "ready"
+    },
+    {
+      "id": "input",
+      "name": "Input Reader",
+      "responsibility": "Read UTF-8 text safely",
+      "boundary": "Local filesystem input",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-001",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "input_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for input_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Source file contents"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {
+        "NFR-001": "Report read/decoding errors; never mutate source on read"
+      },
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for input"
+      ],
+      "stop_reason": "Further decomposition of input is not required for this sample scope",
+      "priority_score": 6.7,
+      "status": "ready"
+    },
+    {
+      "id": "normalize",
+      "name": "Text Normalizer",
+      "responsibility": "Normalize line endings and whitespace",
+      "boundary": "Pure text transformation",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "normalize_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for normalize_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Text Normalizer is stateless or delegates persistence to an owning component",
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for normalize"
+      ],
+      "stop_reason": "Further decomposition of normalize is not required for this sample scope",
+      "priority_score": 5.0,
+      "status": "ready"
+    },
+    {
+      "id": "output",
+      "name": "Output Writer",
+      "responsibility": "Persist normalized text with failure handling",
+      "boundary": "Local filesystem output",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "output_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for output_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Destination file"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {
+        "NFR-001": "Preserve original content on failed writes; report errors"
+      },
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for output"
+      ],
+      "stop_reason": "Further decomposition of output is not required for this sample scope",
+      "priority_score": 7.0,
+      "status": "ready"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "REL-CLI-01",
+      "source_id": "input",
+      "target_id": "normalize",
+      "kind": "data_flow",
+      "description": "UTF-8 input is transformed",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002"
+      ]
+    },
+    {
+      "id": "REL-CLI-02",
+      "source_id": "normalize",
+      "target_id": "output",
+      "kind": "data_flow",
+      "description": "Normalized text is persisted",
+      "requirement_ids": [
+        "FR-002",
+        "FR-003"
+      ]
+    }
+  ],
+  "verification_cases": [
+    {
+      "id": "VC-CLI-01",
+      "description": "Review input read and decoding failure contract",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-001"
+      ],
+      "component_ids": [
+        "input"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-CLI-02",
+      "description": "Review normalization invariants",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "component_ids": [
+        "normalize"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-CLI-03",
+      "description": "Review destination semantics",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "component_ids": [
+        "output"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-CLI-04",
+      "description": "Review atomic write and preservation design",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "output"
+      ],
+      "status": "planned",
+      "evidence": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-CLI-01",
+      "title": "Single-process modular CLI",
+      "choice": "Single process with three cohesive modules",
+      "rationale": "Local processing requires no distributed communication",
+      "alternatives": [
+        "Microservices"
+      ],
+      "tradeoffs": [
+        "Simpler deployment; not horizontally distributed"
+      ],
+      "requirement_ids": [],
+      "status": "accepted"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-CLI-01",
+      "severity": "low",
+      "description": "Atomic replacement semantics need implementation review",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "output"
+      ],
+      "status": "open"
+    }
+  ],
+  "status": "draft"
+}

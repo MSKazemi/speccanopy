@@ -1,0 +1,26 @@
+flowchart TD
+    N0["E-commerce order platform [ready]"]
+    N1["Product Catalog [ready]"]
+    N2["Order Management [ready]"]
+    N3["Payments [ready]"]
+    N4["Inventory [ready]"]
+    N5["Identity and Authorization [ready]"]
+    N6["Payment Authorization [ready]"]
+    N7["Payment Gateway Adapter [ready]"]
+    N8["Order Validation [ready]"]
+    N9["Order Lifecycle [ready]"]
+    N10["Order Tracking [ready]"]
+    N11["Order State Machine [ready]"]
+    N12["Order Notifications [ready]"]
+    N0 --> N1
+    N0 --> N2
+    N0 --> N3
+    N0 --> N4
+    N0 --> N5
+    N3 --> N6
+    N3 --> N7
+    N2 --> N8
+    N2 --> N9
+    N2 --> N10
+    N9 --> N11
+    N9 --> N12

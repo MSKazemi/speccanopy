@@ -1,0 +1,20 @@
+flowchart LR
+    N0["Multi-backend file transfer service"]
+    N1["Transfer Intake"]
+    N2["Transfer Engine"]
+    N3["Job State Store"]
+    N4["Access Control"]
+    N5["Protocol Adapters"]
+    N6["Transfer Planner"]
+    N7["Retry and Recovery"]
+    N8["POSIX Adapter"]
+    N9["S3 Adapter"]
+    N10["WebDAV Adapter"]
+    N11["Multipart Transfer"]
+    N12["Credential Renewal"]
+    N1 -->|"data flow"| N3
+    N1 -->|"event"| N6
+    N6 -->|"dependency"| N5
+    N7 -->|"data flow"| N3
+    N4 -->|"trust boundary"| N12
+    N9 -->|"dependency"| N11

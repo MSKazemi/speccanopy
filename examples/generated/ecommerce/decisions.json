@@ -1,0 +1,36 @@
+{
+  "selected_style": "modular monolith",
+  "decisions": [
+    {
+      "id": "ADR-EC-01",
+      "title": "Start with modular monolith",
+      "choice": "Single deployment with bounded contexts",
+      "rationale": "The application scope can be implemented without independent service deployment",
+      "alternatives": [
+        "Microservices",
+        "Serverless"
+      ],
+      "tradeoffs": [
+        "Simpler transactions/operations; deployments remain coupled"
+      ],
+      "requirement_ids": [],
+      "status": "accepted"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-EC-01",
+      "severity": "medium",
+      "description": "Review inventory consistency when payment fails",
+      "requirement_ids": [
+        "FR-005",
+        "NFR-002"
+      ],
+      "component_ids": [
+        "inventory",
+        "payments"
+      ],
+      "status": "open"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+flowchart TD
+    N0["Multi-backend file transfer service [ready]"]
+    N1["Transfer Intake [ready]"]
+    N2["Transfer Engine [ready]"]
+    N3["Job State Store [ready]"]
+    N4["Access Control [ready]"]
+    N5["Protocol Adapters [ready]"]
+    N6["Transfer Planner [ready]"]
+    N7["Retry and Recovery [ready]"]
+    N8["POSIX Adapter [ready]"]
+    N9["S3 Adapter [ready]"]
+    N10["WebDAV Adapter [ready]"]
+    N11["Multipart Transfer [ready]"]
+    N12["Credential Renewal [ready]"]
+    N0 --> N1
+    N0 --> N2
+    N0 --> N3
+    N0 --> N4
+    N2 --> N5
+    N2 --> N6
+    N2 --> N7
+    N5 --> N8
+    N5 --> N9
+    N5 --> N10
+    N9 --> N11
+    N9 --> N12

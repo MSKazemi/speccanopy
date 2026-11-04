@@ -1,0 +1,288 @@
+{
+  "generator": "deterministic-fixture",
+  "statistics": {
+    "components": 13,
+    "relationships": 6,
+    "max_depth": 3,
+    "processed": 13,
+    "status": "draft"
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "component_id": "system",
+      "depth": 0,
+      "action": "expanded",
+      "details": "Accepted 5 proposed children",
+      "child_ids": [
+        "catalog",
+        "orders",
+        "payments",
+        "inventory",
+        "identity"
+      ],
+      "child_rationales": {
+        "catalog": "Explicit responsibility boundary for Product Catalog",
+        "orders": "Explicit responsibility boundary for Order Management",
+        "payments": "Explicit responsibility boundary for Payments",
+        "inventory": "Explicit responsibility boundary for Inventory",
+        "identity": "Explicit responsibility boundary for Identity and Authorization"
+      }
+    },
+    {
+      "sequence": 2,
+      "component_id": "payments",
+      "depth": 1,
+      "action": "expanded",
+      "details": "Accepted 2 proposed children",
+      "child_ids": [
+        "payment_auth",
+        "payment_gateway"
+      ],
+      "child_rationales": {
+        "payment_auth": "Explicit responsibility boundary for Payment Authorization",
+        "payment_gateway": "Explicit responsibility boundary for Payment Gateway Adapter"
+      }
+    },
+    {
+      "sequence": 3,
+      "component_id": "payment_gateway",
+      "depth": 2,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 4,
+      "component_id": "orders",
+      "depth": 1,
+      "action": "expanded",
+      "details": "Accepted 3 proposed children",
+      "child_ids": [
+        "order_validation",
+        "order_lifecycle",
+        "order_tracking"
+      ],
+      "child_rationales": {
+        "order_validation": "Explicit responsibility boundary for Order Validation",
+        "order_lifecycle": "Explicit responsibility boundary for Order Lifecycle",
+        "order_tracking": "Explicit responsibility boundary for Order Tracking"
+      }
+    },
+    {
+      "sequence": 5,
+      "component_id": "identity",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 6,
+      "component_id": "order_lifecycle",
+      "depth": 2,
+      "action": "expanded",
+      "details": "Accepted 2 proposed children",
+      "child_ids": [
+        "order_state_machine",
+        "order_notifications"
+      ],
+      "child_rationales": {
+        "order_state_machine": "Explicit responsibility boundary for Order State Machine",
+        "order_notifications": "Explicit responsibility boundary for Order Notifications"
+      }
+    },
+    {
+      "sequence": 7,
+      "component_id": "payment_auth",
+      "depth": 2,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 8,
+      "component_id": "inventory",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 9,
+      "component_id": "order_state_machine",
+      "depth": 3,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 10,
+      "component_id": "order_validation",
+      "depth": 2,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 11,
+      "component_id": "catalog",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 12,
+      "component_id": "order_tracking",
+      "depth": 2,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 13,
+      "component_id": "order_notifications",
+      "depth": 3,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 14,
+      "component_id": "order_notifications",
+      "depth": 3,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 15,
+      "component_id": "order_state_machine",
+      "depth": 3,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 16,
+      "component_id": "order_tracking",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 17,
+      "component_id": "order_lifecycle",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 18,
+      "component_id": "order_validation",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 19,
+      "component_id": "payment_gateway",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 20,
+      "component_id": "payment_auth",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 21,
+      "component_id": "identity",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 22,
+      "component_id": "inventory",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 23,
+      "component_id": "payments",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 24,
+      "component_id": "orders",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 25,
+      "component_id": "catalog",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 26,
+      "component_id": "system",
+      "depth": 0,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 27,
+      "component_id": "system",
+      "depth": 0,
+      "action": "completed",
+      "details": "Generated draft; verified=0, planned=7, uncovered=0",
+      "child_ids": [],
+      "child_rationales": {}
+    }
+  ],
+  "note": "Curated proposals and design-level verification plans; not AI-generated or independently validated."
+}

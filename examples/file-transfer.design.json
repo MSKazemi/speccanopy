@@ -1,0 +1,593 @@
+{
+  "root": {
+    "id": "system",
+    "name": "Multi-backend file transfer service",
+    "responsibility": "Coordinate the application capabilities and system-wide requirements",
+    "boundary": "Transfer service API and worker boundary",
+    "requirement_ids": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "FR-004",
+      "NFR-001"
+    ],
+    "interfaces": [
+      {
+        "name": "system_entry",
+        "direction": "inbound",
+        "kind": "api",
+        "description": "Architectural contract for system_entry",
+        "failure_behavior": "Return an explicit error; no silent success"
+      }
+    ],
+    "data_not_applicable_reason": "Application state is owned by designated child components",
+    "validation_evidence": [
+      "Curated architecture fixture identifies the entry boundary, responsibility and component allocation"
+    ],
+    "stop_reason": "System-level decomposition and child boundaries are represented by the fixture",
+    "status": "proposed"
+  },
+  "selected_style": "event-driven modular service",
+  "proposals_by_parent": {
+    "system": [
+      {
+        "id": "intake",
+        "name": "Transfer Intake",
+        "responsibility": "Validate and accept new transfer jobs",
+        "boundary": "External API boundary",
+        "requirement_ids": [
+          "FR-001"
+        ],
+        "rationale": "Explicit responsibility boundary for Transfer Intake",
+        "priority_factors": {
+          "value": 9,
+          "risk": 6,
+          "dependency": 7,
+          "quality_impact": 7,
+          "uncertainty": 3
+        },
+        "interfaces": [
+          {
+            "name": "intake_contract",
+            "direction": "inbound",
+            "kind": "api",
+            "description": "Architectural contract for intake_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "Transfer Intake is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for intake"
+        ],
+        "stop_reason": "Further decomposition of intake is not required for this sample scope"
+      },
+      {
+        "id": "engine",
+        "name": "Transfer Engine",
+        "responsibility": "Execute storage-to-storage transfers",
+        "boundary": "Transfer execution boundary",
+        "requirement_ids": [
+          "FR-002",
+          "FR-003"
+        ],
+        "rationale": "Explicit responsibility boundary for Transfer Engine",
+        "priority_factors": {
+          "value": 10,
+          "risk": 9,
+          "dependency": 9,
+          "quality_impact": 9,
+          "uncertainty": 8
+        },
+        "interfaces": [
+          {
+            "name": "engine_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for engine_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "Transfer Engine is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for engine"
+        ],
+        "stop_reason": "Further decomposition of engine is not required for this sample scope"
+      },
+      {
+        "id": "job_store",
+        "name": "Job State Store",
+        "responsibility": "Persist transfer status and checkpoints",
+        "boundary": "Metadata boundary",
+        "requirement_ids": [
+          "FR-004"
+        ],
+        "rationale": "Explicit responsibility boundary for Job State Store",
+        "priority_factors": {
+          "value": 8,
+          "risk": 8,
+          "dependency": 8,
+          "quality_impact": 8,
+          "uncertainty": 5
+        },
+        "interfaces": [
+          {
+            "name": "job_store_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for job_store_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "owned_data": [
+          "Transfer job status",
+          "Checkpoint records"
+        ],
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for job_store"
+        ],
+        "stop_reason": "Further decomposition of job_store is not required for this sample scope"
+      },
+      {
+        "id": "access",
+        "name": "Access Control",
+        "responsibility": "Protect credentials and authorize access",
+        "boundary": "Security boundary",
+        "requirement_ids": [
+          "NFR-001"
+        ],
+        "rationale": "Explicit responsibility boundary for Access Control",
+        "priority_factors": {
+          "value": 9,
+          "risk": 10,
+          "dependency": 8,
+          "quality_impact": 10,
+          "uncertainty": 7
+        },
+        "interfaces": [
+          {
+            "name": "access_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for access_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "owned_data": [
+          "Credential references"
+        ],
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for access"
+        ],
+        "stop_reason": "Further decomposition of access is not required for this sample scope",
+        "quality_targets": {
+          "NFR-001": "Never expose provider secrets in job logs"
+        }
+      }
+    ],
+    "engine": [
+      {
+        "id": "adapters",
+        "name": "Protocol Adapters",
+        "responsibility": "Abstract storage backend capabilities",
+        "boundary": "Storage protocol boundary",
+        "requirement_ids": [
+          "FR-002",
+          "NFR-001"
+        ],
+        "rationale": "Explicit responsibility boundary for Protocol Adapters",
+        "priority_factors": {
+          "value": 10,
+          "risk": 9,
+          "dependency": 8,
+          "quality_impact": 9,
+          "uncertainty": 8
+        },
+        "interfaces": [
+          {
+            "name": "adapters_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for adapters_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "Protocol Adapters is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for adapters"
+        ],
+        "stop_reason": "Further decomposition of adapters is not required for this sample scope",
+        "quality_targets": {
+          "NFR-001": "Limit backend credentials to selected adapter"
+        }
+      },
+      {
+        "id": "planner",
+        "name": "Transfer Planner",
+        "responsibility": "Select transfer path and resources",
+        "boundary": "Transfer planning boundary",
+        "requirement_ids": [
+          "FR-002"
+        ],
+        "rationale": "Explicit responsibility boundary for Transfer Planner",
+        "priority_factors": {
+          "value": 8,
+          "risk": 6,
+          "dependency": 7,
+          "quality_impact": 6,
+          "uncertainty": 5
+        },
+        "interfaces": [
+          {
+            "name": "planner_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for planner_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "Transfer Planner is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for planner"
+        ],
+        "stop_reason": "Further decomposition of planner is not required for this sample scope"
+      },
+      {
+        "id": "recovery",
+        "name": "Retry and Recovery",
+        "responsibility": "Resume failed and interrupted transfer jobs",
+        "boundary": "Recovery boundary",
+        "requirement_ids": [
+          "FR-003"
+        ],
+        "rationale": "Explicit responsibility boundary for Retry and Recovery",
+        "priority_factors": {
+          "value": 9,
+          "risk": 10,
+          "dependency": 7,
+          "quality_impact": 10,
+          "uncertainty": 8
+        },
+        "interfaces": [
+          {
+            "name": "recovery_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for recovery_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "owned_data": [
+          "Recovery checkpoints"
+        ],
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for recovery"
+        ],
+        "stop_reason": "Further decomposition of recovery is not required for this sample scope"
+      }
+    ],
+    "adapters": [
+      {
+        "id": "posix",
+        "name": "POSIX Adapter",
+        "responsibility": "Read/write local filesystem data",
+        "boundary": "POSIX storage boundary",
+        "requirement_ids": [
+          "FR-002"
+        ],
+        "rationale": "Explicit responsibility boundary for POSIX Adapter",
+        "priority_factors": {
+          "value": 7,
+          "risk": 7,
+          "dependency": 4,
+          "quality_impact": 6,
+          "uncertainty": 3
+        },
+        "interfaces": [
+          {
+            "name": "posix_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for posix_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "POSIX Adapter is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for posix"
+        ],
+        "stop_reason": "Further decomposition of posix is not required for this sample scope"
+      },
+      {
+        "id": "s3",
+        "name": "S3 Adapter",
+        "responsibility": "Read/write S3-compatible object storage",
+        "boundary": "Object storage boundary",
+        "requirement_ids": [
+          "FR-002",
+          "NFR-001"
+        ],
+        "rationale": "Explicit responsibility boundary for S3 Adapter",
+        "priority_factors": {
+          "value": 9,
+          "risk": 10,
+          "dependency": 8,
+          "quality_impact": 9,
+          "uncertainty": 8
+        },
+        "interfaces": [
+          {
+            "name": "s3_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for s3_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "S3 Adapter is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for s3"
+        ],
+        "stop_reason": "Further decomposition of s3 is not required for this sample scope",
+        "quality_targets": {
+          "NFR-001": "Sign requests with scoped credentials; avoid logging secrets"
+        }
+      },
+      {
+        "id": "webdav",
+        "name": "WebDAV Adapter",
+        "responsibility": "Read/write WebDAV resources",
+        "boundary": "WebDAV protocol boundary",
+        "requirement_ids": [
+          "FR-002"
+        ],
+        "rationale": "Explicit responsibility boundary for WebDAV Adapter",
+        "priority_factors": {
+          "value": 5,
+          "risk": 7,
+          "dependency": 4,
+          "quality_impact": 6,
+          "uncertainty": 6
+        },
+        "interfaces": [
+          {
+            "name": "webdav_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for webdav_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "WebDAV Adapter is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for webdav"
+        ],
+        "stop_reason": "Further decomposition of webdav is not required for this sample scope"
+      }
+    ],
+    "s3": [
+      {
+        "id": "multipart",
+        "name": "Multipart Transfer",
+        "responsibility": "Handle multipart upload lifecycle",
+        "boundary": "S3 multipart operations boundary",
+        "requirement_ids": [
+          "FR-002"
+        ],
+        "rationale": "Explicit responsibility boundary for Multipart Transfer",
+        "priority_factors": {
+          "value": 9,
+          "risk": 9,
+          "dependency": 7,
+          "quality_impact": 9,
+          "uncertainty": 7
+        },
+        "interfaces": [
+          {
+            "name": "multipart_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for multipart_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "Multipart Transfer is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for multipart"
+        ],
+        "stop_reason": "Further decomposition of multipart is not required for this sample scope"
+      },
+      {
+        "id": "s3_credentials",
+        "name": "Credential Renewal",
+        "responsibility": "Refresh scoped backend credentials safely",
+        "boundary": "S3 authentication boundary",
+        "requirement_ids": [
+          "NFR-001"
+        ],
+        "rationale": "Explicit responsibility boundary for Credential Renewal",
+        "priority_factors": {
+          "value": 8,
+          "risk": 10,
+          "dependency": 6,
+          "quality_impact": 10,
+          "uncertainty": 9
+        },
+        "interfaces": [
+          {
+            "name": "s3_credentials_contract",
+            "direction": "inbound",
+            "kind": "function",
+            "description": "Architectural contract for s3_credentials_contract",
+            "failure_behavior": "Return an explicit error; no silent success"
+          }
+        ],
+        "data_not_applicable_reason": "Credential Renewal is stateless or delegates persistence to an owning component",
+        "validation_evidence": [
+          "Curated fixture documents responsibility, interface and data boundary for s3_credentials"
+        ],
+        "stop_reason": "Further decomposition of s3_credentials is not required for this sample scope",
+        "quality_targets": {
+          "NFR-001": "Credential renewal must not leak tokens or fail open"
+        }
+      }
+    ]
+  },
+  "relationships": [
+    {
+      "id": "REL-FT-01",
+      "source_id": "intake",
+      "target_id": "job_store",
+      "kind": "data_flow",
+      "description": "Store job metadata",
+      "requirement_ids": [
+        "FR-001",
+        "FR-004"
+      ]
+    },
+    {
+      "id": "REL-FT-02",
+      "source_id": "intake",
+      "target_id": "planner",
+      "kind": "event",
+      "description": "Publish accepted transfer request",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002"
+      ]
+    },
+    {
+      "id": "REL-FT-03",
+      "source_id": "planner",
+      "target_id": "adapters",
+      "kind": "dependency",
+      "description": "Select storage protocol",
+      "requirement_ids": [
+        "FR-002"
+      ]
+    },
+    {
+      "id": "REL-FT-04",
+      "source_id": "recovery",
+      "target_id": "job_store",
+      "kind": "data_flow",
+      "description": "Update checkpoints and retries",
+      "requirement_ids": [
+        "FR-003",
+        "FR-004"
+      ]
+    },
+    {
+      "id": "REL-FT-05",
+      "source_id": "access",
+      "target_id": "s3_credentials",
+      "kind": "trust_boundary",
+      "description": "Retrieve scoped access credentials",
+      "requirement_ids": [
+        "NFR-001"
+      ]
+    },
+    {
+      "id": "REL-FT-06",
+      "source_id": "s3",
+      "target_id": "multipart",
+      "kind": "dependency",
+      "description": "Manage multipart upload sessions",
+      "requirement_ids": [
+        "FR-002"
+      ]
+    }
+  ],
+  "verification_cases": [
+    {
+      "id": "VC-FT-01",
+      "description": "Review job-request contract",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-001"
+      ],
+      "component_ids": [
+        "intake"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "VC-FT-02",
+      "description": "Review S3 transfer contract",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "component_ids": [
+        "s3"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "VC-FT-03",
+      "description": "Review checkpoint and retry failure paths",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "component_ids": [
+        "recovery"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "VC-FT-04",
+      "description": "Review transfer status persistence",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "component_ids": [
+        "job_store"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "VC-FT-05",
+      "description": "Review credential-refresh trust boundary",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "s3_credentials"
+      ],
+      "status": "planned"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-FT-01",
+      "title": "Event-driven modular transfer execution",
+      "choice": "Modular worker with event-triggered jobs",
+      "rationale": "Asynchronous transfer execution decouples intake from long running jobs",
+      "alternatives": [
+        "Synchronous monolith",
+        "Independent protocol microservices"
+      ],
+      "tradeoffs": [
+        "Event reliability needs explicit recovery; simpler than one service per protocol"
+      ],
+      "status": "accepted"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-FT-01",
+      "severity": "medium",
+      "description": "Clarify idempotency of interrupted multipart completions",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "component_ids": [
+        "multipart",
+        "recovery"
+      ],
+      "status": "open"
+    }
+  ]
+}

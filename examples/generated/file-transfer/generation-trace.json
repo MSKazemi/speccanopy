@@ -1,0 +1,288 @@
+{
+  "generator": "deterministic-fixture",
+  "statistics": {
+    "components": 13,
+    "relationships": 6,
+    "max_depth": 4,
+    "processed": 13,
+    "status": "draft"
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "component_id": "system",
+      "depth": 0,
+      "action": "expanded",
+      "details": "Accepted 4 proposed children",
+      "child_ids": [
+        "intake",
+        "engine",
+        "job_store",
+        "access"
+      ],
+      "child_rationales": {
+        "intake": "Explicit responsibility boundary for Transfer Intake",
+        "engine": "Explicit responsibility boundary for Transfer Engine",
+        "job_store": "Explicit responsibility boundary for Job State Store",
+        "access": "Explicit responsibility boundary for Access Control"
+      }
+    },
+    {
+      "sequence": 2,
+      "component_id": "engine",
+      "depth": 1,
+      "action": "expanded",
+      "details": "Accepted 3 proposed children",
+      "child_ids": [
+        "adapters",
+        "planner",
+        "recovery"
+      ],
+      "child_rationales": {
+        "adapters": "Explicit responsibility boundary for Protocol Adapters",
+        "planner": "Explicit responsibility boundary for Transfer Planner",
+        "recovery": "Explicit responsibility boundary for Retry and Recovery"
+      }
+    },
+    {
+      "sequence": 3,
+      "component_id": "access",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 4,
+      "component_id": "adapters",
+      "depth": 2,
+      "action": "expanded",
+      "details": "Accepted 3 proposed children",
+      "child_ids": [
+        "posix",
+        "s3",
+        "webdav"
+      ],
+      "child_rationales": {
+        "posix": "Explicit responsibility boundary for POSIX Adapter",
+        "s3": "Explicit responsibility boundary for S3 Adapter",
+        "webdav": "Explicit responsibility boundary for WebDAV Adapter"
+      }
+    },
+    {
+      "sequence": 5,
+      "component_id": "s3",
+      "depth": 3,
+      "action": "expanded",
+      "details": "Accepted 2 proposed children",
+      "child_ids": [
+        "multipart",
+        "s3_credentials"
+      ],
+      "child_rationales": {
+        "multipart": "Explicit responsibility boundary for Multipart Transfer",
+        "s3_credentials": "Explicit responsibility boundary for Credential Renewal"
+      }
+    },
+    {
+      "sequence": 6,
+      "component_id": "recovery",
+      "depth": 2,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 7,
+      "component_id": "s3_credentials",
+      "depth": 4,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 8,
+      "component_id": "multipart",
+      "depth": 4,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 9,
+      "component_id": "job_store",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 10,
+      "component_id": "intake",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 11,
+      "component_id": "planner",
+      "depth": 2,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 12,
+      "component_id": "posix",
+      "depth": 3,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 13,
+      "component_id": "webdav",
+      "depth": 3,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 14,
+      "component_id": "s3_credentials",
+      "depth": 4,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 15,
+      "component_id": "multipart",
+      "depth": 4,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 16,
+      "component_id": "webdav",
+      "depth": 3,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 17,
+      "component_id": "s3",
+      "depth": 3,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 18,
+      "component_id": "posix",
+      "depth": 3,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 19,
+      "component_id": "recovery",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 20,
+      "component_id": "planner",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 21,
+      "component_id": "adapters",
+      "depth": 2,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 22,
+      "component_id": "access",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 23,
+      "component_id": "job_store",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 24,
+      "component_id": "engine",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 25,
+      "component_id": "intake",
+      "depth": 1,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 26,
+      "component_id": "system",
+      "depth": 0,
+      "action": "ready",
+      "details": "Authored evidence and all child contracts satisfy the structural readiness gate",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 27,
+      "component_id": "system",
+      "depth": 0,
+      "action": "completed",
+      "details": "Generated draft; verified=0, planned=5, uncovered=0",
+      "child_ids": [],
+      "child_rationales": {}
+    }
+  ],
+  "note": "Curated proposals and design-level verification plans; not AI-generated or independently validated."
+}

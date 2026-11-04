@@ -1,0 +1,57 @@
+{
+  "system": "E-commerce order platform",
+  "goals": [
+    "Enable catalog browsing, ordering, payment and order tracking"
+  ],
+  "actors": [
+    "Customer",
+    "Operations staff"
+  ],
+  "functional_requirements": [
+    {
+      "id": "FR-001",
+      "statement": "Customers browse products",
+      "mandatory": true
+    },
+    {
+      "id": "FR-002",
+      "statement": "Customers submit orders",
+      "mandatory": true
+    },
+    {
+      "id": "FR-003",
+      "statement": "Customers pay for orders",
+      "mandatory": true
+    },
+    {
+      "id": "FR-004",
+      "statement": "Customers track order status",
+      "mandatory": true
+    },
+    {
+      "id": "FR-005",
+      "statement": "Inventory is reserved for accepted orders",
+      "mandatory": true
+    }
+  ],
+  "quality_requirements": [
+    {
+      "id": "NFR-001",
+      "attribute": "security",
+      "statement": "Payments and order changes require authorization",
+      "mandatory": true
+    },
+    {
+      "id": "NFR-002",
+      "attribute": "reliability",
+      "statement": "Prevent duplicate order charges",
+      "mandatory": true
+    }
+  ],
+  "constraints": {
+    "preferred_architecture": "modular monolith",
+    "max_depth": 6,
+    "max_nodes": 150,
+    "max_refinement_rounds": 3
+  }
+}

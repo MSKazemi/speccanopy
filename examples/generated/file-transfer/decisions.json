@@ -1,0 +1,35 @@
+{
+  "selected_style": "event-driven modular service",
+  "decisions": [
+    {
+      "id": "ADR-FT-01",
+      "title": "Event-driven modular transfer execution",
+      "choice": "Modular worker with event-triggered jobs",
+      "rationale": "Asynchronous transfer execution decouples intake from long running jobs",
+      "alternatives": [
+        "Synchronous monolith",
+        "Independent protocol microservices"
+      ],
+      "tradeoffs": [
+        "Event reliability needs explicit recovery; simpler than one service per protocol"
+      ],
+      "requirement_ids": [],
+      "status": "accepted"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-FT-01",
+      "severity": "medium",
+      "description": "Clarify idempotency of interrupted multipart completions",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "component_ids": [
+        "multipart",
+        "recovery"
+      ],
+      "status": "open"
+    }
+  ]
+}

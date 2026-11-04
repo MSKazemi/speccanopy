@@ -63,3 +63,9 @@ python -c "from speccanopy.models import ArchitectureSpec; s=ArchitectureSpec.mo
 ## Next development slice
 
 Implement a bounded recursive decomposer that takes `SystemBrief` and `ComponentProposer`, produces `ArchitectureSpec`, and proves varying child counts, early stopping, and explicit incomplete statuses against three contrasting fixtures. Only then add an AI-backed proposer and independent architecture quality review.
+
+## Phase 2 extension (2026-11-04)
+
+A deterministic priority-first recursive engine now consumes a `SystemBrief` and a **curated** `FixtureDesign` (with `ComponentProposal` children) and emits a bounded `ArchitectureSpec`, Mermaid containment/relationship diagrams, a traceability report and an audit trail. See [Phase 2 engine](phase2-engine.md) for commands, example outputs, explicit incomplete-state semantics and remaining limitations.
+
+This does **not** change Phase 1's distinction between component `ready` (structural design evidence), verification `planned` vs `verified`, and overall `validated_for_scope`. The Phase 2 engine intentionally generates `draft` or `incomplete_requires_review`, never unilaterally promotes an architecture to independently validated.

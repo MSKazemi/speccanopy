@@ -1,0 +1,46 @@
+{
+  "coverage": {
+    "verified": [],
+    "planned_only": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "FR-004",
+      "NFR-001"
+    ],
+    "uncovered": []
+  },
+  "component_owners": {
+    "FR-001": [
+      "intake",
+      "system"
+    ],
+    "FR-002": [
+      "adapters",
+      "engine",
+      "multipart",
+      "planner",
+      "posix",
+      "s3",
+      "system",
+      "webdav"
+    ],
+    "FR-003": [
+      "engine",
+      "recovery",
+      "system"
+    ],
+    "FR-004": [
+      "job_store",
+      "system"
+    ],
+    "NFR-001": [
+      "access",
+      "adapters",
+      "s3",
+      "s3_credentials",
+      "system"
+    ]
+  },
+  "status": "draft"
+}

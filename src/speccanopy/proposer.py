@@ -1,7 +1,7 @@
-"""Provider-neutral component proposals; the first proposer is deterministic.
+"""Provider-neutral component proposals with deterministic fixtures.
 
-This does not recursively design an architecture yet. The future decomposition
-engine consumes this protocol and independently checks all proposals.
+The engine checks proposed children and their readiness independently. Fixture
+proposals are human-authored design input, *not* independently verified facts.
 """
 
 from __future__ import annotations
@@ -10,7 +10,8 @@ from typing import Mapping, Protocol, Sequence, runtime_checkable
 
 from pydantic import Field
 
-from .models import Component, Identifier, NonEmptyText, SchemaModel, SystemBrief
+from .models import Component, Identifier, InterfaceContract, NonEmptyText, SchemaModel, SystemBrief
+from .scoring import PriorityFactors
 
 
 class ComponentProposal(SchemaModel):
@@ -20,17 +21,27 @@ class ComponentProposal(SchemaModel):
     boundary: NonEmptyText
     requirement_ids: list[Identifier] = Field(default_factory=list)
     rationale: NonEmptyText
+    priority_factors: PriorityFactors | None = None
+    interfaces: list[InterfaceContract] = Field(default_factory=list)
+    interfaces_not_applicable_reason: NonEmptyText | None = None
+    owned_data: list[NonEmptyText] = Field(default_factory=list)
+    data_not_applicable_reason: NonEmptyText | None = None
+    quality_targets: dict[Identifier, NonEmptyText] = Field(default_factory=dict)
+    assumptions: list[NonEmptyText] = Field(default_factory=list)
+    risks: list[NonEmptyText] = Field(default_factory=list)
+    validation_evidence: list[NonEmptyText] = Field(default_factory=list)
+    stop_reason: NonEmptyText | None = None
 
 
 @runtime_checkable
 class ComponentProposer(Protocol):
     def propose(self, parent: Component, brief: SystemBrief) -> list[ComponentProposal]:
-        """Return candidate children, without mutating architecture state."""
+        """Return candidate children without mutating architecture state."""
         ...
 
 
 class FixtureComponentProposer:
-    """Reproducible, non-AI proposer for schema and recursion tests."""
+    """Reproducible, non-AI proposer used by the first runnable engine."""
 
     def __init__(self, proposals_by_parent: Mapping[str, Sequence[ComponentProposal]]) -> None:
         self._proposals = {parent_id: tuple(items) for parent_id, items in proposals_by_parent.items()}

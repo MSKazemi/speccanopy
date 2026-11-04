@@ -1,0 +1,58 @@
+{
+  "coverage": {
+    "verified": [],
+    "planned_only": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "FR-004",
+      "FR-005",
+      "NFR-001",
+      "NFR-002"
+    ],
+    "uncovered": []
+  },
+  "component_owners": {
+    "FR-001": [
+      "catalog",
+      "system"
+    ],
+    "FR-002": [
+      "order_lifecycle",
+      "order_state_machine",
+      "order_validation",
+      "orders",
+      "system"
+    ],
+    "FR-003": [
+      "payment_auth",
+      "payment_gateway",
+      "payments",
+      "system"
+    ],
+    "FR-004": [
+      "order_notifications",
+      "order_tracking",
+      "orders",
+      "system"
+    ],
+    "FR-005": [
+      "inventory",
+      "system"
+    ],
+    "NFR-001": [
+      "identity",
+      "order_validation",
+      "orders",
+      "payment_auth",
+      "payments",
+      "system"
+    ],
+    "NFR-002": [
+      "payment_gateway",
+      "payments",
+      "system"
+    ]
+  },
+  "status": "draft"
+}
