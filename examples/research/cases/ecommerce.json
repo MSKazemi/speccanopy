@@ -1,0 +1,225 @@
+{
+  "id": "ecommerce",
+  "title": "E-commerce payment and inventory design",
+  "split": "development",
+  "brief": {
+    "system": "E-commerce order platform",
+    "goals": [
+      "Enable catalog browsing, ordering, payment and order tracking"
+    ],
+    "actors": [
+      "Customer",
+      "Operations staff"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Customers browse products",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Customers submit orders",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Customers pay for orders",
+        "mandatory": true
+      },
+      {
+        "id": "FR-004",
+        "statement": "Customers track order status",
+        "mandatory": true
+      },
+      {
+        "id": "FR-005",
+        "statement": "Inventory is reserved for accepted orders",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "security",
+        "statement": "Payments and order changes require authorization",
+        "mandatory": true
+      },
+      {
+        "id": "NFR-002",
+        "attribute": "reliability",
+        "statement": "Prevent duplicate order charges",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "modular monolith",
+      "max_depth": 6,
+      "max_nodes": 150,
+      "max_refinement_rounds": 3
+    }
+  },
+  "provenance": {
+    "origin": "synthetic_curated",
+    "curator": "Speccanopy maintainers",
+    "usage_rights": "Synthetic original fixture; freely reusable with project attribution",
+    "limitations": "Illustrative rule-based case only. NOT independently reviewed by experts; reference alternatives are hypotheses.",
+    "review_claims": []
+  },
+  "common_criteria": [
+    {
+      "id": "EC-MAP-1",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-001",
+      "description": "Functional requirement FR-001 assigned",
+      "weight": 3
+    },
+    {
+      "id": "EC-MAP-2",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-002",
+      "description": "Functional requirement FR-002 assigned",
+      "weight": 3
+    },
+    {
+      "id": "EC-MAP-3",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-003",
+      "description": "Functional requirement FR-003 assigned",
+      "weight": 3
+    },
+    {
+      "id": "EC-MAP-4",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-004",
+      "description": "Functional requirement FR-004 assigned",
+      "weight": 3
+    },
+    {
+      "id": "EC-MAP-5",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-005",
+      "description": "Functional requirement FR-005 assigned",
+      "weight": 3
+    },
+    {
+      "id": "EC-Q-AUTH",
+      "kind": "quality_target",
+      "requirement_id": "NFR-001",
+      "description": "Authorization is owned by a component",
+      "weight": 4
+    },
+    {
+      "id": "EC-Q-IDEMP",
+      "kind": "quality_target",
+      "requirement_id": "NFR-002",
+      "description": "Duplicate charge prevention target exists",
+      "weight": 5
+    },
+    {
+      "id": "EC-VERIFY",
+      "kind": "verification_link",
+      "requirement_id": "NFR-001",
+      "description": "Architecture-level authorization verification planned",
+      "weight": 2
+    },
+    {
+      "id": "EC-OWNER",
+      "kind": "single_data_owner",
+      "requirement_id": "FR-002",
+      "description": "Orders have a single logical data owner",
+      "weight": 4,
+      "data_label": "Order records"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "modular_monolith_path",
+      "name": "Modular monolith with transactions and asynchronous notifications",
+      "rationale": "Simpler deployment and local transaction boundaries with explicit event contracts.",
+      "style_families": [
+        "modular_monolith"
+      ],
+      "criteria": [
+        {
+          "id": "EC-M-CHARGE",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-003",
+          "description": "Orders request payment via synchronous call",
+          "weight": 5,
+          "relationship_kind": "synchronous_call"
+        },
+        {
+          "id": "EC-M-STOCK",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-005",
+          "description": "Order reservations propagated through event",
+          "weight": 4,
+          "relationship_kind": "event"
+        },
+        {
+          "id": "EC-M-AUTH",
+          "kind": "typed_interaction",
+          "requirement_id": "NFR-001",
+          "description": "Payments to identity authorization boundary",
+          "weight": 5,
+          "relationship_kind": "trust_boundary"
+        },
+        {
+          "id": "EC-M-OUT",
+          "kind": "interface_contract",
+          "requirement_id": "FR-002",
+          "description": "Order module publishes outbound synchronous payment call",
+          "weight": 4,
+          "direction": "outbound",
+          "interface_kind": "function"
+        }
+      ]
+    },
+    {
+      "id": "distributed_event_path",
+      "name": "Service-oriented event-driven payment processing",
+      "rationale": "Independent scaling could justify distributed events if idempotency and eventual consistency are reviewed.",
+      "style_families": [
+        "microservices",
+        "event_driven"
+      ],
+      "criteria": [
+        {
+          "id": "EC-D-PAY",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-003",
+          "description": "Payment initiation communicated as event",
+          "weight": 5,
+          "relationship_kind": "event"
+        },
+        {
+          "id": "EC-D-OUT",
+          "kind": "interface_contract",
+          "requirement_id": "FR-003",
+          "description": "Payment producer emits event",
+          "weight": 4,
+          "direction": "outbound",
+          "interface_kind": "event"
+        },
+        {
+          "id": "EC-D-IN",
+          "kind": "interface_contract",
+          "requirement_id": "FR-003",
+          "description": "Payment consumer accepts event",
+          "weight": 4,
+          "direction": "inbound",
+          "interface_kind": "event"
+        },
+        {
+          "id": "EC-D-AUTH",
+          "kind": "typed_interaction",
+          "requirement_id": "NFR-001",
+          "description": "Authorization boundary preserved",
+          "weight": 5,
+          "relationship_kind": "trust_boundary"
+        }
+      ]
+    }
+  ]
+}

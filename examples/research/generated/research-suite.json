@@ -1,0 +1,1050 @@
+{
+  "suite_name": "Phase 6 public synthetic research fixtures — NOT independent holdout",
+  "cases": {
+    "CLI-BASE": {
+      "case_id": "cli_utility",
+      "case_title": "Small file-normalization utility",
+      "split": "development",
+      "origin": "synthetic_curated",
+      "review_status": "curated_unreviewed",
+      "review_claim_count": 0,
+      "case_subject_sha256": "eaa4f6c8b1d5ac8604d120f3f96e249de4650aa9554b4b55e6defc2c4351d0e9",
+      "candidate_sha256": "6483c2489b4a96c0066a654c2664bb8aba0ef7df38ee0f5b44c12986c9958a90",
+      "selected_style": "single-process modular CLI",
+      "detected_style_family": "single_process",
+      "common_score": 100.0,
+      "common_results": [
+        {
+          "id": "CLI-MAP-1",
+          "kind": "requirement_mapped",
+          "description": "Input responsibility mapped",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "CLI-MAP-2",
+          "kind": "requirement_mapped",
+          "description": "Normalization responsibility mapped",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "CLI-MAP-3",
+          "kind": "requirement_mapped",
+          "description": "Output responsibility mapped",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "CLI-VERIFY",
+          "kind": "verification_link",
+          "description": "Failure semantics have a review plan",
+          "weight": 2,
+          "required": true,
+          "present": true,
+          "reason": "Linked design verification case (may be planned only)"
+        },
+        {
+          "id": "CLI-QUALITY",
+          "kind": "quality_target",
+          "description": "Failure behavior target documented",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "CLI-OWNER",
+          "kind": "single_data_owner",
+          "description": "Destination content has one owner",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Matching data owners: output; require one responsible owner"
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "single_process_solution",
+          "name": "Single-process modular utility",
+          "style_status": "matched",
+          "permitted_styles": [
+            "single_process"
+          ],
+          "score": 100.0,
+          "all_required_present": true,
+          "missing_required": [],
+          "results": [
+            {
+              "id": "CLI-DATA",
+              "kind": "typed_interaction",
+              "description": "Transformation flows across modules",
+              "weight": 3,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "CLI-FAIL",
+              "kind": "failure_contract",
+              "description": "Input/output errors described in a contract",
+              "weight": 3,
+              "required": true,
+              "present": true,
+              "reason": "At least one responsible interface describes failure behavior"
+            },
+            {
+              "id": "CLI-ENTRY",
+              "kind": "interface_contract",
+              "description": "Input decoding module contract",
+              "weight": 2,
+              "required": true,
+              "present": true,
+              "reason": "Matching directional interface exists on a requirement owner"
+            }
+          ]
+        }
+      ],
+      "best_path": "single_process_solution",
+      "result": "criteria_present_review_required",
+      "uncovered_mandatory": [],
+      "pending_verification": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "open_high_or_critical_findings": [],
+      "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+    },
+    "ECOM-MODULAR": {
+      "case_id": "ecommerce",
+      "case_title": "E-commerce payment and inventory design",
+      "split": "development",
+      "origin": "synthetic_curated",
+      "review_status": "curated_unreviewed",
+      "review_claim_count": 0,
+      "case_subject_sha256": "c35932773368fe189105fd3303f9a3aa9d9a74f940bd53cbb9bc415f8ff92f52",
+      "candidate_sha256": "f4c0317d9b08be9feb3bb3c48fd99fea1b8105b03f28deb8474c1531c6c603a3",
+      "selected_style": "modular monolith",
+      "detected_style_family": "modular_monolith",
+      "common_score": 100.0,
+      "common_results": [
+        {
+          "id": "EC-MAP-1",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-001 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-2",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-002 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-3",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-003 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-4",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-004 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-5",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-005 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-Q-AUTH",
+          "kind": "quality_target",
+          "description": "Authorization is owned by a component",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "EC-Q-IDEMP",
+          "kind": "quality_target",
+          "description": "Duplicate charge prevention target exists",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "EC-VERIFY",
+          "kind": "verification_link",
+          "description": "Architecture-level authorization verification planned",
+          "weight": 2,
+          "required": true,
+          "present": true,
+          "reason": "Linked design verification case (may be planned only)"
+        },
+        {
+          "id": "EC-OWNER",
+          "kind": "single_data_owner",
+          "description": "Orders have a single logical data owner",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching data owners: orders; require one responsible owner"
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "modular_monolith_path",
+          "name": "Modular monolith with transactions and asynchronous notifications",
+          "style_status": "matched",
+          "permitted_styles": [
+            "modular_monolith"
+          ],
+          "score": 77.78,
+          "all_required_present": false,
+          "missing_required": [
+            "EC-M-OUT"
+          ],
+          "results": [
+            {
+              "id": "EC-M-CHARGE",
+              "kind": "typed_interaction",
+              "description": "Orders request payment via synchronous call",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EC-M-STOCK",
+              "kind": "typed_interaction",
+              "description": "Order reservations propagated through event",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EC-M-AUTH",
+              "kind": "typed_interaction",
+              "description": "Payments to identity authorization boundary",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EC-M-OUT",
+              "kind": "interface_contract",
+              "description": "Order module publishes outbound synchronous payment call",
+              "weight": 4,
+              "required": true,
+              "present": false,
+              "reason": "Missing directional interface for requirement"
+            }
+          ]
+        },
+        {
+          "id": "distributed_event_path",
+          "name": "Service-oriented event-driven payment processing",
+          "style_status": "mismatched",
+          "permitted_styles": [
+            "microservices",
+            "event_driven"
+          ],
+          "score": 27.78,
+          "all_required_present": false,
+          "missing_required": [
+            "EC-D-PAY",
+            "EC-D-OUT",
+            "EC-D-IN"
+          ],
+          "results": [
+            {
+              "id": "EC-D-PAY",
+              "kind": "typed_interaction",
+              "description": "Payment initiation communicated as event",
+              "weight": 5,
+              "required": true,
+              "present": false,
+              "reason": "No matching typed relationship traced to requirement"
+            },
+            {
+              "id": "EC-D-OUT",
+              "kind": "interface_contract",
+              "description": "Payment producer emits event",
+              "weight": 4,
+              "required": true,
+              "present": false,
+              "reason": "Missing directional interface for requirement"
+            },
+            {
+              "id": "EC-D-IN",
+              "kind": "interface_contract",
+              "description": "Payment consumer accepts event",
+              "weight": 4,
+              "required": true,
+              "present": false,
+              "reason": "Missing directional interface for requirement"
+            },
+            {
+              "id": "EC-D-AUTH",
+              "kind": "typed_interaction",
+              "description": "Authorization boundary preserved",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            }
+          ]
+        }
+      ],
+      "best_path": "modular_monolith_path",
+      "result": "criteria_gaps",
+      "uncovered_mandatory": [],
+      "pending_verification": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "open_high_or_critical_findings": [],
+      "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+    },
+    "ECOM-DISTRIBUTED": {
+      "case_id": "ecommerce",
+      "case_title": "E-commerce payment and inventory design",
+      "split": "development",
+      "origin": "synthetic_curated",
+      "review_status": "curated_unreviewed",
+      "review_claim_count": 0,
+      "case_subject_sha256": "c35932773368fe189105fd3303f9a3aa9d9a74f940bd53cbb9bc415f8ff92f52",
+      "candidate_sha256": "f08b81a4cb7c8b519bf917e1b10690d96ba5ef05694487d80c01cd9d7446c5b8",
+      "selected_style": "microservices",
+      "detected_style_family": "microservices",
+      "common_score": 100.0,
+      "common_results": [
+        {
+          "id": "EC-MAP-1",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-001 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-2",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-002 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-3",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-003 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-4",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-004 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-MAP-5",
+          "kind": "requirement_mapped",
+          "description": "Functional requirement FR-005 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EC-Q-AUTH",
+          "kind": "quality_target",
+          "description": "Authorization is owned by a component",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "EC-Q-IDEMP",
+          "kind": "quality_target",
+          "description": "Duplicate charge prevention target exists",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "EC-VERIFY",
+          "kind": "verification_link",
+          "description": "Architecture-level authorization verification planned",
+          "weight": 2,
+          "required": true,
+          "present": true,
+          "reason": "Linked design verification case (may be planned only)"
+        },
+        {
+          "id": "EC-OWNER",
+          "kind": "single_data_owner",
+          "description": "Orders have a single logical data owner",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching data owners: service_orders; require one responsible owner"
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "modular_monolith_path",
+          "name": "Modular monolith with transactions and asynchronous notifications",
+          "style_status": "mismatched",
+          "permitted_styles": [
+            "modular_monolith"
+          ],
+          "score": 77.78,
+          "all_required_present": false,
+          "missing_required": [
+            "EC-M-OUT"
+          ],
+          "results": [
+            {
+              "id": "EC-M-CHARGE",
+              "kind": "typed_interaction",
+              "description": "Orders request payment via synchronous call",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EC-M-STOCK",
+              "kind": "typed_interaction",
+              "description": "Order reservations propagated through event",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EC-M-AUTH",
+              "kind": "typed_interaction",
+              "description": "Payments to identity authorization boundary",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EC-M-OUT",
+              "kind": "interface_contract",
+              "description": "Order module publishes outbound synchronous payment call",
+              "weight": 4,
+              "required": true,
+              "present": false,
+              "reason": "Missing directional interface for requirement"
+            }
+          ]
+        },
+        {
+          "id": "distributed_event_path",
+          "name": "Service-oriented event-driven payment processing",
+          "style_status": "matched",
+          "permitted_styles": [
+            "microservices",
+            "event_driven"
+          ],
+          "score": 100.0,
+          "all_required_present": true,
+          "missing_required": [],
+          "results": [
+            {
+              "id": "EC-D-PAY",
+              "kind": "typed_interaction",
+              "description": "Payment initiation communicated as event",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EC-D-OUT",
+              "kind": "interface_contract",
+              "description": "Payment producer emits event",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching directional interface exists on a requirement owner"
+            },
+            {
+              "id": "EC-D-IN",
+              "kind": "interface_contract",
+              "description": "Payment consumer accepts event",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching directional interface exists on a requirement owner"
+            },
+            {
+              "id": "EC-D-AUTH",
+              "kind": "typed_interaction",
+              "description": "Authorization boundary preserved",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            }
+          ]
+        }
+      ],
+      "best_path": "distributed_event_path",
+      "result": "criteria_present_review_required",
+      "uncovered_mandatory": [],
+      "pending_verification": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "open_high_or_critical_findings": [],
+      "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+    },
+    "TRANSFER-BASE": {
+      "case_id": "file_transfer",
+      "case_title": "Secure resumable file transfer architecture",
+      "split": "public_holdout",
+      "origin": "synthetic_curated",
+      "review_status": "curated_unreviewed",
+      "review_claim_count": 0,
+      "case_subject_sha256": "dc86f3e1ce2692c87735bc39487900240acd2dce78d3703ec0dfc593d6b2a239",
+      "candidate_sha256": "8305d7ce5a3f88a073a77e163514ce669bf6f2e4f8e50e3052ac2b6697fbe449",
+      "selected_style": "event-driven modular service",
+      "detected_style_family": "event_driven",
+      "common_score": 100.0,
+      "common_results": [
+        {
+          "id": "FT-MAP-1",
+          "kind": "requirement_mapped",
+          "description": "Transfer requirement FR-001 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "FT-MAP-2",
+          "kind": "requirement_mapped",
+          "description": "Transfer requirement FR-002 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "FT-MAP-3",
+          "kind": "requirement_mapped",
+          "description": "Transfer requirement FR-003 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "FT-MAP-4",
+          "kind": "requirement_mapped",
+          "description": "Transfer requirement FR-004 assigned",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "FT-CRED",
+          "kind": "quality_target",
+          "description": "Credential secrecy design target exists",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "FT-VERIFY",
+          "kind": "verification_link",
+          "description": "Credential handling verification planned",
+          "weight": 2,
+          "required": true,
+          "present": true,
+          "reason": "Linked design verification case (may be planned only)"
+        },
+        {
+          "id": "FT-OWNER",
+          "kind": "single_data_owner",
+          "description": "Credential references have one logical owner",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching data owners: access; require one responsible owner"
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "event_worker_path",
+          "name": "Event-triggered transfer worker",
+          "style_status": "matched",
+          "permitted_styles": [
+            "event_driven"
+          ],
+          "score": 69.23,
+          "all_required_present": false,
+          "missing_required": [
+            "FT-E-CONTRACT"
+          ],
+          "results": [
+            {
+              "id": "FT-E-JOB",
+              "kind": "typed_interaction",
+              "description": "Job submitted as a typed event",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "FT-E-AUTH",
+              "kind": "typed_interaction",
+              "description": "Credential trust boundary identified",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "FT-E-CONTRACT",
+              "kind": "interface_contract",
+              "description": "Job intake event publisher contract exists",
+              "weight": 4,
+              "required": true,
+              "present": false,
+              "reason": "Missing directional interface for requirement"
+            }
+          ]
+        },
+        {
+          "id": "modular_worker_path",
+          "name": "Modular single-deployment transfer worker",
+          "style_status": "mismatched",
+          "permitted_styles": [
+            "modular_monolith"
+          ],
+          "score": 100.0,
+          "all_required_present": true,
+          "missing_required": [],
+          "results": [
+            {
+              "id": "FT-M-JOB",
+              "kind": "typed_interaction",
+              "description": "Intake to job persistence data flow exists",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "FT-M-CRED",
+              "kind": "typed_interaction",
+              "description": "Credential trust boundary identified",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "FT-M-FAIL",
+              "kind": "failure_contract",
+              "description": "Credential-related failure behavior documented",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "At least one responsible interface describes failure behavior"
+            }
+          ]
+        }
+      ],
+      "best_path": "event_worker_path",
+      "result": "criteria_gaps",
+      "uncovered_mandatory": [],
+      "pending_verification": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "NFR-001"
+      ],
+      "open_high_or_critical_findings": [],
+      "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+    },
+    "EMBEDDED-BASE": {
+      "case_id": "embedded_controller",
+      "case_title": "Embedded fluid controller",
+      "split": "public_holdout",
+      "origin": "synthetic_curated",
+      "review_status": "curated_unreviewed",
+      "review_claim_count": 0,
+      "case_subject_sha256": "d26c1b3194233b851fa202a5a8cfdff9bd9a89f6de08af3f7f9baa6b3973fcac",
+      "candidate_sha256": "c3bd26b44c6ee2517f38b2a2f0c8ae15d20b5d52863e03dad4e7cfbc3266d850",
+      "selected_style": "single-process embedded controller",
+      "detected_style_family": "single_process",
+      "common_score": 100.0,
+      "common_results": [
+        {
+          "id": "EM-SENSOR",
+          "kind": "requirement_mapped",
+          "description": "Sensor sampling assigned",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EM-CONTROL",
+          "kind": "requirement_mapped",
+          "description": "Control rule assigned",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EM-ACT",
+          "kind": "requirement_mapped",
+          "description": "Actuator action assigned",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "EM-DIAG",
+          "kind": "verification_link",
+          "description": "Fault diagnostics review planned",
+          "weight": 2,
+          "required": true,
+          "present": true,
+          "reason": "Linked design verification case (may be planned only)"
+        },
+        {
+          "id": "EM-TIMING",
+          "kind": "quality_target",
+          "description": "Timing target stated (not measured)",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "EM-SAFETY",
+          "kind": "quality_target",
+          "description": "Fail-safe target stated (not verified)",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "EM-OWNER",
+          "kind": "single_data_owner",
+          "description": "Sensor readings have one owner",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Matching data owners: sensor; require one responsible owner"
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "local_control",
+          "name": "Single-process controller modules",
+          "style_status": "matched",
+          "permitted_styles": [
+            "single_process"
+          ],
+          "score": 100.0,
+          "all_required_present": true,
+          "missing_required": [],
+          "results": [
+            {
+              "id": "EM-FLOW",
+              "kind": "typed_interaction",
+              "description": "Sensor-to-control flow",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EM-BOUND",
+              "kind": "typed_interaction",
+              "description": "Actuation call",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "EM-FAIL",
+              "kind": "failure_contract",
+              "description": "Fault behavior in an interface",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "At least one responsible interface describes failure behavior"
+            }
+          ]
+        }
+      ],
+      "best_path": "local_control",
+      "result": "criteria_present_review_required",
+      "uncovered_mandatory": [],
+      "pending_verification": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "open_high_or_critical_findings": [],
+      "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+    },
+    "TELEMETRY-BASE": {
+      "case_id": "telemetry_ingestion",
+      "case_title": "Multi-tenant telemetry event pipeline",
+      "split": "public_holdout",
+      "origin": "synthetic_curated",
+      "review_status": "curated_unreviewed",
+      "review_claim_count": 0,
+      "case_subject_sha256": "f2a224cb44904291a5cb5b55760d074478209c689a93717fa5fb6264e270fc0b",
+      "candidate_sha256": "831c663e3d704bac1354baa6f40a460983fbd41bceebb096e8402af2dac43cfa",
+      "selected_style": "event-driven telemetry ingestion",
+      "detected_style_family": "event_driven",
+      "common_score": 100.0,
+      "common_results": [
+        {
+          "id": "TE-INGEST",
+          "kind": "requirement_mapped",
+          "description": "Ingress responsibility assigned",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "TE-VALIDATE",
+          "kind": "requirement_mapped",
+          "description": "Schema validation assigned",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "TE-STORE",
+          "kind": "requirement_mapped",
+          "description": "Event persistence assigned",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "TE-QUERY",
+          "kind": "requirement_mapped",
+          "description": "Read models assigned",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Requirement is linked to an architecture component"
+        },
+        {
+          "id": "TE-TENANT",
+          "kind": "quality_target",
+          "description": "Tenant isolation target stated",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "TE-DEDUPE",
+          "kind": "quality_target",
+          "description": "Duplicate handling target stated",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Responsible component has an authored quality target"
+        },
+        {
+          "id": "TE-OWNER",
+          "kind": "single_data_owner",
+          "description": "Validated event records have one owner",
+          "weight": 3,
+          "required": true,
+          "present": true,
+          "reason": "Matching data owners: event_store; require one responsible owner"
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "async_pipeline",
+          "name": "Event-driven pipeline",
+          "style_status": "matched",
+          "permitted_styles": [
+            "event_driven"
+          ],
+          "score": 100.0,
+          "all_required_present": true,
+          "missing_required": [],
+          "results": [
+            {
+              "id": "TE-EVENT-1",
+              "kind": "typed_interaction",
+              "description": "Input event published",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "TE-EVENT-2",
+              "kind": "typed_interaction",
+              "description": "Validated event persisted via event",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            },
+            {
+              "id": "TE-AUTH",
+              "kind": "typed_interaction",
+              "description": "Tenant trust boundary recorded",
+              "weight": 5,
+              "required": true,
+              "present": true,
+              "reason": "Matching typed relationship traces to requirement"
+            }
+          ]
+        },
+        {
+          "id": "in_process_pipeline",
+          "name": "Single-process queued pipeline",
+          "style_status": "mismatched",
+          "permitted_styles": [
+            "modular_monolith"
+          ],
+          "score": 50.0,
+          "all_required_present": false,
+          "missing_required": [
+            "TE-QUEUE"
+          ],
+          "results": [
+            {
+              "id": "TE-QUEUE",
+              "kind": "typed_interaction",
+              "description": "In-process data stage",
+              "weight": 4,
+              "required": true,
+              "present": false,
+              "reason": "No matching typed relationship traced to requirement"
+            },
+            {
+              "id": "TE-LOCAL",
+              "kind": "failure_contract",
+              "description": "Local replay failure contract",
+              "weight": 4,
+              "required": true,
+              "present": true,
+              "reason": "At least one responsible interface describes failure behavior"
+            }
+          ]
+        }
+      ],
+      "best_path": "async_pipeline",
+      "result": "criteria_present_review_required",
+      "uncovered_mandatory": [],
+      "pending_verification": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "open_high_or_critical_findings": [],
+      "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+    }
+  },
+  "by_split": [
+    {
+      "split": "development",
+      "count": 3,
+      "criteria_present_review_required": 2,
+      "criteria_gaps": 1,
+      "no_compatible_style": 0,
+      "average_common_criterion_coverage": 100.0
+    },
+    {
+      "split": "public_holdout",
+      "count": 3,
+      "criteria_present_review_required": 2,
+      "criteria_gaps": 1,
+      "no_compatible_style": 0,
+      "average_common_criterion_coverage": 100.0
+    }
+  ],
+  "total": 6,
+  "caveat": "Public synthetic fixtures are not an independent holdout or professional review set. Aggregate counts are diagnostic, not architecture correctness rates."
+}

@@ -1,0 +1,338 @@
+{
+  "brief": {
+    "system": "Embedded fluid controller",
+    "goals": [
+      "Control a pump safely with bounded reaction time"
+    ],
+    "actors": [
+      "Operator",
+      "Device controller"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Sample level and pressure sensors"
+      },
+      {
+        "id": "FR-002",
+        "statement": "Compute a control output from sensor state"
+      },
+      {
+        "id": "FR-003",
+        "statement": "Issue actuator commands"
+      },
+      {
+        "id": "FR-004",
+        "statement": "Record fault and diagnostic events"
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "real_time",
+        "statement": "Design a bounded reaction path"
+      },
+      {
+        "id": "NFR-002",
+        "attribute": "safety",
+        "statement": "Default to safe actuator behavior on sensor fault"
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "single-process embedded controller",
+      "max_depth": 3,
+      "max_nodes": 20,
+      "max_refinement_rounds": 2
+    }
+  },
+  "selected_style": "single-process embedded controller",
+  "status": "draft",
+  "components": [
+    {
+      "id": "system",
+      "name": "Embedded controller",
+      "responsibility": "Embedded controller responsibilities",
+      "boundary": "Embedded controller module boundaries",
+      "parent_id": null,
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "operator",
+          "direction": "inbound",
+          "kind": "cli",
+          "description": "Configuration input",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [],
+      "data_not_applicable_reason": "Stateless component",
+      "quality_targets": {},
+      "status": "requires_review"
+    },
+    {
+      "id": "sensor",
+      "name": "Sensor sampling",
+      "responsibility": "Sensor sampling responsibilities",
+      "boundary": "Sensor sampling module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-001",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "poll",
+          "direction": "outbound",
+          "kind": "function",
+          "description": "Read sensors",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [
+        "Sensor readings"
+      ],
+      "quality_targets": {
+        "NFR-001": "Sample within allocated 2 ms budget",
+        "NFR-002": "Invalid data flagged before actuation"
+      },
+      "status": "requires_review"
+    },
+    {
+      "id": "control",
+      "name": "Control decision",
+      "responsibility": "Control decision responsibilities",
+      "boundary": "Control decision module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-002",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "decide",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Transform inputs into control output",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        },
+        {
+          "name": "command",
+          "direction": "outbound",
+          "kind": "function",
+          "description": "Propose actuator command",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [
+        "Control state"
+      ],
+      "quality_targets": {
+        "NFR-001": "Design budget of at most 10 ms sensor-to-actuator; unmeasured"
+      },
+      "status": "requires_review"
+    },
+    {
+      "id": "actuator",
+      "name": "Actuator commands",
+      "responsibility": "Actuator commands responsibilities",
+      "boundary": "Actuator commands module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "apply",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Drive actuator or safe default",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [],
+      "data_not_applicable_reason": "Stateless component",
+      "quality_targets": {
+        "NFR-002": "Set safe state when sensor data cannot be trusted"
+      },
+      "status": "requires_review"
+    },
+    {
+      "id": "diagnostics",
+      "name": "Fault diagnostics",
+      "responsibility": "Fault diagnostics responsibilities",
+      "boundary": "Fault diagnostics module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "interfaces": [
+        {
+          "name": "capture",
+          "direction": "inbound",
+          "kind": "event",
+          "description": "Record faults",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [
+        "Diagnostic events"
+      ],
+      "quality_targets": {},
+      "status": "requires_review"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "REL-EM-1",
+      "source_id": "sensor",
+      "target_id": "control",
+      "kind": "data_flow",
+      "description": "sensor to control design interaction",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "NFR-001"
+      ]
+    },
+    {
+      "id": "REL-EM-2",
+      "source_id": "control",
+      "target_id": "actuator",
+      "kind": "synchronous_call",
+      "description": "control to actuator design interaction",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-001"
+      ]
+    },
+    {
+      "id": "REL-EM-3",
+      "source_id": "control",
+      "target_id": "diagnostics",
+      "kind": "event",
+      "description": "control to diagnostics design interaction",
+      "requirement_ids": [
+        "FR-004"
+      ]
+    },
+    {
+      "id": "REL-EM-4",
+      "source_id": "actuator",
+      "target_id": "diagnostics",
+      "kind": "event",
+      "description": "actuator to diagnostics design interaction",
+      "requirement_ids": [
+        "NFR-002"
+      ]
+    }
+  ],
+  "verification_cases": [
+    {
+      "id": "V-FR-001",
+      "description": "Planned architecture review for FR-001",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-001"
+      ],
+      "component_ids": [
+        "sensor"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-FR-002",
+      "description": "Planned architecture review for FR-002",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "component_ids": [
+        "control"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-FR-003",
+      "description": "Planned architecture review for FR-003",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "component_ids": [
+        "actuator"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-FR-004",
+      "description": "Planned architecture review for FR-004",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "component_ids": [
+        "diagnostics"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-NFR-001",
+      "description": "Planned architecture review for NFR-001",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "control"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-NFR-002",
+      "description": "Planned architecture review for NFR-002",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-002"
+      ],
+      "component_ids": [
+        "actuator"
+      ],
+      "status": "planned"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-EM-1",
+      "title": "Bounded controller modules",
+      "choice": "Single-process modular control design",
+      "rationale": "A synthetic candidate for bounded control; timing/safety proof not performed",
+      "status": "proposed"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-EM-1",
+      "severity": "medium",
+      "description": "Actual worst-case latency and fail-safe behavior not yet independently verified",
+      "requirement_ids": [
+        "NFR-001",
+        "NFR-002"
+      ],
+      "component_ids": [
+        "sensor",
+        "control",
+        "actuator"
+      ],
+      "status": "open"
+    }
+  ]
+}

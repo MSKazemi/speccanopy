@@ -1,0 +1,213 @@
+{
+  "case_id": "ecommerce",
+  "case_title": "E-commerce payment and inventory design",
+  "split": "development",
+  "origin": "synthetic_curated",
+  "review_status": "curated_unreviewed",
+  "review_claim_count": 0,
+  "case_subject_sha256": "c35932773368fe189105fd3303f9a3aa9d9a74f940bd53cbb9bc415f8ff92f52",
+  "candidate_sha256": "f08b81a4cb7c8b519bf917e1b10690d96ba5ef05694487d80c01cd9d7446c5b8",
+  "selected_style": "microservices",
+  "detected_style_family": "microservices",
+  "common_score": 100.0,
+  "common_results": [
+    {
+      "id": "EC-MAP-1",
+      "kind": "requirement_mapped",
+      "description": "Functional requirement FR-001 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EC-MAP-2",
+      "kind": "requirement_mapped",
+      "description": "Functional requirement FR-002 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EC-MAP-3",
+      "kind": "requirement_mapped",
+      "description": "Functional requirement FR-003 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EC-MAP-4",
+      "kind": "requirement_mapped",
+      "description": "Functional requirement FR-004 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EC-MAP-5",
+      "kind": "requirement_mapped",
+      "description": "Functional requirement FR-005 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EC-Q-AUTH",
+      "kind": "quality_target",
+      "description": "Authorization is owned by a component",
+      "weight": 4,
+      "required": true,
+      "present": true,
+      "reason": "Responsible component has an authored quality target"
+    },
+    {
+      "id": "EC-Q-IDEMP",
+      "kind": "quality_target",
+      "description": "Duplicate charge prevention target exists",
+      "weight": 5,
+      "required": true,
+      "present": true,
+      "reason": "Responsible component has an authored quality target"
+    },
+    {
+      "id": "EC-VERIFY",
+      "kind": "verification_link",
+      "description": "Architecture-level authorization verification planned",
+      "weight": 2,
+      "required": true,
+      "present": true,
+      "reason": "Linked design verification case (may be planned only)"
+    },
+    {
+      "id": "EC-OWNER",
+      "kind": "single_data_owner",
+      "description": "Orders have a single logical data owner",
+      "weight": 4,
+      "required": true,
+      "present": true,
+      "reason": "Matching data owners: service_orders; require one responsible owner"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "modular_monolith_path",
+      "name": "Modular monolith with transactions and asynchronous notifications",
+      "style_status": "mismatched",
+      "permitted_styles": [
+        "modular_monolith"
+      ],
+      "score": 77.78,
+      "all_required_present": false,
+      "missing_required": [
+        "EC-M-OUT"
+      ],
+      "results": [
+        {
+          "id": "EC-M-CHARGE",
+          "kind": "typed_interaction",
+          "description": "Orders request payment via synchronous call",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "EC-M-STOCK",
+          "kind": "typed_interaction",
+          "description": "Order reservations propagated through event",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "EC-M-AUTH",
+          "kind": "typed_interaction",
+          "description": "Payments to identity authorization boundary",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "EC-M-OUT",
+          "kind": "interface_contract",
+          "description": "Order module publishes outbound synchronous payment call",
+          "weight": 4,
+          "required": true,
+          "present": false,
+          "reason": "Missing directional interface for requirement"
+        }
+      ]
+    },
+    {
+      "id": "distributed_event_path",
+      "name": "Service-oriented event-driven payment processing",
+      "style_status": "matched",
+      "permitted_styles": [
+        "microservices",
+        "event_driven"
+      ],
+      "score": 100.0,
+      "all_required_present": true,
+      "missing_required": [],
+      "results": [
+        {
+          "id": "EC-D-PAY",
+          "kind": "typed_interaction",
+          "description": "Payment initiation communicated as event",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "EC-D-OUT",
+          "kind": "interface_contract",
+          "description": "Payment producer emits event",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching directional interface exists on a requirement owner"
+        },
+        {
+          "id": "EC-D-IN",
+          "kind": "interface_contract",
+          "description": "Payment consumer accepts event",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching directional interface exists on a requirement owner"
+        },
+        {
+          "id": "EC-D-AUTH",
+          "kind": "typed_interaction",
+          "description": "Authorization boundary preserved",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        }
+      ]
+    }
+  ],
+  "best_path": "distributed_event_path",
+  "result": "criteria_present_review_required",
+  "uncovered_mandatory": [],
+  "pending_verification": [
+    "FR-001",
+    "FR-002",
+    "FR-003",
+    "FR-004",
+    "FR-005",
+    "NFR-001",
+    "NFR-002"
+  ],
+  "open_high_or_critical_findings": [],
+  "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+}

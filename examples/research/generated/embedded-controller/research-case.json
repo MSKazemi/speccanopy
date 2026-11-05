@@ -1,0 +1,133 @@
+{
+  "case_id": "embedded_controller",
+  "case_title": "Embedded fluid controller",
+  "split": "public_holdout",
+  "origin": "synthetic_curated",
+  "review_status": "curated_unreviewed",
+  "review_claim_count": 0,
+  "case_subject_sha256": "d26c1b3194233b851fa202a5a8cfdff9bd9a89f6de08af3f7f9baa6b3973fcac",
+  "candidate_sha256": "c3bd26b44c6ee2517f38b2a2f0c8ae15d20b5d52863e03dad4e7cfbc3266d850",
+  "selected_style": "single-process embedded controller",
+  "detected_style_family": "single_process",
+  "common_score": 100.0,
+  "common_results": [
+    {
+      "id": "EM-SENSOR",
+      "kind": "requirement_mapped",
+      "description": "Sensor sampling assigned",
+      "weight": 4,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EM-CONTROL",
+      "kind": "requirement_mapped",
+      "description": "Control rule assigned",
+      "weight": 4,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EM-ACT",
+      "kind": "requirement_mapped",
+      "description": "Actuator action assigned",
+      "weight": 4,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "EM-DIAG",
+      "kind": "verification_link",
+      "description": "Fault diagnostics review planned",
+      "weight": 2,
+      "required": true,
+      "present": true,
+      "reason": "Linked design verification case (may be planned only)"
+    },
+    {
+      "id": "EM-TIMING",
+      "kind": "quality_target",
+      "description": "Timing target stated (not measured)",
+      "weight": 5,
+      "required": true,
+      "present": true,
+      "reason": "Responsible component has an authored quality target"
+    },
+    {
+      "id": "EM-SAFETY",
+      "kind": "quality_target",
+      "description": "Fail-safe target stated (not verified)",
+      "weight": 5,
+      "required": true,
+      "present": true,
+      "reason": "Responsible component has an authored quality target"
+    },
+    {
+      "id": "EM-OWNER",
+      "kind": "single_data_owner",
+      "description": "Sensor readings have one owner",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Matching data owners: sensor; require one responsible owner"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "local_control",
+      "name": "Single-process controller modules",
+      "style_status": "matched",
+      "permitted_styles": [
+        "single_process"
+      ],
+      "score": 100.0,
+      "all_required_present": true,
+      "missing_required": [],
+      "results": [
+        {
+          "id": "EM-FLOW",
+          "kind": "typed_interaction",
+          "description": "Sensor-to-control flow",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "EM-BOUND",
+          "kind": "typed_interaction",
+          "description": "Actuation call",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "EM-FAIL",
+          "kind": "failure_contract",
+          "description": "Fault behavior in an interface",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "At least one responsible interface describes failure behavior"
+        }
+      ]
+    }
+  ],
+  "best_path": "local_control",
+  "result": "criteria_present_review_required",
+  "uncovered_mandatory": [],
+  "pending_verification": [
+    "FR-001",
+    "FR-002",
+    "FR-003",
+    "FR-004",
+    "NFR-001",
+    "NFR-002"
+  ],
+  "open_high_or_critical_findings": [],
+  "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+}

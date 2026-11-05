@@ -1,0 +1,35 @@
+{
+  "name": "Phase 6 public synthetic research fixtures — NOT independent holdout",
+  "entries": [
+    {
+      "id": "CLI-BASE",
+      "case_path": "cases/cli-utility.json",
+      "architecture_path": "../generated/cli-utility/architecture.json"
+    },
+    {
+      "id": "ECOM-MODULAR",
+      "case_path": "cases/ecommerce.json",
+      "architecture_path": "../generated/ecommerce/architecture.json"
+    },
+    {
+      "id": "ECOM-DISTRIBUTED",
+      "case_path": "cases/ecommerce.json",
+      "architecture_path": "candidates/ecommerce-distributed-unreviewed.json"
+    },
+    {
+      "id": "TRANSFER-BASE",
+      "case_path": "cases/file-transfer.json",
+      "architecture_path": "../generated/file-transfer/architecture.json"
+    },
+    {
+      "id": "EMBEDDED-BASE",
+      "case_path": "cases/embedded-controller.json",
+      "architecture_path": "candidates/embedded-controller.json"
+    },
+    {
+      "id": "TELEMETRY-BASE",
+      "case_path": "cases/telemetry-ingestion.json",
+      "architecture_path": "candidates/telemetry-ingestion.json"
+    }
+  ]
+}

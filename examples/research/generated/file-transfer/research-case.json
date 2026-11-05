@@ -1,0 +1,174 @@
+{
+  "case_id": "file_transfer",
+  "case_title": "Secure resumable file transfer architecture",
+  "split": "public_holdout",
+  "origin": "synthetic_curated",
+  "review_status": "curated_unreviewed",
+  "review_claim_count": 0,
+  "case_subject_sha256": "dc86f3e1ce2692c87735bc39487900240acd2dce78d3703ec0dfc593d6b2a239",
+  "candidate_sha256": "8305d7ce5a3f88a073a77e163514ce669bf6f2e4f8e50e3052ac2b6697fbe449",
+  "selected_style": "event-driven modular service",
+  "detected_style_family": "event_driven",
+  "common_score": 100.0,
+  "common_results": [
+    {
+      "id": "FT-MAP-1",
+      "kind": "requirement_mapped",
+      "description": "Transfer requirement FR-001 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "FT-MAP-2",
+      "kind": "requirement_mapped",
+      "description": "Transfer requirement FR-002 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "FT-MAP-3",
+      "kind": "requirement_mapped",
+      "description": "Transfer requirement FR-003 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "FT-MAP-4",
+      "kind": "requirement_mapped",
+      "description": "Transfer requirement FR-004 assigned",
+      "weight": 3,
+      "required": true,
+      "present": true,
+      "reason": "Requirement is linked to an architecture component"
+    },
+    {
+      "id": "FT-CRED",
+      "kind": "quality_target",
+      "description": "Credential secrecy design target exists",
+      "weight": 5,
+      "required": true,
+      "present": true,
+      "reason": "Responsible component has an authored quality target"
+    },
+    {
+      "id": "FT-VERIFY",
+      "kind": "verification_link",
+      "description": "Credential handling verification planned",
+      "weight": 2,
+      "required": true,
+      "present": true,
+      "reason": "Linked design verification case (may be planned only)"
+    },
+    {
+      "id": "FT-OWNER",
+      "kind": "single_data_owner",
+      "description": "Credential references have one logical owner",
+      "weight": 4,
+      "required": true,
+      "present": true,
+      "reason": "Matching data owners: access; require one responsible owner"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "event_worker_path",
+      "name": "Event-triggered transfer worker",
+      "style_status": "matched",
+      "permitted_styles": [
+        "event_driven"
+      ],
+      "score": 69.23,
+      "all_required_present": false,
+      "missing_required": [
+        "FT-E-CONTRACT"
+      ],
+      "results": [
+        {
+          "id": "FT-E-JOB",
+          "kind": "typed_interaction",
+          "description": "Job submitted as a typed event",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "FT-E-AUTH",
+          "kind": "typed_interaction",
+          "description": "Credential trust boundary identified",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "FT-E-CONTRACT",
+          "kind": "interface_contract",
+          "description": "Job intake event publisher contract exists",
+          "weight": 4,
+          "required": true,
+          "present": false,
+          "reason": "Missing directional interface for requirement"
+        }
+      ]
+    },
+    {
+      "id": "modular_worker_path",
+      "name": "Modular single-deployment transfer worker",
+      "style_status": "mismatched",
+      "permitted_styles": [
+        "modular_monolith"
+      ],
+      "score": 100.0,
+      "all_required_present": true,
+      "missing_required": [],
+      "results": [
+        {
+          "id": "FT-M-JOB",
+          "kind": "typed_interaction",
+          "description": "Intake to job persistence data flow exists",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "FT-M-CRED",
+          "kind": "typed_interaction",
+          "description": "Credential trust boundary identified",
+          "weight": 5,
+          "required": true,
+          "present": true,
+          "reason": "Matching typed relationship traces to requirement"
+        },
+        {
+          "id": "FT-M-FAIL",
+          "kind": "failure_contract",
+          "description": "Credential-related failure behavior documented",
+          "weight": 4,
+          "required": true,
+          "present": true,
+          "reason": "At least one responsible interface describes failure behavior"
+        }
+      ]
+    }
+  ],
+  "best_path": "event_worker_path",
+  "result": "criteria_gaps",
+  "uncovered_mandatory": [],
+  "pending_verification": [
+    "FR-001",
+    "FR-002",
+    "FR-003",
+    "FR-004",
+    "NFR-001"
+  ],
+  "open_high_or_critical_findings": [],
+  "caveat": "Requirement-linked structural/documentation signals only. A full score does NOT verify semantic correctness, independent expert review, security or deployability. Reviews listed here, if any, are self-declared and NOT authenticated."
+}

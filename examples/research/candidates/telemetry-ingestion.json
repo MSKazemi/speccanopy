@@ -1,0 +1,364 @@
+{
+  "brief": {
+    "system": "Multi-tenant telemetry ingestion",
+    "goals": [
+      "Ingest and query events by tenant"
+    ],
+    "actors": [
+      "Telemetry devices",
+      "Tenant analyst"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Receive telemetry events"
+      },
+      {
+        "id": "FR-002",
+        "statement": "Validate event schemas"
+      },
+      {
+        "id": "FR-003",
+        "statement": "Persist accepted events"
+      },
+      {
+        "id": "FR-004",
+        "statement": "Query tenant aggregates"
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "security",
+        "statement": "Enforce tenant isolation"
+      },
+      {
+        "id": "NFR-002",
+        "attribute": "reliability",
+        "statement": "Specify duplicate delivery handling"
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "event-driven ingestion",
+      "max_depth": 4,
+      "max_nodes": 20,
+      "max_refinement_rounds": 2
+    }
+  },
+  "selected_style": "event-driven telemetry ingestion",
+  "status": "draft",
+  "components": [
+    {
+      "id": "system",
+      "name": "Telemetry ingestion",
+      "responsibility": "Telemetry ingestion responsibilities",
+      "boundary": "Telemetry ingestion module boundaries",
+      "parent_id": null,
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "ingress",
+          "direction": "inbound",
+          "kind": "api",
+          "description": "Client event requests",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [],
+      "data_not_applicable_reason": "Stateless component",
+      "quality_targets": {},
+      "status": "requires_review"
+    },
+    {
+      "id": "ingress",
+      "name": "Ingress",
+      "responsibility": "Ingress responsibilities",
+      "boundary": "Ingress module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-001",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "accept",
+          "direction": "inbound",
+          "kind": "api",
+          "description": "Submit events",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        },
+        {
+          "name": "emit",
+          "direction": "outbound",
+          "kind": "event",
+          "description": "Publish accepted events",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [
+        "Ingest records"
+      ],
+      "quality_targets": {
+        "NFR-002": "Use message-id deduplication; efficacy unverified"
+      },
+      "status": "requires_review"
+    },
+    {
+      "id": "validator",
+      "name": "Schema and tenancy validation",
+      "responsibility": "Schema and tenancy validation responsibilities",
+      "boundary": "Schema and tenancy validation module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-002",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "consume",
+          "direction": "inbound",
+          "kind": "event",
+          "description": "Validate incoming events",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        },
+        {
+          "name": "validate",
+          "direction": "outbound",
+          "kind": "event",
+          "description": "Publish validated events",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [],
+      "data_not_applicable_reason": "Stateless component",
+      "quality_targets": {
+        "NFR-001": "Require tenant context before accepting record"
+      },
+      "status": "requires_review"
+    },
+    {
+      "id": "event_store",
+      "name": "Event storage",
+      "responsibility": "Event storage responsibilities",
+      "boundary": "Event storage module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "interfaces": [
+        {
+          "name": "persist",
+          "direction": "inbound",
+          "kind": "event",
+          "description": "Persist accepted records",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [
+        "Validated events"
+      ],
+      "quality_targets": {},
+      "status": "requires_review"
+    },
+    {
+      "id": "aggregator",
+      "name": "Tenant aggregation",
+      "responsibility": "Tenant aggregation responsibilities",
+      "boundary": "Tenant aggregation module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "interfaces": [
+        {
+          "name": "query",
+          "direction": "inbound",
+          "kind": "api",
+          "description": "Query aggregate read model",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [
+        "Tenant aggregates"
+      ],
+      "quality_targets": {},
+      "status": "requires_review"
+    },
+    {
+      "id": "identity",
+      "name": "Tenant identity",
+      "responsibility": "Tenant identity responsibilities",
+      "boundary": "Tenant identity module boundaries",
+      "parent_id": "system",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "authorize",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Check tenant claims",
+          "failure_behavior": "Report failure and enter a safe/fail-closed mode; design review pending"
+        }
+      ],
+      "owned_data": [
+        "Tenant policies"
+      ],
+      "quality_targets": {
+        "NFR-001": "Reject cross-tenant reads/writes"
+      },
+      "status": "requires_review"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "REL-TE-1",
+      "source_id": "ingress",
+      "target_id": "validator",
+      "kind": "event",
+      "description": "ingress to validator design interaction",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "NFR-002"
+      ]
+    },
+    {
+      "id": "REL-TE-2",
+      "source_id": "validator",
+      "target_id": "event_store",
+      "kind": "event",
+      "description": "validator to event_store design interaction",
+      "requirement_ids": [
+        "FR-003"
+      ]
+    },
+    {
+      "id": "REL-TE-3",
+      "source_id": "event_store",
+      "target_id": "aggregator",
+      "kind": "data_flow",
+      "description": "event_store to aggregator design interaction",
+      "requirement_ids": [
+        "FR-004"
+      ]
+    },
+    {
+      "id": "REL-TE-4",
+      "source_id": "validator",
+      "target_id": "identity",
+      "kind": "trust_boundary",
+      "description": "validator to identity design interaction",
+      "requirement_ids": [
+        "NFR-001"
+      ]
+    }
+  ],
+  "verification_cases": [
+    {
+      "id": "V-FR-001",
+      "description": "Planned architecture review for FR-001",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-001"
+      ],
+      "component_ids": [
+        "ingress"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-FR-002",
+      "description": "Planned architecture review for FR-002",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "component_ids": [
+        "validator"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-FR-003",
+      "description": "Planned architecture review for FR-003",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "component_ids": [
+        "event_store"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-FR-004",
+      "description": "Planned architecture review for FR-004",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "component_ids": [
+        "aggregator"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-NFR-001",
+      "description": "Planned architecture review for NFR-001",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "identity"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "V-NFR-002",
+      "description": "Planned architecture review for NFR-002",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-002"
+      ],
+      "component_ids": [
+        "ingress"
+      ],
+      "status": "planned"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-TE-1",
+      "title": "Telemetry event pipeline",
+      "choice": "Event-driven ingestion and tenant-aware read model",
+      "rationale": "Synthetic candidate; ordering, isolation and operations require further review",
+      "status": "proposed"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-TE-1",
+      "severity": "medium",
+      "description": "Tenant partition semantics and replay contract still need security review",
+      "requirement_ids": [
+        "NFR-001",
+        "NFR-002"
+      ],
+      "component_ids": [
+        "validator",
+        "event_store"
+      ],
+      "status": "open"
+    }
+  ]
+}

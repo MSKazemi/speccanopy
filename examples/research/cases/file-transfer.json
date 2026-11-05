@@ -1,0 +1,180 @@
+{
+  "id": "file_transfer",
+  "title": "Secure resumable file transfer architecture",
+  "split": "public_holdout",
+  "brief": {
+    "system": "Multi-backend file transfer service",
+    "goals": [
+      "Securely transfer files across storage backends with recovery"
+    ],
+    "actors": [
+      "Transfer operator",
+      "Automation client"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Accept transfer job requests",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Transfer files over local and remote backends",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Recover and retry interrupted transfers",
+        "mandatory": true
+      },
+      {
+        "id": "FR-004",
+        "statement": "Persist transfer status and metadata",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "security",
+        "statement": "Credential handling must protect transfer access",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "event-driven modular service",
+      "max_depth": 6,
+      "max_nodes": 150,
+      "max_refinement_rounds": 3
+    }
+  },
+  "provenance": {
+    "origin": "synthetic_curated",
+    "curator": "Speccanopy maintainers",
+    "usage_rights": "Synthetic original fixture; freely reusable with project attribution",
+    "limitations": "Illustrative rule-based case only. NOT independently reviewed by experts; reference alternatives are hypotheses.",
+    "review_claims": []
+  },
+  "common_criteria": [
+    {
+      "id": "FT-MAP-1",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-001",
+      "description": "Transfer requirement FR-001 assigned",
+      "weight": 3
+    },
+    {
+      "id": "FT-MAP-2",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-002",
+      "description": "Transfer requirement FR-002 assigned",
+      "weight": 3
+    },
+    {
+      "id": "FT-MAP-3",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-003",
+      "description": "Transfer requirement FR-003 assigned",
+      "weight": 3
+    },
+    {
+      "id": "FT-MAP-4",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-004",
+      "description": "Transfer requirement FR-004 assigned",
+      "weight": 3
+    },
+    {
+      "id": "FT-CRED",
+      "kind": "quality_target",
+      "requirement_id": "NFR-001",
+      "description": "Credential secrecy design target exists",
+      "weight": 5
+    },
+    {
+      "id": "FT-VERIFY",
+      "kind": "verification_link",
+      "requirement_id": "NFR-001",
+      "description": "Credential handling verification planned",
+      "weight": 2
+    },
+    {
+      "id": "FT-OWNER",
+      "kind": "single_data_owner",
+      "requirement_id": "NFR-001",
+      "description": "Credential references have one logical owner",
+      "weight": 4,
+      "data_label": "Credential references"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "event_worker_path",
+      "name": "Event-triggered transfer worker",
+      "rationale": "Asynchronous work distribution supports retries and job state checkpoints.",
+      "style_families": [
+        "event_driven"
+      ],
+      "criteria": [
+        {
+          "id": "FT-E-JOB",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-001",
+          "description": "Job submitted as a typed event",
+          "weight": 4,
+          "relationship_kind": "event"
+        },
+        {
+          "id": "FT-E-AUTH",
+          "kind": "typed_interaction",
+          "requirement_id": "NFR-001",
+          "description": "Credential trust boundary identified",
+          "weight": 5,
+          "relationship_kind": "trust_boundary"
+        },
+        {
+          "id": "FT-E-CONTRACT",
+          "kind": "interface_contract",
+          "requirement_id": "FR-001",
+          "description": "Job intake event publisher contract exists",
+          "weight": 4,
+          "direction": "outbound",
+          "interface_kind": "event"
+        }
+      ]
+    },
+    {
+      "id": "modular_worker_path",
+      "name": "Modular single-deployment transfer worker",
+      "rationale": "Same functions can be deployed together if asynchronous isolation is unnecessary.",
+      "style_families": [
+        "modular_monolith"
+      ],
+      "criteria": [
+        {
+          "id": "FT-M-JOB",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-001",
+          "description": "Intake to job persistence data flow exists",
+          "weight": 4,
+          "relationship_kind": "data_flow"
+        },
+        {
+          "id": "FT-M-CRED",
+          "kind": "typed_interaction",
+          "requirement_id": "NFR-001",
+          "description": "Credential trust boundary identified",
+          "weight": 5,
+          "relationship_kind": "trust_boundary"
+        },
+        {
+          "id": "FT-M-FAIL",
+          "kind": "failure_contract",
+          "requirement_id": "NFR-001",
+          "description": "Credential-related failure behavior documented",
+          "weight": 4
+        }
+      ]
+    }
+  ]
+}

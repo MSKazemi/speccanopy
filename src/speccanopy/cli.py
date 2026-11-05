@@ -25,6 +25,8 @@ from .refinement import RefinementEdits, RefinementPlan, plan_refinement, apply_
 from .refinement_exporters import (
     export_refinement_plan, export_refinement_approved, export_benchmark,
 )
+from .research import ResearchCase, ResearchSuite, evaluate_case, summarize_suite
+from .research_exporters import export_research
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -78,7 +80,55 @@ def main(argv: list[str] | None = None) -> int:
     benchmark.add_argument("--candidate", type=Path, help="Compare a refined candidate against the source draft")
     benchmark.add_argument("--output", type=Path, required=True)
 
+    research_case = sub.add_parser("research-case", help="Score a draft against multiple documented architecture alternatives (not expert certification)")
+    research_case.add_argument("case", type=Path, help="ResearchCase JSON with provenance and acceptable alternatives")
+    research_case.add_argument("--architecture", type=Path, required=True)
+    research_case.add_argument("--output", type=Path, required=True)
+    research_case.add_argument("--strict", action="store_true", help="Exit 2 unless all required case criteria match")
+
+    research_suite = sub.add_parser("research-suite", help="Run a public provenance-aware architecture research fixture suite")
+    research_suite.add_argument("suite", type=Path)
+    research_suite.add_argument("--output", type=Path, required=True)
+    research_suite.add_argument("--strict", action="store_true", help="Exit 2 if any case has structural rubric gaps")
+
     args = parser.parse_args(argv)
+    if args.command == "research-case":
+        try:
+            case = ResearchCase.model_validate_json(args.case.read_text(encoding="utf-8"))
+            spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
+            result = evaluate_case(case, spec)
+            paths = export_research(result, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error evaluating research case: {exc}", file=sys.stderr)
+            return 1
+        print(f"Research {result.case_id}: {result.result}, best alternative={result.best_path}")
+        print("Signals only; NOT independent expert certification or implementation readiness")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and result.result != "criteria_present_review_required" else 0
+
+    if args.command == "research-suite":
+        try:
+            suite = ResearchSuite.model_validate_json(args.suite.read_text(encoding="utf-8"))
+            reports = {}
+            for item in suite.entries:
+                # Paths are relative to the user-selected suite file, not external network data.
+                case_path = args.suite.parent / item.case_path
+                architecture_path = args.suite.parent / item.architecture_path
+                case = ResearchCase.model_validate_json(case_path.read_text(encoding="utf-8"))
+                spec = ArchitectureSpec.model_validate_json(architecture_path.read_text(encoding="utf-8"))
+                reports[item.id] = evaluate_case(case, spec)
+            result = summarize_suite(suite.name, reports)
+            paths = export_research(result, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error evaluating research suite: {exc}", file=sys.stderr)
+            return 1
+        print(f"Research suite {result.suite_name}: evaluated {result.total} curated candidate entries")
+        print("Public fixtures are NOT independent holdout data or authenticated expert review")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and any(
+            r.result != "criteria_present_review_required" for r in result.cases.values()
+        ) else 0
+
     if args.command == "refine-plan":
         try:
             spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))

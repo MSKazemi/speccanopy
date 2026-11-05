@@ -1,0 +1,133 @@
+{
+  "id": "cli_utility",
+  "title": "Small file-normalization utility",
+  "split": "development",
+  "brief": {
+    "system": "Text normalization CLI utility",
+    "goals": [
+      "Normalize local UTF-8 text files and save normalized output"
+    ],
+    "actors": [
+      "CLI user"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Read a user-provided local UTF-8 text file",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Normalize whitespace and line endings",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Write normalized text to a requested destination",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "reliability",
+        "statement": "Report input/output errors clearly without silently losing the original file",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "single-process modular CLI",
+      "max_depth": 4,
+      "max_nodes": 20,
+      "max_refinement_rounds": 2
+    }
+  },
+  "provenance": {
+    "origin": "synthetic_curated",
+    "curator": "Speccanopy maintainers",
+    "usage_rights": "Synthetic original fixture; freely reusable with project attribution",
+    "limitations": "Illustrative rule-based case only. NOT independently reviewed by experts; reference alternatives are hypotheses.",
+    "review_claims": []
+  },
+  "common_criteria": [
+    {
+      "id": "CLI-MAP-1",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-001",
+      "description": "Input responsibility mapped",
+      "weight": 3
+    },
+    {
+      "id": "CLI-MAP-2",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-002",
+      "description": "Normalization responsibility mapped",
+      "weight": 3
+    },
+    {
+      "id": "CLI-MAP-3",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-003",
+      "description": "Output responsibility mapped",
+      "weight": 3
+    },
+    {
+      "id": "CLI-VERIFY",
+      "kind": "verification_link",
+      "requirement_id": "NFR-001",
+      "description": "Failure semantics have a review plan",
+      "weight": 2
+    },
+    {
+      "id": "CLI-QUALITY",
+      "kind": "quality_target",
+      "requirement_id": "NFR-001",
+      "description": "Failure behavior target documented",
+      "weight": 4
+    },
+    {
+      "id": "CLI-OWNER",
+      "kind": "single_data_owner",
+      "requirement_id": "FR-003",
+      "description": "Destination content has one owner",
+      "weight": 3,
+      "data_label": "Destination file"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "single_process_solution",
+      "name": "Single-process modular utility",
+      "rationale": "Local file operations benefit from a single deployment unit and clear module interfaces.",
+      "style_families": [
+        "single_process"
+      ],
+      "criteria": [
+        {
+          "id": "CLI-DATA",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-002",
+          "description": "Transformation flows across modules",
+          "weight": 3,
+          "relationship_kind": "data_flow"
+        },
+        {
+          "id": "CLI-FAIL",
+          "kind": "failure_contract",
+          "requirement_id": "NFR-001",
+          "description": "Input/output errors described in a contract",
+          "weight": 3
+        },
+        {
+          "id": "CLI-ENTRY",
+          "kind": "interface_contract",
+          "requirement_id": "FR-001",
+          "description": "Input decoding module contract",
+          "weight": 2,
+          "direction": "inbound",
+          "interface_kind": "function"
+        }
+      ]
+    }
+  ]
+}

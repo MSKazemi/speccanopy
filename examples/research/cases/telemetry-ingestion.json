@@ -1,0 +1,177 @@
+{
+  "id": "telemetry_ingestion",
+  "title": "Multi-tenant telemetry event pipeline",
+  "split": "public_holdout",
+  "brief": {
+    "system": "Multi-tenant telemetry ingestion",
+    "goals": [
+      "Ingest and query events by tenant"
+    ],
+    "actors": [
+      "Telemetry devices",
+      "Tenant analyst"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Receive telemetry events",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Validate event schemas",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Persist accepted events",
+        "mandatory": true
+      },
+      {
+        "id": "FR-004",
+        "statement": "Query tenant aggregates",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "security",
+        "statement": "Enforce tenant isolation",
+        "mandatory": true
+      },
+      {
+        "id": "NFR-002",
+        "attribute": "reliability",
+        "statement": "Specify duplicate delivery handling",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "event-driven ingestion",
+      "max_depth": 4,
+      "max_nodes": 20,
+      "max_refinement_rounds": 2
+    }
+  },
+  "provenance": {
+    "origin": "synthetic_curated",
+    "curator": "Speccanopy maintainers",
+    "usage_rights": "Synthetic original fixture; freely reusable with project attribution",
+    "limitations": "Illustrative rule-based case only. NOT independently reviewed by experts; reference alternatives are hypotheses.",
+    "review_claims": []
+  },
+  "common_criteria": [
+    {
+      "id": "TE-INGEST",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-001",
+      "description": "Ingress responsibility assigned",
+      "weight": 4
+    },
+    {
+      "id": "TE-VALIDATE",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-002",
+      "description": "Schema validation assigned",
+      "weight": 4
+    },
+    {
+      "id": "TE-STORE",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-003",
+      "description": "Event persistence assigned",
+      "weight": 4
+    },
+    {
+      "id": "TE-QUERY",
+      "kind": "requirement_mapped",
+      "requirement_id": "FR-004",
+      "description": "Read models assigned",
+      "weight": 4
+    },
+    {
+      "id": "TE-TENANT",
+      "kind": "quality_target",
+      "requirement_id": "NFR-001",
+      "description": "Tenant isolation target stated",
+      "weight": 5
+    },
+    {
+      "id": "TE-DEDUPE",
+      "kind": "quality_target",
+      "requirement_id": "NFR-002",
+      "description": "Duplicate handling target stated",
+      "weight": 4
+    },
+    {
+      "id": "TE-OWNER",
+      "kind": "single_data_owner",
+      "requirement_id": "FR-003",
+      "description": "Validated event records have one owner",
+      "weight": 3,
+      "data_label": "Validated events"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "async_pipeline",
+      "name": "Event-driven pipeline",
+      "rationale": "Asynchronous event transfer with explicitly owned storage and validation stages.",
+      "style_families": [
+        "event_driven"
+      ],
+      "criteria": [
+        {
+          "id": "TE-EVENT-1",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-001",
+          "description": "Input event published",
+          "weight": 4,
+          "relationship_kind": "event"
+        },
+        {
+          "id": "TE-EVENT-2",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-003",
+          "description": "Validated event persisted via event",
+          "weight": 4,
+          "relationship_kind": "event"
+        },
+        {
+          "id": "TE-AUTH",
+          "kind": "typed_interaction",
+          "requirement_id": "NFR-001",
+          "description": "Tenant trust boundary recorded",
+          "weight": 5,
+          "relationship_kind": "trust_boundary"
+        }
+      ]
+    },
+    {
+      "id": "in_process_pipeline",
+      "name": "Single-process queued pipeline",
+      "rationale": "May be appropriate for small, bounded ingestion loads; throughput proof pending.",
+      "style_families": [
+        "modular_monolith"
+      ],
+      "criteria": [
+        {
+          "id": "TE-QUEUE",
+          "kind": "typed_interaction",
+          "requirement_id": "FR-002",
+          "description": "In-process data stage",
+          "weight": 4,
+          "relationship_kind": "data_flow"
+        },
+        {
+          "id": "TE-LOCAL",
+          "kind": "failure_contract",
+          "requirement_id": "NFR-002",
+          "description": "Local replay failure contract",
+          "weight": 4
+        }
+      ]
+    }
+  ]
+}

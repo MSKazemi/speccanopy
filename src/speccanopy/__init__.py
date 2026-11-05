@@ -94,3 +94,16 @@ __all__ += [
     "ReferenceCriterion", "ReferenceRubric", "BenchmarkAssessment", "BenchmarkComparison",
     "evaluate_reference", "compare_reference",
 ]
+
+from .research import (
+    ResearchCriterion, AcceptableAlternative, ReviewClaim, CaseProvenance,
+    ResearchCase, ResearchAssessment, ResearchSuite, SuiteAssessment,
+    evaluate_case, summarize_suite,
+)
+from .research_exporters import export_research, research_markdown, suite_markdown
+
+__all__ += [
+    "ResearchCriterion", "AcceptableAlternative", "ReviewClaim", "CaseProvenance",
+    "ResearchCase", "ResearchAssessment", "ResearchSuite", "SuiteAssessment",
+    "evaluate_case", "summarize_suite", "export_research", "research_markdown", "suite_markdown",
+]

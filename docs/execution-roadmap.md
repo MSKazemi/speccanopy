@@ -1,6 +1,6 @@
 # Speccanopy execution roadmap — Universal Software Architect
 
-**Status:** Active roadmap; Phases 1–4 include schema, deterministic recursion, advisory review and an optional AI candidate proposer with human acknowledgement (2026-11-05).  
+**Status:** Active roadmap; Phases 1–6 have executable research prototypes, with Phase 6 multi-alternative evaluation and an outstanding independent expert review milestone (2026-11-05).  
 **Date:** 2026-11-04  
 **Product boundary:** Speccanopy designs and validates architecture; it does not autonomously implement, build, test or deploy the software applications being designed.
 
@@ -122,3 +122,11 @@ The first release should provide a CLI and structured artifacts. Only after the 
 **Measured only on curated fixtures:** The e-commerce two-round preview addresses three deterministic interaction-contract findings and changes the authored structural rubric from 51.22% to 100% (11/11 criteria). This does **not** prove real-world architectural correctness or expert review. The CLI baseline scores 100% (7/7) on its narrow curated rubric; file transfer scores 79.31% (6/8). All rubrics remain **curated_unreviewed**.
 
 **Next:** obtain independently expert-reviewed reference architectures across several domains and design alternatives, calibrate semantic quality reviews and evaluate optional AI-generated targeted proposals under the existing approval gates. No target application code generation is planned.
+
+## Phase 6 implementation update (2026-11-05)
+
+**Implemented:** Five curated synthetic application briefs and six candidate architecture entries; alternative-style matching without exact component ID dependence; requirement-linked documentation criteria; provenance and content-digest review claims; split-aware non-certifying reports; adversarial tests for missing owners, invalid links, duplicated data and unsupported styles. See [Phase 6 research evaluation](phase6-architecture-research.md).
+
+**Not yet accomplished:** Real externally authenticated expert assessments, blind held-out comparisons, calibrated semantic correctness metrics, professional review of security/safety/operational trade-offs. Public holdout fixtures are visible and are not genuine independent holdouts. All reviewer claims remain unauthenticated self-declarations.
+
+**Next:** Recruit independent experts and collect non-sensitive or licensed design cases with alternative acceptable solutions; record provenance, review disagreements and false-positive/false-negative rates; perform genuinely withheld tests. Maintain architecture-only product scope and human decision controls.

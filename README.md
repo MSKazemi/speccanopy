@@ -30,17 +30,19 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 5 controlled refinement and reference evaluation:** [docs/phase5-refinement-evaluation.md](docs/phase5-refinement-evaluation.md).
 
+**Phase 6 architecture research and multiple alternatives:** [docs/phase6-architecture-research.md](docs/phase6-architecture-research.md).
+
 ## Status
 
-**Phases 1–5 are prototyped:** typed architecture contracts, adaptive deterministic recursive generation, advisory style/quality review, optional structured AI proposals with a human acknowledgement gate, and **bounded, finding-specific refinement plus reference-rubric evaluation**. The updated CLI and existing regression tests passed **146 tests locally** before committing.
+**Phases 1–6 are implemented as research prototypes:** typed architecture contracts, bounded recursive generation, advisory style/quality reviews, structured AI proposals with human acknowledgement, targeted refinement, and a provenance-aware multi-alternative research evaluator. **178 tests passed locally** on Python 3.13 before committing.
 
-**Limitations:** Refinement edits are **human-authored**, not autonomously proposed by AI. The reference rubrics are **curated and not independently expert-reviewed**. The included benchmark scores represent only explicit structural criterion presence, not correctness or expert approval. Real paid-model API calls have not been validated here. Refined architectures remain incomplete drafts until substantive architecture review.
+**Phase 6 evaluation boundaries:** The suite uses five synthetic application briefs and six candidate architectures spanning CLI, e-commerce, file transfer, embedded control and telemetry. Criteria refer to requirement ownership, interfaces, data and interactions rather than exact component IDs. **There are no independently authenticated expert reviews or genuinely blind held-out cases.** Source-bound review claims are self-declared and remain unverified. No live paid-model API call or empirical correctness certificate is claimed.
 
 ## Next implementation steps
 
-1. Collect independently reviewed architecture references covering multiple valid designs and architectural styles.
-2. Evaluate security, resilience, coupling and domain-specific quality against expert-reviewed scenarios rather than relying on structural presence.
-3. Explore optional AI-proposed targeted edits while preserving deterministic validation, provenance and human approval.
+1. Recruit independent qualified reviewers and gather permissible architecture briefs and multiple acceptable design alternatives with verifiable evidence.
+2. Build a genuinely unseen evaluation set and compare semantic quality, security, distributed consistency, resilience and safety/timing failures against professional judgments.
+3. Calibrate the critique/refinement engine on reviewer disagreements without relaxing deterministic validation, provenance or human decision gates.
 
 ## Run Speccanopy
 
@@ -95,6 +97,15 @@ speccanopy benchmark examples/generated/ecommerce/architecture.json \
 ```
 
 The preview is **not** approved. Releasing a revision requires `speccanopy refine-apply ... --reviewer YOUR_ID --acknowledge-review`; this records a self-declared review acknowledgement, not independent architecture certification.
+
+Evaluate competing architectural alternatives and the synthetic research suite:
+
+```bash
+speccanopy research-case examples/research/cases/ecommerce.json --architecture examples/research/candidates/ecommerce-distributed-unreviewed.json --output out/research-ecommerce
+speccanopy research-suite examples/research/suite.json --output out/research-suite
+```
+
+The research cases are **curated and unreviewed**. The public_holdout partition is a visible regression fixture, not an independent blind benchmark. These commands check architecture documentation signals, not architectural correctness.
 
 Alternatively run `PYTHONPATH=src python -m speccanopy.cli design examples/cli-utility.json --output out/cli-utility` without installing a console script.
 
