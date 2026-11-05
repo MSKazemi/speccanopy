@@ -4,6 +4,8 @@
 
 This document implements the human-research next step from [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) and complements the [Phase 7 review protocol](phase7-expert-panel.md).
 
+For current invitation status, GitHub discoverability and safe outreach channels, see the [outreach distribution and response triage plan](outreach-distribution.md).
+
 ## Purpose and boundaries
 
 Speccanopy is a **universal software architecture design engine**, not an application builder. The objective is to determine whether architecture proposals are defensible under stated functional, security, reliability, data, deployment-design and operational constraints. We need qualified humans to identify semantic faults that automated schema checks cannot establish.
