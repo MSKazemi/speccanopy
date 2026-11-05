@@ -6,6 +6,20 @@
 
 Read alongside [vision-and-goal.md](vision-and-goal.md), [adaptive-recursive-architecture-design.md](adaptive-recursive-architecture-design.md), and [mvp-implementation-plan.md](mvp-implementation-plan.md).
 
+## Immediate next milestone — first external review pilot (checked 2026-11-05)
+
+**Current evidence gate:** The Phase 7 reviewer collection tooling, recruitment forms and GitHub invitations exist. [Reviewer Issue #3](https://github.com/MSKazemi/speccanopy/issues/3) and [benchmark case Issue #4](https://github.com/MSKazemi/speccanopy/issues/4) currently have **zero public responses**. [Research Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) remains open. No real independent-review or permissioned-real-case results should be claimed.
+
+**The next meaningful result is human evidence, not another synthetic score.**
+
+1. **Recruit:** the maintainer shares the [volunteer call](https://github.com/MSKazemi/speccanopy/issues/3) with suitable architects. Privately screen and obtain informed consent from at least **two independently verified qualified people** for each candidate. A public GitHub comment does not count as verification or consent.
+2. **Pilot:** once reviewers genuinely agree, use the public synthetic [e-commerce study](../examples/expert-review/ecommerce-study.json) and [Phase 7 protocol](phase7-expert-panel.md) to distribute candidate-source-blinded packets, receive private assessments and record disagreement. The pilot is **not** a truly blinded holdout, because the candidate architectures are public.
+3. **Report:** evaluate whether reviewers consistently identify missing interface/data-consistency/security risks, report disagreement and false positives/negatives, and publish only anonymized, permissioned findings. If no reviewers participate, report "not started" rather than inventing results.
+4. **Real-world evidence:** in parallel, source one non-sensitive or de-identified application brief with written rights for review; prepare a genuinely unseen holdout under access controls only after lawful permission and a frozen protocol.
+5. **Optional technical parallel track:** improve explicit runtime/data/deployment-*design* views and semantic review prompts, but do not treat those as evidence of architecture correctness until independently assessed.
+
+**Exit criterion:** at least two actually verified, consented, independent reviewer reports for each pilot candidate, with issues/disagreements preserved and a limitations report; then seek a separately permissioned, unseen real-world evaluation. The review software's passing tests are not substitutes for those reports.
+
 ## North-star outcome
 
 Given a software application brief, Speccanopy produces a **reviewable, traceable, implementation-ready architecture specification** and explicitly identifies any assumptions, unresolved requirements, accepted risks or validation gaps.
