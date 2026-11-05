@@ -46,6 +46,8 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 7 has a reviewer-coordination workflow:** the `speccanopy-experts` CLI creates candidate-source-blinded architecture packets, blank expert review templates, a restricted private source manifest and an aggregation of self-declared reviews. Evidence is bound to case and packet SHA-256 digests, and disagreements are reported without automatic architectural certification. **There are no independently authenticated expert assessments or genuinely private holdout results yet.** Test status is reported by the GitHub Actions workflow.
 
+**Quick start for Claude Code:** [What input to give and which files you receive](docs/claude-code-quickstart.md). Includes copyable commands for a separate existing app and a full output directory tree.
+
 ## Document a real project
 
 **Partially ready:** Speccanopy can generate a reviewable structured architecture, two Mermaid views, requirement coverage and an architecture review; it does **not** yet scan an arbitrary source repo or generate a full Markdown architecture documentation pack automatically.
