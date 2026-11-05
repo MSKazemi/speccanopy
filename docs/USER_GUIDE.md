@@ -131,7 +131,7 @@ my-app/
 ### Understanding the results
 
 - `architecture.json` is a **draft**—not proof that the code implements all requirements.
-- `architecture.mmd` shows containment; `relationships.mmd` shows directed interactions. They are Mermaid **source text**, which a Markdown renderer can display using ```mermaid fences.
+- `architecture.mmd` shows containment; `relationships.mmd` shows directed interactions. They are Mermaid **source text**, which a Markdown renderer can display using a fenced code block labeled `mermaid`.
 - `requirements-report.json` distinguishes verified-evidence-linked, planned-only and uncovered requirements. AI-authored claims alone do **not** independently establish verified coverage.
 - `architecture-review.md` is a **heuristic review**, not external expert certification. A source architecture can remain `draft` or `incomplete_requires_review`.
 - `open-questions.md` should be reviewed by you, the project owner; unresolved facts should not be silently treated as accepted design.
