@@ -83,6 +83,8 @@ speccanopy/
         └── quality-review.json
 ```
 
+**Optional source evidence:** Run `speccanopy source-inventory ~/projects/my-app --output out/myproject-inputs/source-inventory.json`, let Claude Code author `source-evidence.json` with actual file hashes and architecture IDs, then run `speccanopy document ... --source-root ~/projects/my-app --source-evidence out/myproject-inputs/source-evidence.json --output out/myproject-source-docs`. This adds `source-evidence.md` and reports changed/missing/unlinked file references (not proof of correctness). See [complete source evidence instructions](source-evidence-workflow.md).
+
 **New built-in baseline Markdown output:** `speccanopy document` automatically produces `out/myproject-docs/` with nine Markdown pages (`README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`) and two Mermaid files (`architecture.mmd` and `relationships.mmd`). These pages describe the supplied architecture, not verified facts about a repository. See [renderer documentation](architecture-documentation-renderer.md).
 
 **Claude Code's optional additional documentation**, if you request it and authorize writes in the app:

@@ -16,11 +16,14 @@ Speccanopy's product scope is **software architecture design and architecture do
 | Create containment and interaction diagrams | Yes | Mermaid `.mmd`, not always a complete runtime, data-flow or deployment architecture |
 | Render an architecture Markdown pack from `ArchitectureSpec` | **Yes, baseline** | `speccanopy document --output EMPTY_DIRECTORY` produces nine Markdown pages and two Mermaid files, without inspecting application code |
 | Generate complete, source-verified docs for arbitrary real applications | **Not built in** | Claude-assisted intake, source provenance, owner review and drift detection are still required |
-| Read any existing source-code repository and infer its architecture | **Not built in** | Claude Code may help manually, with source access; Speccanopy has no built-in repository scanner |
-| Regenerate docs reliably after code/requirement changes | **Not built in** | An owner must reconcile drift and manually maintain accepted decisions |
+| Inventory allowlisted local source files and check author-supplied citations | **Yes, metadata only** | `source-inventory` and optional `document --source-root --source-evidence` compare file hashes, not architectural meaning |
+| Automatically infer architecture semantics from source code | **Not built in** | Claude Code can inspect authorized source, but Speccanopy does not infer implemented behavior or business requirements |
+| Regenerate verified documentation after code/requirement changes | **Partial** | Changed/missing **cited** source-file bytes are flagged; semantic drift and uncited changes still require owner reconciliation |
 | Generate all kinds of project documentation (end-user help, API reference, deployment runbook) | **No** | Out of the current tool's automatic scope |
 
 Neither expert recruitment nor an independent benchmark is a prerequisite for **using** Speccanopy to draft private architecture documentation. It is required before claiming experimentally demonstrated expert-level architecture quality; see [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2).
+
+**New source snapshot workflow:** Follow [source inventory and evidence mapping](source-evidence-workflow.md) to connect your authored requirement/component IDs to live local file hashes and surface missing/changed files. This is not a proof of application behavior.
 
 **Use your Claude Code subscription for the guided workflow:** launch the unmodified `claude` terminal in the Speccanopy checkout after authenticating to your eligible paid plan. You do **not** need a Console API key for Claude Code to inspect your approved project files, author a `SystemBrief` / fixture, and execute local `speccanopy design` and `speccanopy review` commands. The `propose-ai --backend claude` option is a **different, direct API** integration requiring `ANTHROPIC_API_KEY`. If that environment variable is set while using Claude Code, Anthropic says it takes precedence over subscription billing, so remove it before starting a subscription session. See [subscription-versus-API instructions](claude-integration.md#claude-subscription-versus-anthropic-api-key).
 
@@ -145,9 +148,9 @@ Tracked in [Issue #5 — project architecture documentation workflow](https://gi
 
 ### Priority 0: minimum viable documentation product
 
-1. **Project intake:** read an existing repository and produce traceable initial requirements/components from authorized source files, with source references and explicit unknowns. A Claude Code helper is a reasonable first integration; there is no reason to assume a scanner can infer every architectural decision from code.
+1. **Project intake (file metadata groundwork implemented):** `speccanopy source-inventory` lists local allowlisted files and digests, and an authored evidence map can bind IDs to files. Still needed: source-aware **semantic** extraction of requirements/components and explicit unknowns. A Claude Code helper is a reasonable first integration; there is no reason to assume a scanner can infer every architectural decision from code.
 2. **Architecture-document renderer (initial implementation complete):** `speccanopy document` now emits a deterministic baseline architecture pack from `ArchitectureSpec`, preserving missing information as gaps. Remaining: source-backed claims, appropriate design completeness and actual application verification.
-3. **Review and provenance gates:** separate observed implementation from proposed future architecture and verified decisions, with missing requirement/source evidence checks and human signoff for accepted changes.
+3. **Review and provenance gates (partial):** `document --source-root --source-evidence` checks authored file hashes and missing observed links, but cannot prove semantic architecture claims or user approval. Continue separating actual implementation from proposals and keep source/decision signoff with the owner.
 4. **Real-project end-to-end example and CI:** start from a permissible small application repository, extract a brief, design/review it and render a source-linked documentation pack; test reproducibility and invalid/missing evidence.
 
 ### Priority 1: maintainability and breadth

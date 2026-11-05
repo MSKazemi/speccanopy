@@ -22,9 +22,9 @@ Read alongside [vision-and-goal.md](vision-and-goal.md), [adaptive-recursive-arc
 
 ## Documentation productization track (2026-11-05)
 
-**Assessment:** The prototype is usable for guided architecture documentation on a real project but **not** ready as an autonomous documentation generator. `design` requires a per-project fixture; `propose-ai` only proposes component hierarchies; `review` emits advisory review Markdown; `document` now emits a baseline architecture Markdown pack. Source-code inspection, factual provenance and ongoing synchronization are still not built in.
+**Assessment:** The prototype is usable for guided architecture documentation on a real project but **not** ready as an autonomous documentation generator. `design` requires a per-project fixture; `propose-ai` only proposes component hierarchies; `review` emits advisory review Markdown; `document` now emits a baseline architecture Markdown pack. Allowlisted file-metadata inventory and SHA-256-bound source citation checks now exist; semantic understanding, independently corroborated source claims and full documentation synchronization are still not built in.
 
-**Priority P0:** a source-aware Claude Code intake with provenance, **extension of the implemented baseline documentation renderer**, explicit observed/proposed/unknown status gates, and a tested end-to-end application example. **Priority P1:** change-aware regeneration, richer runtime/data/deployment views and optional alternate publishing formats.
+**Priority P0:** a source-aware Claude Code intake with provenance, **extension of the implemented Markdown renderer and source snapshot-checking workflow**, explicit observed/proposed/unknown status gates, and a tested end-to-end application example. **Priority P1:** change-aware regeneration, richer runtime/data/deployment views and optional alternate publishing formats.
 
 Use [the realistic getting-started guide](project-documentation-readiness.md) today. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks the full backlog. This usability track can proceed **in parallel** with independent research Issue #2; absence of external experts does not prevent drafting personal project documentation, but it limits claims of architecture quality.
 
