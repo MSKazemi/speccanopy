@@ -91,3 +91,7 @@ The integration uses the standard library HTTP client and a fixed HTTPS Response
 ## Next milestone
 
 Integrate independent architecture review findings with **bounded targeted redesign**, not just schema repair. Build benchmark cases of varying styles/domains and measure whether AI proposals improve quality over the deterministic fixture baseline. Add optional human-in-the-loop editing and explicit provenance for reviewed interface/data contracts, while preserving the architecture-only product boundary.
+
+## Claude provider integration (2026-11-05)
+
+The same `ComponentProposer` pipeline now accepts an Anthropic Messages API adapter, activated with `--backend claude --model YOUR_AVAILABLE_CLAUDE_MODEL_ID`. See [Claude integration](claude-integration.md) and the repository's `CLAUDE.md`. It uses schema-constrained `output_config.format` and the same local component/provenance/requirement checks, budgets and explicit human acknowledgement as OpenAI. **The Claude transport is mocked in CI; no live Claude API request or independent human design review is claimed.** Existing `--backend openai` and `--backend scripted` are retained.

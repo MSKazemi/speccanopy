@@ -34,6 +34,8 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 7 external reviewer protocol:** [docs/phase7-expert-panel.md](docs/phase7-expert-panel.md).
 
+**Claude Code and Claude API integration:** [docs/claude-integration.md](docs/claude-integration.md). **AI-only case review:** [docs/ai-assisted-case-review.md](docs/ai-assisted-case-review.md).
+
 **Phase 5 controlled refinement and reference evaluation:** [docs/phase5-refinement-evaluation.md](docs/phase5-refinement-evaluation.md).
 
 **Phase 6 architecture research and multiple alternatives:** [docs/phase6-architecture-research.md](docs/phase6-architecture-research.md).
@@ -43,6 +45,20 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 **Phases 1–6 are implemented as prototypes:** typed contracts, deterministic recursion, rule-based style and quality review, optional AI candidate proposals with human acknowledgement, controlled refinement, and multi-alternative synthetic research evaluation.
 
 **Phase 7 has a reviewer-coordination workflow:** the `speccanopy-experts` CLI creates candidate-source-blinded architecture packets, blank expert review templates, a restricted private source manifest and an aggregation of self-declared reviews. Evidence is bound to case and packet SHA-256 digests, and disagreements are reported without automatic architectural certification. **There are no independently authenticated expert assessments or genuinely private holdout results yet.** Test status is reported by the GitHub Actions workflow.
+
+## Using Speccanopy with Claude
+
+Speccanopy is compatible with **Claude Code**: open this repository using `claude` and the checked-in `CLAUDE.md` explains the project rules, test commands and evidence-bound AI architecture review. No Anthropic API key is required for local deterministic reviews.
+
+To generate model-proposed components through the separate **Claude Messages API**, set `ANTHROPIC_API_KEY` and use a model available to your account:
+
+```bash
+speccanopy propose-ai examples/cli-utility.json \
+  --backend claude --model YOUR_CLAUDE_MODEL_ID \
+  --output out/claude-draft
+```
+
+**AI review is useful but not equivalent to an independently authenticated expert review.** The worked [AI desk critique](docs/ai-assisted-case-review.md) makes concrete, source-linked observations on e-commerce, CLI and file-transfer architecture drafts; it is not production certification and does not fulfill human-research Issue #2. Live Claude API behavior has mocked transport coverage only.
 
 ## Participate in independent architecture research
 

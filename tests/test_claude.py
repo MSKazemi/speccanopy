@@ -185,7 +185,7 @@ def test_cli_claude_backend_mocked_end_to_end(tmp_path, monkeypatch):
         calls["n"] += 1
         # AIComponentProposer prompt identifies the parent ID via its JSON payload.
         # Parent order is tested elsewhere; this verifies Claude can feed the full pipeline.
-        parent = ["system", "read", "normalize", "write"][calls["n"] - 1]
+        parent = json.loads(prompt)["parent"]["id"]
         return FakeResponse(message(responses[parent]))
     monkeypatch.setattr(claude, "urlopen", fake_urlopen)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-only-not-real")
