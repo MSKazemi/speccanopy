@@ -107,3 +107,7 @@ __all__ += [
     "ResearchCase", "ResearchAssessment", "ResearchSuite", "SuiteAssessment",
     "evaluate_case", "summarize_suite", "export_research", "research_markdown", "suite_markdown",
 ]
+
+from .claude import ClaudeMessagesClient
+
+__all__ += ["ClaudeMessagesClient"]

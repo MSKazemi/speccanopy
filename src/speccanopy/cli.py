@@ -14,6 +14,7 @@ from .ai import (
     approve_proposal_bundle, brief_digest, draft_architecture, fixture_digest,
 )
 from .ai_exporters import export_ai_draft, export_approved
+from .claude import ClaudeMessagesClient
 from .decomposer import generate_architecture
 from .exporters import export_generation
 from .fixtures import FixtureDesign
@@ -48,8 +49,8 @@ def main(argv: list[str] | None = None) -> int:
     propose_ai = sub.add_parser("propose-ai", help="Draft a component hierarchy using structured AI model proposals")
     propose_ai.add_argument("brief", type=Path)
     propose_ai.add_argument("--output", type=Path, required=True)
-    propose_ai.add_argument("--backend", choices=["openai", "scripted"], default="openai")
-    propose_ai.add_argument("--model", help="Explicit model ID for live Responses API")
+    propose_ai.add_argument("--backend", choices=["openai", "claude", "scripted"], default="openai")
+    propose_ai.add_argument("--model", help="Explicit model ID for live OpenAI Responses or Claude Messages API")
     propose_ai.add_argument("--responses", type=Path, help="Scripted offline responses (not AI inference)")
     propose_ai.add_argument("--max-model-calls", type=int, default=40)
 
@@ -200,8 +201,8 @@ def main(argv: list[str] | None = None) -> int:
                 if args.responses:
                     raise ValueError("--responses is only valid with --backend scripted")
                 if not args.model:
-                    raise ValueError("--model is required for live Responses API proposals")
-                client = OpenAIResponsesClient(args.model)
+                    raise ValueError("--model is required for live model proposals")
+                client = ClaudeMessagesClient(args.model) if args.backend == "claude" else OpenAIResponsesClient(args.model)
             result, bundle = draft_architecture(brief, client, max_model_calls=args.max_model_calls)
             paths = export_ai_draft(result, bundle, args.output)
         except (OSError, ValidationError, ValueError) as exc:
