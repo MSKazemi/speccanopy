@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "speccanopy"
-version = "0.4.0"
-description = "Adaptive recursive software architecture design and AI-assisted proposal review engine"
+version = "0.5.0"
+description = "Adaptive recursive software architecture design and AI-assisted proposal review and controlled architecture refinement engine"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2.9,<3"]

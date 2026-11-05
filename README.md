@@ -28,15 +28,19 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 4 AI-assisted proposals and approval:** [docs/phase4-ai-proposals.md](docs/phase4-ai-proposals.md).
 
+**Phase 5 controlled refinement and reference evaluation:** [docs/phase5-refinement-evaluation.md](docs/phase5-refinement-evaluation.md).
+
 ## Status
 
-**Phases 1–4 are implemented as prototypes:** typed architecture contracts, deterministic recursive generation, advisory style/quality review, and an optional AI-assisted component proposer with strict schema validation, bounded model calls, provenance and explicit human-acknowledgement workflow. **120 tests passed locally** (including the existing 91 tests). A scripted offline example is reproducible. **The live Responses API adapter has mocked transport tests only—no paid model call has been performed in this milestone.** AI outputs remain incomplete architecture drafts and need human review; independently validated architecture generation and full design refinement are not implemented.
+**Phases 1–5 are prototyped:** typed architecture contracts, adaptive deterministic recursive generation, advisory style/quality review, optional structured AI proposals with a human acknowledgement gate, and **bounded, finding-specific refinement plus reference-rubric evaluation**. The updated CLI and existing regression tests passed **146 tests locally** before committing.
+
+**Limitations:** Refinement edits are **human-authored**, not autonomously proposed by AI. The reference rubrics are **curated and not independently expert-reviewed**. The included benchmark scores represent only explicit structural criterion presence, not correctness or expert approval. Real paid-model API calls have not been validated here. Refined architectures remain incomplete drafts until substantive architecture review.
 
 ## Next implementation steps
 
-1. Evaluate AI-generated component boundaries against expert-reviewed benchmark architectures across additional application domains.
-2. Add bounded targeted architectural critique and refinement based on Phase 3 review findings, not merely schema repair.
-3. Add provenance and human review for interfaces, data ownership, integration contracts and quality-attribute decisions.
+1. Collect independently reviewed architecture references covering multiple valid designs and architectural styles.
+2. Evaluate security, resilience, coupling and domain-specific quality against expert-reviewed scenarios rather than relying on structural presence.
+3. Explore optional AI-proposed targeted edits while preserving deterministic validation, provenance and human approval.
 
 ## Run Speccanopy
 
@@ -75,6 +79,22 @@ speccanopy design examples/cli-utility.json \
 ```
 
 For offline testing without an API key, add `--backend scripted --responses examples/ai-scripted-cli.json` to `propose-ai`. This uses authored test responses, **not** a real AI model. The resulting architecture is still `incomplete_requires_review`: proposal approval is not architecture certification. See the Phase 4 guide for privacy and scope limitations.
+
+Preview a **human-authored, two-round refinement** and compare it to a curated structural rubric:
+
+```bash
+speccanopy refine-plan examples/generated/ecommerce/architecture.json \
+  --config examples/ecommerce.review.json \
+  --edits examples/refinement/ecommerce.edits.json \
+  --output out/refinement-preview
+speccanopy benchmark examples/generated/ecommerce/architecture.json \
+  --candidate out/refinement-preview/candidate-preview.json \
+  --config examples/ecommerce.review.json \
+  --rubric examples/refinement/ecommerce.rubric.json \
+  --output out/refinement-benchmark
+```
+
+The preview is **not** approved. Releasing a revision requires `speccanopy refine-apply ... --reviewer YOUR_ID --acknowledge-review`; this records a self-declared review acknowledgement, not independent architecture certification.
 
 Alternatively run `PYTHONPATH=src python -m speccanopy.cli design examples/cli-utility.json --output out/cli-utility` without installing a console script.
 

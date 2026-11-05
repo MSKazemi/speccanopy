@@ -1,0 +1,14 @@
+{
+  "name": "CLI single-process design smoke rubric",
+  "source": "Maintainer-curated criteria derived from the example requirements; no independent expert review",
+  "status": "curated_unreviewed",
+  "criteria": [
+    {"id": "REF-CLI-01", "kind": "component_present", "component_id": "input", "description": "Explicit input handling boundary", "weight": 3},
+    {"id": "REF-CLI-02", "kind": "component_present", "component_id": "normalize", "description": "Explicit transformation boundary", "weight": 3},
+    {"id": "REF-CLI-03", "kind": "component_present", "component_id": "output", "description": "Explicit output handling boundary", "weight": 3},
+    {"id": "REF-CLI-04", "kind": "relationship_present", "source_id": "input", "target_id": "normalize", "relationship_kind": "data_flow", "description": "Input text flow is modeled", "weight": 3},
+    {"id": "REF-CLI-05", "kind": "quality_target_present", "component_id": "input", "requirement_id": "NFR-001", "description": "Read failure objective is documented", "weight": 4},
+    {"id": "REF-CLI-06", "kind": "scenario_design_complete", "scenario_id": "SC-CLI-RELIABILITY", "description": "Reliability scenario has no rule-detected structural gaps", "weight": 5},
+    {"id": "REF-CLI-07", "kind": "verification_planned", "requirement_id": "NFR-001", "description": "Reliability design review is planned", "weight": 2}
+  ]
+}

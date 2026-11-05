@@ -1,0 +1,216 @@
+{
+  "before": {
+    "system": "E-commerce order platform",
+    "rubric_name": "E-commerce interface boundary regression rubric",
+    "rubric_status": "curated_unreviewed",
+    "score": 51.22,
+    "satisfied": 6,
+    "total": 11,
+    "missing_criteria": [
+      "REF-EC-06",
+      "REF-EC-07",
+      "REF-EC-08",
+      "REF-EC-09",
+      "REF-EC-10"
+    ],
+    "results": [
+      {
+        "id": "REF-EC-01",
+        "kind": "component_present",
+        "description": "Payments capability exists",
+        "weight": 3,
+        "present": true,
+        "reason": "Component is represented in the hierarchy"
+      },
+      {
+        "id": "REF-EC-02",
+        "kind": "component_present",
+        "description": "Order capability exists",
+        "weight": 3,
+        "present": true,
+        "reason": "Component is represented in the hierarchy"
+      },
+      {
+        "id": "REF-EC-03",
+        "kind": "relationship_present",
+        "description": "Authorization boundary is traced",
+        "weight": 5,
+        "present": true,
+        "reason": "Typed interaction is represented"
+      },
+      {
+        "id": "REF-EC-04",
+        "kind": "scenario_design_complete",
+        "description": "Authorization scenario has no listed structural design gaps",
+        "weight": 5,
+        "present": true,
+        "reason": "No rule-based scenario design gaps"
+      },
+      {
+        "id": "REF-EC-05",
+        "kind": "quality_target_present",
+        "description": "Idempotency target documented",
+        "weight": 3,
+        "present": true,
+        "reason": "Quality target is recorded"
+      },
+      {
+        "id": "REF-EC-06",
+        "kind": "interface_present",
+        "description": "Orders have a payment request boundary",
+        "weight": 4,
+        "present": false,
+        "reason": "Required directional contract is missing"
+      },
+      {
+        "id": "REF-EC-07",
+        "kind": "interface_present",
+        "description": "Orders publish inventory events",
+        "weight": 4,
+        "present": false,
+        "reason": "Required directional contract is missing"
+      },
+      {
+        "id": "REF-EC-08",
+        "kind": "interface_present",
+        "description": "Inventory consumes reservation events",
+        "weight": 4,
+        "present": false,
+        "reason": "Required directional contract is missing"
+      },
+      {
+        "id": "REF-EC-09",
+        "kind": "interface_present",
+        "description": "Lifecycle publishes status events",
+        "weight": 4,
+        "present": false,
+        "reason": "Required directional contract is missing"
+      },
+      {
+        "id": "REF-EC-10",
+        "kind": "interface_present",
+        "description": "Tracking consumes status events",
+        "weight": 4,
+        "present": false,
+        "reason": "Required directional contract is missing"
+      },
+      {
+        "id": "REF-EC-11",
+        "kind": "verification_planned",
+        "description": "Authorization has verification plan (not necessarily verified)",
+        "weight": 2,
+        "present": true,
+        "reason": "Requirement has a linked verification case"
+      }
+    ],
+    "high_or_critical_findings": 0,
+    "uncovered_mandatory": [],
+    "caveat": "This score is criterion presence under a human-authored rubric, NOT independent architecture correctness, expert certification, performance or security validation."
+  },
+  "after": {
+    "system": "E-commerce order platform",
+    "rubric_name": "E-commerce interface boundary regression rubric",
+    "rubric_status": "curated_unreviewed",
+    "score": 100.0,
+    "satisfied": 11,
+    "total": 11,
+    "missing_criteria": [],
+    "results": [
+      {
+        "id": "REF-EC-01",
+        "kind": "component_present",
+        "description": "Payments capability exists",
+        "weight": 3,
+        "present": true,
+        "reason": "Component is represented in the hierarchy"
+      },
+      {
+        "id": "REF-EC-02",
+        "kind": "component_present",
+        "description": "Order capability exists",
+        "weight": 3,
+        "present": true,
+        "reason": "Component is represented in the hierarchy"
+      },
+      {
+        "id": "REF-EC-03",
+        "kind": "relationship_present",
+        "description": "Authorization boundary is traced",
+        "weight": 5,
+        "present": true,
+        "reason": "Typed interaction is represented"
+      },
+      {
+        "id": "REF-EC-04",
+        "kind": "scenario_design_complete",
+        "description": "Authorization scenario has no listed structural design gaps",
+        "weight": 5,
+        "present": true,
+        "reason": "No rule-based scenario design gaps"
+      },
+      {
+        "id": "REF-EC-05",
+        "kind": "quality_target_present",
+        "description": "Idempotency target documented",
+        "weight": 3,
+        "present": true,
+        "reason": "Quality target is recorded"
+      },
+      {
+        "id": "REF-EC-06",
+        "kind": "interface_present",
+        "description": "Orders have a payment request boundary",
+        "weight": 4,
+        "present": true,
+        "reason": "Directional contract is specified"
+      },
+      {
+        "id": "REF-EC-07",
+        "kind": "interface_present",
+        "description": "Orders publish inventory events",
+        "weight": 4,
+        "present": true,
+        "reason": "Directional contract is specified"
+      },
+      {
+        "id": "REF-EC-08",
+        "kind": "interface_present",
+        "description": "Inventory consumes reservation events",
+        "weight": 4,
+        "present": true,
+        "reason": "Directional contract is specified"
+      },
+      {
+        "id": "REF-EC-09",
+        "kind": "interface_present",
+        "description": "Lifecycle publishes status events",
+        "weight": 4,
+        "present": true,
+        "reason": "Directional contract is specified"
+      },
+      {
+        "id": "REF-EC-10",
+        "kind": "interface_present",
+        "description": "Tracking consumes status events",
+        "weight": 4,
+        "present": true,
+        "reason": "Directional contract is specified"
+      },
+      {
+        "id": "REF-EC-11",
+        "kind": "verification_planned",
+        "description": "Authorization has verification plan (not necessarily verified)",
+        "weight": 2,
+        "present": true,
+        "reason": "Requirement has a linked verification case"
+      }
+    ],
+    "high_or_critical_findings": 0,
+    "uncovered_mandatory": [],
+    "caveat": "This score is criterion presence under a human-authored rubric, NOT independent architecture correctness, expert certification, performance or security validation."
+  },
+  "delta_points": 48.78,
+  "reduced_high_or_critical": 0,
+  "introduced_missing_criteria": [],
+  "caveat": "A positive rubric score delta only means more authored structural checks match; human domain review and real-world architectural validation remain necessary."
+}

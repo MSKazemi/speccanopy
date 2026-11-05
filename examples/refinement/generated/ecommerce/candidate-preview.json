@@ -1,0 +1,720 @@
+{
+  "brief": {
+    "system": "E-commerce order platform",
+    "goals": [
+      "Enable catalog browsing, ordering, payment and order tracking"
+    ],
+    "actors": [
+      "Customer",
+      "Operations staff"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Customers browse products",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Customers submit orders",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Customers pay for orders",
+        "mandatory": true
+      },
+      {
+        "id": "FR-004",
+        "statement": "Customers track order status",
+        "mandatory": true
+      },
+      {
+        "id": "FR-005",
+        "statement": "Inventory is reserved for accepted orders",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "security",
+        "statement": "Payments and order changes require authorization",
+        "mandatory": true
+      },
+      {
+        "id": "NFR-002",
+        "attribute": "reliability",
+        "statement": "Prevent duplicate order charges",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "modular monolith",
+      "max_depth": 6,
+      "max_nodes": 150,
+      "max_refinement_rounds": 3
+    }
+  },
+  "selected_style": "modular monolith",
+  "components": [
+    {
+      "id": "system",
+      "name": "E-commerce order platform",
+      "responsibility": "Coordinate the application capabilities and system-wide requirements",
+      "boundary": "Application API with modular monolith boundary",
+      "parent_id": null,
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "system_entry",
+          "direction": "inbound",
+          "kind": "api",
+          "description": "Architectural contract for system_entry",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Application state is owned by designated child components",
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": null,
+      "status": "requires_review"
+    },
+    {
+      "id": "catalog",
+      "name": "Product Catalog",
+      "responsibility": "Serve product browsing",
+      "boundary": "Catalog module",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "catalog_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for catalog_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Product metadata"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for catalog"
+      ],
+      "stop_reason": "Further decomposition of catalog is not required for this sample scope",
+      "priority_score": 4.95,
+      "status": "ready"
+    },
+    {
+      "id": "orders",
+      "name": "Order Management",
+      "responsibility": "Manage order lifecycle and status",
+      "boundary": "Orders bounded context",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-002",
+        "FR-004",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "orders_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for orders_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        },
+        {
+          "name": "charge_request",
+          "direction": "outbound",
+          "kind": "function",
+          "description": "Proposed charge_request contract; message/operation payload, auth and reliability require human review",
+          "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+        },
+        {
+          "name": "inventory_reservation_published",
+          "direction": "outbound",
+          "kind": "event",
+          "description": "Proposed inventory_reservation_published contract; message/operation payload, auth and reliability require human review",
+          "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Order records"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": 8.95,
+      "status": "requires_review"
+    },
+    {
+      "id": "payments",
+      "name": "Payments",
+      "responsibility": "Coordinate authorized payments",
+      "boundary": "Payment boundary with external provider",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-001",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "payments_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for payments_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Payment transaction references"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {
+        "NFR-001": "Authenticated payment initiation",
+        "NFR-002": "Enforce idempotency keys for each payment intent"
+      },
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for payments"
+      ],
+      "stop_reason": "Further decomposition of payments is not required for this sample scope",
+      "priority_score": 9.5,
+      "status": "ready"
+    },
+    {
+      "id": "inventory",
+      "name": "Inventory",
+      "responsibility": "Reserve stock on accepted orders",
+      "boundary": "Inventory bounded context",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-005"
+      ],
+      "interfaces": [
+        {
+          "name": "inventory_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for inventory_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        },
+        {
+          "name": "inventory_reservation_received",
+          "direction": "inbound",
+          "kind": "event",
+          "description": "Proposed inventory_reservation_received contract; message/operation payload, auth and reliability require human review",
+          "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Inventory levels and reservations"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": 7.65,
+      "status": "requires_review"
+    },
+    {
+      "id": "identity",
+      "name": "Identity and Authorization",
+      "responsibility": "Enforce actor permissions",
+      "boundary": "Identity boundary",
+      "parent_id": "system",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "identity_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for identity_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Authorization policies"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {
+        "NFR-001": "Require authorized actor for payment and order changes"
+      },
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for identity"
+      ],
+      "stop_reason": "Further decomposition of identity is not required for this sample scope",
+      "priority_score": 8.8,
+      "status": "ready"
+    },
+    {
+      "id": "payment_auth",
+      "name": "Payment Authorization",
+      "responsibility": "Check payment request permissions",
+      "boundary": "Payment authorization boundary",
+      "parent_id": "payments",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "payment_auth_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for payment_auth_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Payment Authorization is stateless or delegates persistence to an owning component",
+      "quality_targets": {
+        "NFR-001": "Deny unauthorized payment requests"
+      },
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for payment_auth"
+      ],
+      "stop_reason": "Further decomposition of payment_auth is not required for this sample scope",
+      "priority_score": 8.5,
+      "status": "ready"
+    },
+    {
+      "id": "payment_gateway",
+      "name": "Payment Gateway Adapter",
+      "responsibility": "Submit idempotent payment requests",
+      "boundary": "External processor adapter",
+      "parent_id": "payments",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "payment_gateway_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for payment_gateway_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Processor payment tokens"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {
+        "NFR-002": "Repeat payment intents with identical idempotency key"
+      },
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for payment_gateway"
+      ],
+      "stop_reason": "Further decomposition of payment_gateway is not required for this sample scope",
+      "priority_score": 9.3,
+      "status": "ready"
+    },
+    {
+      "id": "order_validation",
+      "name": "Order Validation",
+      "responsibility": "Validate submitted order contents and actor",
+      "boundary": "Orders validation module",
+      "parent_id": "orders",
+      "requirement_ids": [
+        "FR-002",
+        "NFR-001"
+      ],
+      "interfaces": [
+        {
+          "name": "order_validation_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for order_validation_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Order Validation is stateless or delegates persistence to an owning component",
+      "quality_targets": {
+        "NFR-001": "Validate authenticated caller role"
+      },
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for order_validation"
+      ],
+      "stop_reason": "Further decomposition of order_validation is not required for this sample scope",
+      "priority_score": 6.75,
+      "status": "ready"
+    },
+    {
+      "id": "order_lifecycle",
+      "name": "Order Lifecycle",
+      "responsibility": "Transition order states",
+      "boundary": "Orders workflow boundary",
+      "parent_id": "orders",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "order_lifecycle_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for order_lifecycle_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        },
+        {
+          "name": "order_status_published",
+          "direction": "outbound",
+          "kind": "event",
+          "description": "Proposed order_status_published contract; message/operation payload, auth and reliability require human review",
+          "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [
+        "Order state changes"
+      ],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": 8.55,
+      "status": "requires_review"
+    },
+    {
+      "id": "order_tracking",
+      "name": "Order Tracking",
+      "responsibility": "Expose order status projections",
+      "boundary": "Orders query boundary",
+      "parent_id": "orders",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "interfaces": [
+        {
+          "name": "order_tracking_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for order_tracking_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        },
+        {
+          "name": "order_status_received",
+          "direction": "inbound",
+          "kind": "event",
+          "description": "Proposed order_status_received contract; message/operation payload, auth and reliability require human review",
+          "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Order Tracking is stateless or delegates persistence to an owning component",
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": 4.9,
+      "status": "requires_review"
+    },
+    {
+      "id": "order_state_machine",
+      "name": "Order State Machine",
+      "responsibility": "Enforce valid order-state transitions",
+      "boundary": "Internal state machine",
+      "parent_id": "order_lifecycle",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "interfaces": [
+        {
+          "name": "order_state_machine_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for order_state_machine_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Order State Machine is stateless or delegates persistence to an owning component",
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for order_state_machine"
+      ],
+      "stop_reason": "Further decomposition of order_state_machine is not required for this sample scope",
+      "priority_score": 7.35,
+      "status": "ready"
+    },
+    {
+      "id": "order_notifications",
+      "name": "Order Notifications",
+      "responsibility": "Publish status change notifications",
+      "boundary": "Internal notification adapter",
+      "parent_id": "order_lifecycle",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "interfaces": [
+        {
+          "name": "order_notifications_contract",
+          "direction": "inbound",
+          "kind": "function",
+          "description": "Architectural contract for order_notifications_contract",
+          "failure_behavior": "Return an explicit error; no silent success"
+        }
+      ],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": "Order Notifications is stateless or delegates persistence to an owning component",
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [
+        "Curated fixture documents responsibility, interface and data boundary for order_notifications"
+      ],
+      "stop_reason": "Further decomposition of order_notifications is not required for this sample scope",
+      "priority_score": 3.75,
+      "status": "ready"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "REL-EC-01",
+      "source_id": "catalog",
+      "target_id": "orders",
+      "kind": "dependency",
+      "description": "Order line-items refer to published products",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002"
+      ]
+    },
+    {
+      "id": "REL-EC-02",
+      "source_id": "orders",
+      "target_id": "payments",
+      "kind": "synchronous_call",
+      "description": "Request payment intent",
+      "requirement_ids": [
+        "FR-002",
+        "FR-003"
+      ]
+    },
+    {
+      "id": "REL-EC-03",
+      "source_id": "orders",
+      "target_id": "inventory",
+      "kind": "event",
+      "description": "Reserve stock after order validation",
+      "requirement_ids": [
+        "FR-005"
+      ]
+    },
+    {
+      "id": "REL-EC-04",
+      "source_id": "payments",
+      "target_id": "identity",
+      "kind": "trust_boundary",
+      "description": "Payment actor checked before external call",
+      "requirement_ids": [
+        "NFR-001"
+      ]
+    },
+    {
+      "id": "REL-EC-05",
+      "source_id": "payment_gateway",
+      "target_id": "payment_auth",
+      "kind": "dependency",
+      "description": "Gateway adapter is gated by authorization",
+      "requirement_ids": [
+        "NFR-001",
+        "NFR-002"
+      ]
+    },
+    {
+      "id": "REL-EC-06",
+      "source_id": "order_lifecycle",
+      "target_id": "order_tracking",
+      "kind": "event",
+      "description": "Update order tracking projection",
+      "requirement_ids": [
+        "FR-004"
+      ]
+    }
+  ],
+  "verification_cases": [
+    {
+      "id": "VC-EC-01",
+      "description": "Review browse/catalog requirements",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-001"
+      ],
+      "component_ids": [
+        "catalog"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-EC-02",
+      "description": "Review valid and invalid order submissions",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "component_ids": [
+        "order_validation"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-EC-03",
+      "description": "Review payment gateway contract",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-003"
+      ],
+      "component_ids": [
+        "payment_gateway"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-EC-04",
+      "description": "Review status query contract",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-004"
+      ],
+      "component_ids": [
+        "order_tracking"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-EC-05",
+      "description": "Review inventory reservation contract",
+      "method": "design_review",
+      "requirement_ids": [
+        "FR-005"
+      ],
+      "component_ids": [
+        "inventory"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-EC-06",
+      "description": "Review access control threat boundary",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-001"
+      ],
+      "component_ids": [
+        "payment_auth"
+      ],
+      "status": "planned",
+      "evidence": null
+    },
+    {
+      "id": "VC-EC-07",
+      "description": "Review idempotency and duplicate-charge design",
+      "method": "design_review",
+      "requirement_ids": [
+        "NFR-002"
+      ],
+      "component_ids": [
+        "payment_gateway"
+      ],
+      "status": "planned",
+      "evidence": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-EC-01",
+      "title": "Start with modular monolith",
+      "choice": "Single deployment with bounded contexts",
+      "rationale": "The application scope can be implemented without independent service deployment",
+      "alternatives": [
+        "Microservices",
+        "Serverless"
+      ],
+      "tradeoffs": [
+        "Simpler transactions/operations; deployments remain coupled"
+      ],
+      "requirement_ids": [],
+      "status": "accepted"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FIND-EC-01",
+      "severity": "medium",
+      "description": "Review inventory consistency when payment fails",
+      "requirement_ids": [
+        "FR-005",
+        "NFR-002"
+      ],
+      "component_ids": [
+        "inventory",
+        "payments"
+      ],
+      "status": "open"
+    }
+  ],
+  "status": "incomplete_requires_review"
+}

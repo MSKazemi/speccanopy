@@ -1,0 +1,81 @@
+{
+  "system": "Multi-backend file transfer service",
+  "rubric_name": "File-transfer asynchronous design smoke rubric",
+  "rubric_status": "curated_unreviewed",
+  "score": 79.31,
+  "satisfied": 6,
+  "total": 8,
+  "missing_criteria": [
+    "REF-FT-06",
+    "REF-FT-07"
+  ],
+  "results": [
+    {
+      "id": "REF-FT-01",
+      "kind": "component_present",
+      "description": "Credential scope is a separate component",
+      "weight": 4,
+      "present": true,
+      "reason": "Component is represented in the hierarchy"
+    },
+    {
+      "id": "REF-FT-02",
+      "kind": "component_present",
+      "description": "Recovery responsibility represented",
+      "weight": 3,
+      "present": true,
+      "reason": "Component is represented in the hierarchy"
+    },
+    {
+      "id": "REF-FT-03",
+      "kind": "relationship_present",
+      "description": "Credential trust boundary shown",
+      "weight": 5,
+      "present": true,
+      "reason": "Typed interaction is represented"
+    },
+    {
+      "id": "REF-FT-04",
+      "kind": "quality_target_present",
+      "description": "Credential handling target documented",
+      "weight": 4,
+      "present": true,
+      "reason": "Quality target is recorded"
+    },
+    {
+      "id": "REF-FT-05",
+      "kind": "scenario_design_complete",
+      "description": "Credential scenario has no rule-detected design gaps",
+      "weight": 5,
+      "present": true,
+      "reason": "No rule-based scenario design gaps"
+    },
+    {
+      "id": "REF-FT-06",
+      "kind": "interface_present",
+      "description": "Intake event producer contract exists",
+      "weight": 3,
+      "present": false,
+      "reason": "Required directional contract is missing"
+    },
+    {
+      "id": "REF-FT-07",
+      "kind": "interface_present",
+      "description": "Transfer planner event consumer contract exists",
+      "weight": 3,
+      "present": false,
+      "reason": "Required directional contract is missing"
+    },
+    {
+      "id": "REF-FT-08",
+      "kind": "verification_planned",
+      "description": "Security design review is planned",
+      "weight": 2,
+      "present": true,
+      "reason": "Requirement has a linked verification case"
+    }
+  ],
+  "high_or_critical_findings": 0,
+  "uncovered_mandatory": [],
+  "caveat": "This score is criterion presence under a human-authored rubric, NOT independent architecture correctness, expert certification, performance or security validation."
+}

@@ -73,3 +73,7 @@ This does **not** change Phase 1's distinction between component `ready` (struct
 ## Phase 3 advisory review extension
 
 See [Phase 3 review](phase3-review.md). Style comparison accepts explicit weighted design drivers; quality rules inspect requirement-linked scenarios, documented evidence, data ownership and directional interaction contracts. Reviews are separate artifacts and **never upgrade** a draft to `validated_for_scope`. Heuristic recommendations and rule-based findings require human interpretation.
+
+## Phase 5 constrained refinement and rubric checks
+
+See [Phase 5 guide](phase5-refinement-evaluation.md). The deterministic Phase 3 review findings can be used to bind explicitly human-authored, scoped patches. Refinement runs are bounded by the brief's `max_refinement_rounds`, preserve mandatory coverage, reject new high/critical findings and invalidate stale component and verification evidence. Preview is separate from reviewer acknowledgement; no operation may assert `validated_for_scope`. A reference-rubric score is weighted structural criterion presence only, not domain correctness or independently authenticated expert signoff.\n

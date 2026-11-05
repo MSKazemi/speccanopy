@@ -1,0 +1,110 @@
+{
+  "author": "curated-example-author-no-expert-attestation",
+  "patches": [
+    {
+      "id": "PATCH-EC-01",
+      "round": 1,
+      "finding_id": "REVIEW-004",
+      "finding_category": "interaction_contract",
+      "kind": "add_interface",
+      "rationale": "Define the outbound request boundary used when placing a payment",
+      "component_id": "orders",
+      "requirement_id": null,
+      "interface": {
+        "name": "charge_request",
+        "direction": "outbound",
+        "kind": "function",
+        "description": "Proposed charge_request contract; message/operation payload, auth and reliability require human review",
+        "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+      },
+      "relationship": null,
+      "target_text": null,
+      "data_name": null,
+      "verification_case": null
+    },
+    {
+      "id": "PATCH-EC-02",
+      "round": 1,
+      "finding_id": "REVIEW-005",
+      "finding_category": "interaction_contract",
+      "kind": "add_interface",
+      "rationale": "Document the producer role for inventory reservation events",
+      "component_id": "orders",
+      "requirement_id": null,
+      "interface": {
+        "name": "inventory_reservation_published",
+        "direction": "outbound",
+        "kind": "event",
+        "description": "Proposed inventory_reservation_published contract; message/operation payload, auth and reliability require human review",
+        "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+      },
+      "relationship": null,
+      "target_text": null,
+      "data_name": null,
+      "verification_case": null
+    },
+    {
+      "id": "PATCH-EC-03",
+      "round": 1,
+      "finding_id": "REVIEW-005",
+      "finding_category": "interaction_contract",
+      "kind": "add_interface",
+      "rationale": "Document the consumer role and failure semantics for reservations",
+      "component_id": "inventory",
+      "requirement_id": null,
+      "interface": {
+        "name": "inventory_reservation_received",
+        "direction": "inbound",
+        "kind": "event",
+        "description": "Proposed inventory_reservation_received contract; message/operation payload, auth and reliability require human review",
+        "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+      },
+      "relationship": null,
+      "target_text": null,
+      "data_name": null,
+      "verification_case": null
+    },
+    {
+      "id": "PATCH-EC-04",
+      "round": 2,
+      "finding_id": "REVIEW-004",
+      "finding_category": "interaction_contract",
+      "kind": "add_interface",
+      "rationale": "Provide a status-change event contract for the lifecycle component",
+      "component_id": "order_lifecycle",
+      "requirement_id": null,
+      "interface": {
+        "name": "order_status_published",
+        "direction": "outbound",
+        "kind": "event",
+        "description": "Proposed order_status_published contract; message/operation payload, auth and reliability require human review",
+        "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+      },
+      "relationship": null,
+      "target_text": null,
+      "data_name": null,
+      "verification_case": null
+    },
+    {
+      "id": "PATCH-EC-05",
+      "round": 2,
+      "finding_id": "REVIEW-004",
+      "finding_category": "interaction_contract",
+      "kind": "add_interface",
+      "rationale": "Provide a typed consumer contract for order tracking updates",
+      "component_id": "order_tracking",
+      "requirement_id": null,
+      "interface": {
+        "name": "order_status_received",
+        "direction": "inbound",
+        "kind": "event",
+        "description": "Proposed order_status_received contract; message/operation payload, auth and reliability require human review",
+        "failure_behavior": "Explicit timeout/failure reporting; no implied delivery guarantee"
+      },
+      "relationship": null,
+      "target_text": null,
+      "data_name": null,
+      "verification_case": null
+    }
+  ]
+}

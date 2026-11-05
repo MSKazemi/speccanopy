@@ -114,3 +114,11 @@ The first release should provide a CLI and structured artifacts. Only after the 
 ## Decision summary
 
 **Completed as test-driven prototypes:** architecture contracts, bounded recursive generator, advisory style/quality reviewer, and model-backed component *proposals* with structured output, provenance and an explicit human acknowledgement gate. **Next:** empirical benchmarking and bounded targeted *architectural* refinement, plus richer runtime, data and deployment-design views. The goal remains architecture design, not application building. See [Phase 4](phase4-ai-proposals.md).
+
+## Phase 5 implementation update (2026-11-05)
+
+**Implemented:** finding-specific, human-authored patch requests, bounded refinement simulation, integrity-checked review previews, per-round quality re-review, invalidation of affected prior verification evidence, an explicit reviewer acknowledgement gate and weighted structural reference rubrics. See [Phase 5 refinement and evaluation](phase5-refinement-evaluation.md).
+
+**Measured only on curated fixtures:** The e-commerce two-round preview addresses three deterministic interaction-contract findings and changes the authored structural rubric from 51.22% to 100% (11/11 criteria). This does **not** prove real-world architectural correctness or expert review. The CLI baseline scores 100% (7/7) on its narrow curated rubric; file transfer scores 79.31% (6/8). All rubrics remain **curated_unreviewed**.
+
+**Next:** obtain independently expert-reviewed reference architectures across several domains and design alternatives, calibrate semantic quality reviews and evaluate optional AI-generated targeted proposals under the existing approval gates. No target application code generation is planned.

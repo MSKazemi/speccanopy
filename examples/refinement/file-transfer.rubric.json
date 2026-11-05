@@ -1,0 +1,15 @@
+{
+  "name": "File-transfer asynchronous design smoke rubric",
+  "source": "Maintainer-curated criteria derived from file-transfer example; no independent expert review",
+  "status": "curated_unreviewed",
+  "criteria": [
+    {"id": "REF-FT-01", "kind": "component_present", "component_id": "s3_credentials", "description": "Credential scope is a separate component", "weight": 4},
+    {"id": "REF-FT-02", "kind": "component_present", "component_id": "recovery", "description": "Recovery responsibility represented", "weight": 3},
+    {"id": "REF-FT-03", "kind": "relationship_present", "source_id": "access", "target_id": "s3_credentials", "relationship_kind": "trust_boundary", "description": "Credential trust boundary shown", "weight": 5},
+    {"id": "REF-FT-04", "kind": "quality_target_present", "component_id": "s3_credentials", "requirement_id": "NFR-001", "description": "Credential handling target documented", "weight": 4},
+    {"id": "REF-FT-05", "kind": "scenario_design_complete", "scenario_id": "SC-FT-SECRETS", "description": "Credential scenario has no rule-detected design gaps", "weight": 5},
+    {"id": "REF-FT-06", "kind": "interface_present", "component_id": "intake", "direction": "outbound", "interface_kind": "event", "description": "Intake event producer contract exists", "weight": 3},
+    {"id": "REF-FT-07", "kind": "interface_present", "component_id": "planner", "direction": "inbound", "interface_kind": "event", "description": "Transfer planner event consumer contract exists", "weight": 3},
+    {"id": "REF-FT-08", "kind": "verification_planned", "requirement_id": "NFR-001", "description": "Security design review is planned", "weight": 2}
+  ]
+}

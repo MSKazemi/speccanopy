@@ -1,0 +1,97 @@
+{
+  "name": "E-commerce interface boundary regression rubric",
+  "source": "Speccanopy maintainers manually curated from the fixture and its explicit review scenarios; independent expert review not yet performed",
+  "status": "curated_unreviewed",
+  "criteria": [
+    {
+      "id": "REF-EC-01",
+      "kind": "component_present",
+      "component_id": "payments",
+      "description": "Payments capability exists",
+      "weight": 3
+    },
+    {
+      "id": "REF-EC-02",
+      "kind": "component_present",
+      "component_id": "orders",
+      "description": "Order capability exists",
+      "weight": 3
+    },
+    {
+      "id": "REF-EC-03",
+      "kind": "relationship_present",
+      "source_id": "payments",
+      "target_id": "identity",
+      "relationship_kind": "trust_boundary",
+      "description": "Authorization boundary is traced",
+      "weight": 5
+    },
+    {
+      "id": "REF-EC-04",
+      "kind": "scenario_design_complete",
+      "scenario_id": "SC-EC-AUTH",
+      "description": "Authorization scenario has no listed structural design gaps",
+      "weight": 5
+    },
+    {
+      "id": "REF-EC-05",
+      "kind": "quality_target_present",
+      "component_id": "payment_gateway",
+      "requirement_id": "NFR-002",
+      "description": "Idempotency target documented",
+      "weight": 3
+    },
+    {
+      "id": "REF-EC-06",
+      "kind": "interface_present",
+      "component_id": "orders",
+      "direction": "outbound",
+      "interface_kind": "function",
+      "description": "Orders have a payment request boundary",
+      "weight": 4
+    },
+    {
+      "id": "REF-EC-07",
+      "kind": "interface_present",
+      "component_id": "orders",
+      "direction": "outbound",
+      "interface_kind": "event",
+      "description": "Orders publish inventory events",
+      "weight": 4
+    },
+    {
+      "id": "REF-EC-08",
+      "kind": "interface_present",
+      "component_id": "inventory",
+      "direction": "inbound",
+      "interface_kind": "event",
+      "description": "Inventory consumes reservation events",
+      "weight": 4
+    },
+    {
+      "id": "REF-EC-09",
+      "kind": "interface_present",
+      "component_id": "order_lifecycle",
+      "direction": "outbound",
+      "interface_kind": "event",
+      "description": "Lifecycle publishes status events",
+      "weight": 4
+    },
+    {
+      "id": "REF-EC-10",
+      "kind": "interface_present",
+      "component_id": "order_tracking",
+      "direction": "inbound",
+      "interface_kind": "event",
+      "description": "Tracking consumes status events",
+      "weight": 4
+    },
+    {
+      "id": "REF-EC-11",
+      "kind": "verification_planned",
+      "requirement_id": "NFR-001",
+      "description": "Authorization has verification plan (not necessarily verified)",
+      "weight": 2
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "system": "Text normalization CLI utility",
+  "rubric_name": "CLI single-process design smoke rubric",
+  "rubric_status": "curated_unreviewed",
+  "score": 100.0,
+  "satisfied": 7,
+  "total": 7,
+  "missing_criteria": [],
+  "results": [
+    {
+      "id": "REF-CLI-01",
+      "kind": "component_present",
+      "description": "Explicit input handling boundary",
+      "weight": 3,
+      "present": true,
+      "reason": "Component is represented in the hierarchy"
+    },
+    {
+      "id": "REF-CLI-02",
+      "kind": "component_present",
+      "description": "Explicit transformation boundary",
+      "weight": 3,
+      "present": true,
+      "reason": "Component is represented in the hierarchy"
+    },
+    {
+      "id": "REF-CLI-03",
+      "kind": "component_present",
+      "description": "Explicit output handling boundary",
+      "weight": 3,
+      "present": true,
+      "reason": "Component is represented in the hierarchy"
+    },
+    {
+      "id": "REF-CLI-04",
+      "kind": "relationship_present",
+      "description": "Input text flow is modeled",
+      "weight": 3,
+      "present": true,
+      "reason": "Typed interaction is represented"
+    },
+    {
+      "id": "REF-CLI-05",
+      "kind": "quality_target_present",
+      "description": "Read failure objective is documented",
+      "weight": 4,
+      "present": true,
+      "reason": "Quality target is recorded"
+    },
+    {
+      "id": "REF-CLI-06",
+      "kind": "scenario_design_complete",
+      "description": "Reliability scenario has no rule-detected structural gaps",
+      "weight": 5,
+      "present": true,
+      "reason": "No rule-based scenario design gaps"
+    },
+    {
+      "id": "REF-CLI-07",
+      "kind": "verification_planned",
+      "description": "Reliability design review is planned",
+      "weight": 2,
+      "present": true,
+      "reason": "Requirement has a linked verification case"
+    }
+  ],
+  "high_or_critical_findings": 0,
+  "uncovered_mandatory": [],
+  "caveat": "This score is criterion presence under a human-authored rubric, NOT independent architecture correctness, expert certification, performance or security validation."
+}

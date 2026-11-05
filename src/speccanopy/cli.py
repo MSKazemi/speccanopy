@@ -20,6 +20,11 @@ from .fixtures import FixtureDesign
 from .models import ArchitectureSpec, SystemBrief
 from .review import ReviewConfig, assess_architecture
 from .review_exporters import export_review
+from .benchmark import ReferenceRubric, evaluate_reference, compare_reference
+from .refinement import RefinementEdits, RefinementPlan, plan_refinement, apply_refinement
+from .refinement_exporters import (
+    export_refinement_plan, export_refinement_approved, export_benchmark,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -52,7 +57,85 @@ def main(argv: list[str] | None = None) -> int:
     approve_ai.add_argument("--acknowledge-review", action="store_true", help="Confirm the human reviewed candidate components")
     approve_ai.add_argument("--output", type=Path, required=True, help="Output *.design.json fixture path")
 
+    refinement_plan = sub.add_parser("refine-plan", help="Preview bounded, finding-specific human-authored changes")
+    refinement_plan.add_argument("architecture", type=Path)
+    refinement_plan.add_argument("--config", type=Path, required=True)
+    refinement_plan.add_argument("--edits", type=Path, required=True)
+    refinement_plan.add_argument("--output", type=Path, required=True)
+
+    refinement_apply = sub.add_parser("refine-apply", help="Release a reviewed revision (never certify architecture)")
+    refinement_apply.add_argument("architecture", type=Path)
+    refinement_apply.add_argument("--config", type=Path, required=True)
+    refinement_apply.add_argument("--plan", type=Path, required=True)
+    refinement_apply.add_argument("--reviewer", required=True)
+    refinement_apply.add_argument("--acknowledge-review", action="store_true")
+    refinement_apply.add_argument("--output", type=Path, required=True)
+
+    benchmark = sub.add_parser("benchmark", help="Evaluate a draft against a curated, explicit reference rubric")
+    benchmark.add_argument("architecture", type=Path)
+    benchmark.add_argument("--config", type=Path, required=True)
+    benchmark.add_argument("--rubric", type=Path, required=True)
+    benchmark.add_argument("--candidate", type=Path, help="Compare a refined candidate against the source draft")
+    benchmark.add_argument("--output", type=Path, required=True)
+
     args = parser.parse_args(argv)
+    if args.command == "refine-plan":
+        try:
+            spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
+            config = ReviewConfig.model_validate_json(args.config.read_text(encoding="utf-8"))
+            edits = RefinementEdits.model_validate_json(args.edits.read_text(encoding="utf-8"))
+            plan, candidate = plan_refinement(spec, config, edits)
+            paths = export_refinement_plan(
+                plan, candidate, assess_architecture(spec, config),
+                assess_architecture(candidate, config), args.output,
+            )
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error preparing refinement plan: {exc}", file=sys.stderr)
+            return 1
+        print(f"Refinement preview: {len(plan.rounds)} rounds, {len(plan.edits.patches)} actions")
+        print("No changes released. Inspect preview and acknowledge the plan separately.")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 0
+
+    if args.command == "refine-apply":
+        try:
+            spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
+            config = ReviewConfig.model_validate_json(args.config.read_text(encoding="utf-8"))
+            plan = RefinementPlan.model_validate_json(args.plan.read_text(encoding="utf-8"))
+            candidate, receipt = apply_refinement(
+                spec, config, plan, reviewer=args.reviewer,
+                acknowledge_review=args.acknowledge_review,
+            )
+            paths = export_refinement_approved(
+                candidate, receipt, assess_architecture(candidate, config), args.output,
+            )
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error applying architecture refinement: {exc}", file=sys.stderr)
+            return 1
+        print("Refined architecture released for FURTHER architecture review; status remains incomplete")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 0
+
+    if args.command == "benchmark":
+        try:
+            spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
+            config = ReviewConfig.model_validate_json(args.config.read_text(encoding="utf-8"))
+            rubric = ReferenceRubric.model_validate_json(args.rubric.read_text(encoding="utf-8"))
+            if args.candidate:
+                candidate = ArchitectureSpec.model_validate_json(args.candidate.read_text(encoding="utf-8"))
+                result = compare_reference(spec, candidate, config, rubric)
+            else:
+                result = evaluate_reference(spec, config, rubric)
+            paths = export_benchmark(result, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error evaluating architecture reference rubric: {exc}", file=sys.stderr)
+            return 1
+        report = result.after if args.candidate else result
+        print(f"Reference criterion coverage: {report.score:.2f}% ({report.satisfied}/{report.total})")
+        print("This measures authored structural checks only, not correctness or expert signoff.")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 0
+
     if args.command == "propose-ai":
         try:
             brief = SystemBrief.model_validate_json(args.brief.read_text(encoding="utf-8"))

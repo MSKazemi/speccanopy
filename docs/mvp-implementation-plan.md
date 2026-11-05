@@ -178,3 +178,7 @@ UI, hosted workflows, PR automation, production infrastructure, optimization cla
 ## First coding action
 
 **Next coding slice:** Evaluate AI-generated proposal quality with held-out expert-reviewed cases; add bounded targeted architecture refinement driven by design-quality findings and explicit human signoff on interfaces/data/quality trade-offs. Phase 4 already implements candidate proposals, strict schemas and a reviewer acknowledgement; that does **not** imply validated architectures.
+
+## Phase 5 implementation update (2026-11-05)
+
+Bounded **human-authored** architecture refinements now link explicitly to Phase 3 review findings, simulate changes against the full schema and requirements traceability, recheck quality findings between rounds, and fail closed for newly introduced high/critical risks or mandatory coverage losses. Changed components and related verification cases lose stale readiness/evidence. Revisions require an explicit reviewer acknowledgement and remain `incomplete_requires_review`. Curated, **not independently expert-reviewed**, rubric evaluations now cover CLI, e-commerce and file transfer examples. Autonomous semantic refinement and expert empirical evaluation remain future milestones. See [Phase 5 guide](phase5-refinement-evaluation.md).

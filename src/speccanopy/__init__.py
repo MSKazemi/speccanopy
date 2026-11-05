@@ -79,3 +79,18 @@ __all__ += [
     "StructuredProposalClient", "approve_proposal_bundle", "draft_architecture",
     "export_ai_draft", "export_approved", "review_packet",
 ]
+
+from .refinement import (
+    RefinementPatch, RefinementEdits, RefinementPlan, RefinementRound,
+    RefinementReceipt, plan_refinement, apply_refinement, simulate_refinement,
+)
+from .benchmark import (
+    ReferenceCriterion, ReferenceRubric, BenchmarkAssessment, BenchmarkComparison,
+    evaluate_reference, compare_reference,
+)
+__all__ += [
+    "RefinementPatch", "RefinementEdits", "RefinementPlan", "RefinementRound",
+    "RefinementReceipt", "plan_refinement", "apply_refinement", "simulate_refinement",
+    "ReferenceCriterion", "ReferenceRubric", "BenchmarkAssessment", "BenchmarkComparison",
+    "evaluate_reference", "compare_reference",
+]
