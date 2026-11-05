@@ -45,10 +45,6 @@ def _table(headings: list[str], rows: list[list[object]], missing: str) -> str:
 def _mermaid(source: str) -> str:
     """Protect Markdown fences even if an authored diagram label has backticks."""
     tick = chr(96)
-    longest = max((len(p) for p in source.split(" ") if p and set(p) == {tick}), default=0)
-    # Also cover runs embedded within labels, not just whitespace-separated runs.
-    for chunk in source.split(tick)[1::2]:
-        longest = max(longest, 1)
     run = length = 0
     for char in source:
         if char == tick:

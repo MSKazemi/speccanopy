@@ -59,7 +59,7 @@ def test_document_with_matching_review_surfaces_heuristic_findings(tmp_path):
     findings = (out / "quality-risks.md").read_text()
     assert "Rule findings" in findings
     assert "Freshness warning" in findings
-    assert "requires_review" in findings
+    assert "requires\\_review" in findings
     assert "Investigate heuristic finding" in (out / "open-questions.md").read_text()
 
 
