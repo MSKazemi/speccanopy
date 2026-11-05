@@ -6,6 +6,34 @@ through `CLAUDE.md`. Live Claude network calls require the user's own API access
 and have **not been performed in this milestone**. Mocked transport tests are not
 a live provider compatibility or design-quality benchmark.
 
+## Claude subscription versus Anthropic API key
+
+**Recommended when you already pay for Claude and use Claude Code in your terminal:** use Claude Code as the **interactive agent**, with Speccanopy's local CLI as its tool. You can use the included subscription allocation without creating an Anthropic API key.
+
+| Workflow | Claude subscription authentication | Additional Anthropic Console API key |
+| --- | --- | --- |
+| Open `claude` in the Speccanopy repo, ask it to prepare a project brief/fixture, and have it run `speccanopy design` and `speccanopy review` | **Yes**, using your eligible Claude Code plan and usage limits | **Not needed** |
+| Run the Speccanopy `design` / `review` commands directly from a shell | No inference takes place | **Not needed** |
+| Run `speccanopy propose-ai --backend claude --model ...` directly | **No**; the CLI calls Anthropic's Messages HTTP API instead of your Claude Code session | **Required** (`ANTHROPIC_API_KEY`; Console access and applicable credits/billing) |
+
+For the subscription-backed workflow (Bash/zsh terminal):
+
+```bash
+cd speccanopy
+unset ANTHROPIC_API_KEY  # Important: otherwise Claude Code may use API billing
+claude
+```
+
+If you need to switch authentication inside Claude Code, use `/login` and choose your subscription account, then check `/status`. **Do not** extract or reuse Claude Code session tokens or proxy a subscription's login into `speccanopy propose-ai`. Anthropic's current rules require applications integrating Claude models through their own direct requests to use authorized API authentication. This project does not have a native "Claude Code subscription" provider adapter.
+
+**Prompt Claude Code:**
+
+> Read CLAUDE.md and docs/project-documentation-readiness.md. Inspect only the source files I authorize in my application project and exclude secrets. Build a requirements brief and architecture fixture with file-level provenance and unknowns, execute `speccanopy design` and `speccanopy review`, and create a readable `docs/architecture/` Markdown pack with the Mermaid diagrams and an open-questions section. Do not claim certified expertise or change the application code without my approval.
+
+This approach is **guided, not a one-command automatic feature**. The CLI's `propose-ai --backend claude` is a separate optional method for API users, not a prerequisite for using Speccanopy with Claude Code.
+
+**Official Anthropic references:** [Use Claude Code with subscription plans](https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-max-or-ultra-plan), [API key environment precedence](https://support.claude.com/en/articles/12304248-manage-api-key-environment-variables-in-claude-code), [Claude API prerequisites](https://platform.claude.com/docs/en/api/overview), and [Claude Code legal and compliance](https://code.claude.com/docs/en/legal-and-compliance). Plan-specific API credits, where offered, do not remove the need for proper API authentication.
+
 ## Two different ways to use Claude
 
 ### A. Claude Code in a cloned repository

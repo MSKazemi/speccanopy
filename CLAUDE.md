@@ -50,6 +50,8 @@ A worked **AI-only** critique of three synthetic cases is in
 `docs/ai-assisted-case-review.md`. Review protocol: `docs/phase7-expert-panel.md`.
 Issue #2 remains open until actual independently qualified reviewers participate.
 
+**Subscription mode:** When launched from an authenticated personal Claude Code terminal session, you may author project fixtures and run all local `speccanopy design` / `review` commands with your eligible Claude Code subscription. A separate `ANTHROPIC_API_KEY` is **not** needed for this guided workflow. The Python `propose-ai --backend claude` backend is a distinct, direct Anthropic API client and requires its own authorized API key. Keep `ANTHROPIC_API_KEY` unset when you want Claude Code to use subscription allowances, and never reuse session tokens or proxy a subscription into the direct backend. Read `docs/claude-integration.md` for details.
+
 ## Claude platform integration
 
 - **Claude Code (interactive):** opening this repo with `claude` uses this

@@ -52,6 +52,8 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 Follow the [practical project-documentation guide](docs/project-documentation-readiness.md) to use Claude Code for requirements/source discovery, Speccanopy for validated structure and review, and Claude Code again for narrative documents. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks the missing one-command documentation workflow.
 
+**Claude Code subscription users:** You can use Speccanopy from the Claude Code terminal **without buying a separate API key**. Claude Code can create the structured inputs and run local `speccanopy design` / `review` under your subscription. Only the optional direct `propose-ai --backend claude` HTTP integration requires Anthropic API access. [Subscription vs API guide](docs/claude-integration.md#claude-subscription-versus-anthropic-api-key). To avoid unintended API charges when using Claude Code, keep `ANTHROPIC_API_KEY` unset.
+
 ## Using Speccanopy with Claude
 
 Speccanopy is compatible with **Claude Code**: open this repository using `claude` and the checked-in `CLAUDE.md` explains the project rules, test commands and evidence-bound AI architecture review. No Anthropic API key is required for local deterministic reviews.

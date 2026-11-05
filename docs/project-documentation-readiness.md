@@ -21,6 +21,8 @@ Speccanopy's product scope is **software architecture design and architecture do
 
 Neither expert recruitment nor an independent benchmark is a prerequisite for **using** Speccanopy to draft private architecture documentation. It is required before claiming experimentally demonstrated expert-level architecture quality; see [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2).
 
+**Use your Claude Code subscription for the guided workflow:** launch the unmodified `claude` terminal in the Speccanopy checkout after authenticating to your eligible paid plan. You do **not** need a Console API key for Claude Code to inspect your approved project files, author a `SystemBrief` / fixture, and execute local `speccanopy design` and `speccanopy review` commands. The `propose-ai --backend claude` option is a **different, direct API** integration requiring `ANTHROPIC_API_KEY`. If that environment variable is set while using Claude Code, Anthropic says it takes precedence over subscription billing, so remove it before starting a subscription session. See [subscription-versus-API instructions](claude-integration.md#claude-subscription-versus-anthropic-api-key).
+
 ## Prerequisites
 
 - Python **3.11+** and a checkout of [Speccanopy](https://github.com/MSKazemi/speccanopy).
