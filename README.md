@@ -1,5 +1,7 @@
 # Speccanopy
 
+**Repository health & remaining work:** [Full audit (2026-11-06)](docs/REPOSITORY_AUDIT_2026-11-06.md). Four issues remain open; passing tests do not indicate product completion.
+
 **START HERE — [Complete Claude Code user guide](docs/USER_GUIDE.md)**: what input to provide, exact commands, generated outputs, subscription vs. API billing, new vs. existing projects, and troubleshooting. [Browse all documentation](docs/README.md).
 
 

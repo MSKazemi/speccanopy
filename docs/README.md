@@ -1,5 +1,7 @@
 # Speccanopy documentation
 
+**Maintenance status:** [Repository-wide audit (2026-11-06)](REPOSITORY_AUDIT_2026-11-06.md), including open GitHub issues, incomplete product features, tests, release readiness and recommended next sprint.
+
 **New to Speccanopy?** Read the [complete Claude Code user guide](USER_GUIDE.md). It explains **what input you give, exact commands, what output files you receive, and troubleshooting**.
 
 ## Using Speccanopy
