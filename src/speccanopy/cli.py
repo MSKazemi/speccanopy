@@ -16,10 +16,11 @@ from .ai import (
 from .ai_exporters import export_ai_draft, export_approved
 from .claude import ClaudeMessagesClient
 from .decomposer import generate_architecture
+from .documentation import export_documentation
 from .exporters import export_generation
 from .fixtures import FixtureDesign
 from .models import ArchitectureSpec, SystemBrief
-from .review import ReviewConfig, assess_architecture
+from .review import ArchitectureReview, ReviewConfig, assess_architecture
 from .review_exporters import export_review
 from .benchmark import ReferenceRubric, evaluate_reference, compare_reference
 from .refinement import RefinementEdits, RefinementPlan, plan_refinement, apply_refinement
@@ -45,6 +46,12 @@ def main(argv: list[str] | None = None) -> int:
     review.add_argument("--config", type=Path, help="Explicit style drivers and quality scenarios (optional)")
     review.add_argument("--output", type=Path, required=True)
     review.add_argument("--strict", action="store_true", help="Return code 2 for results requiring review")
+
+    document = sub.add_parser("document", help="Render a reviewable Markdown architecture documentation pack")
+    document.add_argument("architecture", type=Path, help="Existing ArchitectureSpec JSON")
+    document.add_argument("--review", type=Path, help="Optional matching architecture-review.json")
+    document.add_argument("--output", type=Path, required=True, help="New or empty docs directory")
+    document.add_argument("--strict", action="store_true", help="Exit 2 when architecture or review remains unvalidated")
 
     propose_ai = sub.add_parser("propose-ai", help="Draft a component hierarchy using structured AI model proposals")
     propose_ai.add_argument("brief", type=Path)
@@ -252,6 +259,23 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Mandatory requirements: {len(report.verified)} verified, {len(report.planned_only)} planned, {len(report.uncovered)} uncovered")
         print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
         return 2 if args.strict and result.architecture.status == "incomplete_requires_review" else 0
+
+    if args.command == "document":
+        try:
+            spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
+            review = (ArchitectureReview.model_validate_json(args.review.read_text(encoding="utf-8"))
+                      if args.review else None)
+            paths = export_documentation(spec, args.output, review=review)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error documenting architecture: {exc}", file=sys.stderr)
+            return 1
+        print(f"Documentation: {spec.brief.system}")
+        print(f"Source architecture status: {spec.status} — no independent approval inferred")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and (
+            spec.status != "validated_for_scope" or
+            (review is not None and review.overall_status == "requires_review")
+        ) else 0
 
     if args.command == "review":
         try:
