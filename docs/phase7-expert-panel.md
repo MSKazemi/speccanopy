@@ -62,3 +62,7 @@ A provisional panel quorum is **at least two distinct, self-declared independent
 ## Synthetic example and current evidence status
 
 [`examples/expert-review/ecommerce-study.json`](../examples/expert-review/ecommerce-study.json) references **two public, maintainer-curated e-commerce candidates** from Phase 6. It contains no reviewer responses. Its `development` partition is deliberate: public fixtures are not blind holdouts. No approval, verified expert claim, qualified reviewer identity, agreement measure or semantic-quality gain is reported. Progress on obtaining independent evidence remains open in Issue #2.
+
+## Reviewer recruitment launched (2026-11-05)
+
+The project has publicly invited [reviewer volunteers](https://github.com/MSKazemi/speccanopy/issues/3) and [permissioned benchmark case proposals](https://github.com/MSKazemi/speccanopy/issues/4). Use the [reviewer recruitment and consent workflow](reviewer-recruitment.md), [case intake guide](benchmark-case-intake.md), and issue templates for public **non-sensitive** expressions of interest only. Publication of invitations does not mean independent reviewers have been recruited, permissions obtained, or a private holdout created. Issue #2 remains open for real evidence collection.

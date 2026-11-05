@@ -1,0 +1,52 @@
+name: Volunteer architecture reviewer
+description: Express interest in independent architecture research; all issue content is public.
+title: "[Reviewer interest] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your interest in the Speccanopy pilot. This form is PUBLIC.
+        Do not include private contact details, employer/customer secrets, ID documents,
+        confidential system designs or completed review reports.
+        Registering interest is not a verified reviewer submission or research consent.
+        Read: https://github.com/MSKazemi/speccanopy/blob/main/docs/reviewer-recruitment.md
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Primary architecture domain
+      options:
+        - Backend and distributed systems
+        - Security and privacy
+        - Data architecture and consistency
+        - Platform reliability and operations
+        - Embedded and real-time systems
+        - Other software architecture
+    validations:
+      required: true
+  - type: textarea
+    id: experience
+    attributes:
+      label: Public experience summary
+      description: Please summarize architecture decisions or reviews you have worked on without revealing private information.
+      placeholder: "I have reviewed ... in publicly describable settings"
+    validations:
+      required: true
+  - type: dropdown
+    id: conflict
+    attributes:
+      label: Any known involvement in Speccanopy or the evaluated designs?
+      options:
+        - No known involvement
+        - Possible conflict or prior involvement
+        - Prefer to discuss privately
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Public registration safeguards
+      options:
+        - label: I have not included confidential information or private contact details.
+          required: true
+        - label: I understand this is an expression of interest, not research consent or authenticated expertise.
+          required: true

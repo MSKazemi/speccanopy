@@ -1,0 +1,52 @@
+name: Propose an architecture benchmark case
+description: Share only public-source links and non-sensitive metadata; no private documents.
+title: "[Case candidate] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a PUBLIC GitHub issue. Do not paste or attach proprietary
+        requirements, client information, security details, private designs or personal data.
+        A public source link is a suggestion, NOT permission to republish it.
+        See https://github.com/MSKazemi/speccanopy/blob/main/docs/benchmark-case-intake.md
+  - type: textarea
+    id: summary
+    attributes:
+      label: High-level non-sensitive description
+      description: What architectural problem would qualified reviewers evaluate?
+      placeholder: "A publicly describable system that ... "
+    validations:
+      required: true
+  - type: dropdown
+    id: source-status
+    attributes:
+      label: Source and rights status
+      options:
+        - Public source with documented reuse rights
+        - Public source; redistribution rights need review
+        - Nonpublic source; owner permission required (do not attach)
+        - Synthetic original scenario
+    validations:
+      required: true
+  - type: input
+    id: public-link
+    attributes:
+      label: Public source URL (optional)
+      description: Link only when already public and lawful to share. Leave blank for private cases.
+      placeholder: "https://..."
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Architectural tradeoffs (non-sensitive)
+      placeholder: "Main quality constraints, data consistency or failure scenarios..."
+    validations:
+      required: true
+  - type: checkboxes
+    id: safe-submission
+    attributes:
+      label: Data-handling acknowledgement
+      options:
+        - label: I am submitting only non-sensitive public metadata; any private material requires an agreed secure intake and written permissions.
+          required: true
+        - label: I understand that linking a document does not grant Speccanopy permission to republish it.
+          required: true

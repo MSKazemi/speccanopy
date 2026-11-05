@@ -40,6 +40,17 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 7 has a reviewer-coordination workflow:** the `speccanopy-experts` CLI creates candidate-source-blinded architecture packets, blank expert review templates, a restricted private source manifest and an aggregation of self-declared reviews. Evidence is bound to case and packet SHA-256 digests, and disagreements are reported without automatic architectural certification. **There are no independently authenticated expert assessments or genuinely private holdout results yet.** Test status is reported by the GitHub Actions workflow.
 
+## Participate in independent architecture research
+
+Speccanopy needs **real human evaluation**, not just additional synthetic scores. The public calls below are open:
+
+- [Volunteer as an independent architecture reviewer](https://github.com/MSKazemi/speccanopy/issues/3) — start with a nonconfidential synthetic e-commerce pilot.
+- [Propose a permissioned real-world or public-source case](https://github.com/MSKazemi/speccanopy/issues/4) — links and non-sensitive metadata only.
+
+Read the [reviewer recruitment guide](docs/reviewer-recruitment.md), [case permissions and intake](docs/benchmark-case-intake.md), and [public research source triage](docs/public-case-source-triage.md). Ready-to-adapt [outreach messages](docs/outreach-messages.md) are available.
+
+**Status:** Invitations have been posted in this repository; there are **no verified independent expert submissions or accepted real-world cases recorded here**. Volunteering, identity/consent verification and any secure case sharing require follow-through by human participants and the study coordinator. **Never submit private personal or customer details in public GitHub issues.**
+
 ## Next research actions
 
 1. Recruit qualified independent software architects for Issue #2 and obtain lawful de-identified real-world cases.
