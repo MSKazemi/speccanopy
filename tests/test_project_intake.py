@@ -279,3 +279,42 @@ def test_empty_package_and_unrelated_standard_imports_are_not_dependencies(tmp_p
     assert len(result.observations.modules) == 1
     assert result.observations.dependencies == []
     assert len(result.evidence.claims) == 1
+
+
+def test_self_repository_python_intake_smoke(tmp_path):
+    """Dogfood against Speccanopy source; NOT an external validation study."""
+    root = Path(__file__).resolve().parents[1]
+    inputs = tmp_path / "self-inputs"
+    assert main([
+        "project-intake", str(root), "--system", "Speccanopy",
+        "--goal", "Document the existing Python module boundaries",
+        "--requirement", "Provide structured software architecture documentation",
+        "--max-modules", "50", "--output", str(inputs),
+    ]) == 0
+    obs = IntakeObservations.model_validate_json(
+        (inputs / "module-observations.json").read_text()
+    )
+    names = {item.module for item in obs.modules}
+    assert {"speccanopy.cli", "speccanopy.project_intake", "speccanopy.source_evidence"} <= names
+    assert obs.dependencies
+    structure = tmp_path / "self-design"
+    assert main([
+        "design", str(inputs / "brief.json"), "--fixture",
+        str(inputs / "design.json"), "--output", str(structure),
+    ]) == 0
+    review = tmp_path / "self-review"
+    assert main(["review", str(structure / "architecture.json"),
+                 "--output", str(review)]) == 0
+    docs = tmp_path / "self-docs"
+    assert main([
+        "document", str(structure / "architecture.json"),
+        "--review", str(review / "architecture-review.json"),
+        "--source-root", str(root),
+        "--source-evidence", str(inputs / "source-evidence.json"),
+        "--output", str(docs),
+    ]) == 0
+    assert "matching\\_snapshot" in (docs / "source-evidence.md").read_text()
+    assert "FR-USER-001" in (docs / "open-questions.md").read_text()
+    assert "incomplete_requires_review" in (
+        structure / "architecture.json"
+    ).read_text()
