@@ -200,8 +200,8 @@ def test_document_changes_missing_and_invalid_line_spans_remain_visible(tmp_path
     root = _project(tmp_path)
     manifest = _map(root)
     a, b = manifest.claims
-    b.line_start = 900
     b.line_end = 900
+    b.line_start = 900
     report = assess_sources(ArchitectureSpec.model_validate_json(ARCH.read_text()),
                             manifest, root)
     assert [x.status for x in report.checks] == ["matching_snapshot", "line_out_of_range"]
@@ -277,12 +277,12 @@ def test_inferred_proposed_source_claims_never_count_as_observed(tmp_path):
 def test_evidence_claim_text_escaped_from_markdown_injection(tmp_path):
     root = _project(tmp_path)
     evidence_obj = _map(root)
-    evidence_obj.claims[0].assertion = "<script>bad()</script> | Bad\\n# heading"
+    evidence_obj.claims[0].assertion = "<script>bad()</script> | Bad\n# heading"
     evidence = _write_map(tmp_path, evidence_obj)
     out = tmp_path / "docs"
     assert main(["document", str(ARCH), "--source-root", str(root),
                  "--source-evidence", str(evidence), "--output", str(out)]) == 0
     text = (out / "source-evidence.md").read_text()
     assert "&lt;script&gt;" in text
-    assert "Bad\\\\n#" not in text
+    assert "Bad # heading" in text
     assert "\n# heading\n" not in text
