@@ -20,6 +20,14 @@ Read alongside [vision-and-goal.md](vision-and-goal.md), [adaptive-recursive-arc
 
 **Exit criterion:** at least two actually verified, consented, independent reviewer reports for each pilot candidate, with issues/disagreements preserved and a limitations report; then seek a separately permissioned, unseen real-world evaluation. The review software's passing tests are not substitutes for those reports.
 
+## Documentation productization track (2026-11-05)
+
+**Assessment:** The prototype is usable for guided architecture documentation on a real project but **not** ready as an autonomous documentation generator. `design` requires a per-project fixture; `propose-ai` only proposes component hierarchies; `review` emits review Markdown, not a full architecture handbook; source-code inspection and ongoing synchronization are not built in.
+
+**Priority P0:** a source-aware Claude Code intake with provenance, an `ArchitectureSpec` -> Markdown documentation-pack renderer, explicit observed/proposed/unknown status gates, and a tested end-to-end application example. **Priority P1:** change-aware regeneration, richer runtime/data/deployment views and optional alternate publishing formats.
+
+Use [the realistic getting-started guide](project-documentation-readiness.md) today. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks the full backlog. This usability track can proceed **in parallel** with independent research Issue #2; absence of external experts does not prevent drafting personal project documentation, but it limits claims of architecture quality.
+
 ## North-star outcome
 
 Given a software application brief, Speccanopy produces a **reviewable, traceable, implementation-ready architecture specification** and explicitly identifies any assumptions, unresolved requirements, accepted risks or validation gaps.

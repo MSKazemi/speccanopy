@@ -63,4 +63,6 @@ Issue #2 remains open until actual independently qualified reviewers participate
 - The live API sends the supplied system brief to the provider. Do not transmit
   confidential requirements without explicit authorization and adequate controls.
 
+To document a **separate existing application** (as distinct from developing the Speccanopy engine), follow `docs/project-documentation-readiness.md`: inspect authorized sources, draft a structured `SystemBrief` and `FixtureDesign`, run `design`/`review`, and assemble a human-reviewable `docs/architecture/` set. This is a manual Claude Code workflow, not yet a built-in source scanner or documentation renderer. Mark source-derived facts separately from inferred/proposed design decisions.
+
 Details: `docs/claude-integration.md`.
