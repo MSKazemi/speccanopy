@@ -2,7 +2,7 @@
 
 **Implementation status:** Speccanopy supports Anthropic's Messages API for
 schema-constrained **component proposals**, and Claude Code can use this repository
-through \`CLAUDE.md\`. Live Claude network calls require the user's own API access
+through `CLAUDE.md`. Live Claude network calls require the user's own API access
 and have **not been performed in this milestone**. Mocked transport tests are not
 a live provider compatibility or design-quality benchmark.
 
@@ -12,27 +12,27 @@ a live provider compatibility or design-quality benchmark.
 
 Open the repository with Claude Code:
 
-\`\`\`bash
+```bash
 git clone https://github.com/MSKazemi/speccanopy.git
 cd speccanopy
 python -m pip install -e '.[dev]'
 pytest -q
 claude
-\`\`\`
+```
 
-Claude Code automatically reads the root \`CLAUDE.md\` as project instructions.
+Claude Code automatically reads the root `CLAUDE.md` as project instructions.
 It can inspect architecture files, run the local CLI, write reports and propose
-edits **with your approval**. The local \`review\` and \`research-case\` commands
+edits **with your approval**. The local `review` and `research-case` commands
 are deterministic and do **not** make model API requests:
 
-\`\`\`bash
+```bash
 speccanopy review examples/generated/ecommerce/architecture.json \
   --config examples/ecommerce.review.json --output out/ecommerce-review
 
 speccanopy research-case examples/research/cases/ecommerce.json \
   --architecture examples/generated/ecommerce/architecture.json \
   --output out/research-ecommerce
-\`\`\`
+```
 
 Suggested Claude Code task:
 
@@ -53,7 +53,7 @@ This is an **additional, billed API integration**, distinct from the Claude
 Code interface. It uses Anthropic's Messages API with an API key from an
 authorized Anthropic API project:
 
-\`\`\`bash
+```bash
 export ANTHROPIC_API_KEY='YOUR_SECRET_KEY'
 # Some multi-workspace keys also need ANTHROPIC_WORKSPACE_ID.
 speccanopy propose-ai examples/cli-utility.json \
@@ -61,15 +61,15 @@ speccanopy propose-ai examples/cli-utility.json \
   --model YOUR_AVAILABLE_CLAUDE_MODEL_ID \
   --max-model-calls 20 \
   --output out/claude-cli
-\`\`\`
+```
 
 Use a model identifier available to your particular account; the repository
 does not hardcode or assume any model entitlement. Inspect
-\`out/claude-cli/proposal-review.md\`, \`ai-proposals.json\` and \`architecture.json\`
+`out/claude-cli/proposal-review.md`, `ai-proposals.json` and `architecture.json`
 before approving even the component hierarchy. Any release of a proposal
 fixture requires a **real person** to acknowledge what they reviewed:
 
-\`\`\`bash
+```bash
 speccanopy approve-ai out/claude-cli/ai-proposals.json \
   --reviewer YOUR_REVIEWER_ID --acknowledge-review \
   --output out/claude-cli/approved.design.json
@@ -77,7 +77,7 @@ speccanopy approve-ai out/claude-cli/ai-proposals.json \
 speccanopy design examples/cli-utility.json \
   --fixture out/claude-cli/approved.design.json \
   --output out/claude-cli/approved-draft
-\`\`\`
+```
 
 The second command still produces an incomplete architecture when design
 contracts, relationships, decision evidence and validation are absent.
@@ -86,26 +86,26 @@ approval command merely to satisfy the demo.
 
 For a fully **offline** demonstration, use:
 
-\`\`\`bash
+```bash
 speccanopy propose-ai examples/cli-utility.json \
   --backend scripted --responses examples/ai-scripted-cli.json \
   --output out/offline
-\`\`\`
+```
 
 The scripted backend contains authored test responses — **not Claude inference**.
 
 ## Implementation details and fail-closed behavior
 
-- Adapter: \`src/speccanopy/claude.py\`; CLI: \`--backend claude\`.
-- Fixed HTTPS endpoint: \`https://api.anthropic.com/v1/messages\`.
-- Uses \`anthropic-version: 2026-10-21\`, \`x-api-key\` and (when configured)
-  \`anthropic-workspace-id\`, plus \`output_config.format.type=json_schema\`.
-- The same \`AI_RESPONSE_SCHEMA\` is sent as for OpenAI; responses pass the
+- Adapter: `src/speccanopy/claude.py`; CLI: `--backend claude`.
+- Fixed HTTPS endpoint: `https://api.anthropic.com/v1/messages`.
+- Uses `anthropic-version: 2026-10-21`, `x-api-key` and (when configured)
+  `anthropic-workspace-id`, plus `output_config.format.type=json_schema`.
+- The same `AI_RESPONSE_SCHEMA` is sent as for OpenAI; responses pass the
   existing Pydantic component/requirement/ID/recursion-budget checks.
 - Only one complete assistant JSON text block is accepted. Incomplete,
   refused, tool-use, malformed or oversized provider replies fail closed.
 - API keys never enter input briefs, prompt hashes, trace files, logs or the
-  exported \`AIProposalBundle\`.
+  exported `AIProposalBundle`.
 - The full brief, current parent component and requirement IDs **are sent
   to Anthropic** for live proposal requests. Obtain permission before
   transmitting any private requirements. Provider retention and account
@@ -126,8 +126,8 @@ are not evidence of professional qualifications, consent, real production
 feasibility or independent reviewer agreement.
 
 Speccanopy therefore keeps the external human-review Issue #2 open.
-Do not inject AI desk reviews into \`ReviewerSubmission\`,
-\`ReviewClaim\` or the "expert quorum" aggregation. The
+Do not inject AI desk reviews into `ReviewerSubmission`,
+`ReviewClaim` or the "expert quorum" aggregation. The
 [worked AI critique](ai-assisted-case-review.md) identifies concrete
 questions worth resolving but does not certify the architectures.
 
