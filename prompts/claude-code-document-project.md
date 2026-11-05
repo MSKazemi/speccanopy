@@ -4,22 +4,22 @@ Replace `~/projects/my-app` with the actual application directory. Launch Claude
 
 ---
 
-Read `CLAUDE.md` and `docs/USER_GUIDE.md` before acting.
+Read `CLAUDE.md`, `docs/USER_GUIDE.md` and `docs/source-evidence-workflow.md` before acting.
 
 My existing application repository is `~/projects/my-app`. I want accurate, reviewable **architecture documentation for the CURRENT application**. Do not implement a new application or modify its source code.
 
 1. Inspect only authorized paths: README, source modules, entry points, tests, configuration and API/data definitions. Exclude `.env`, credentials, private keys, real user data, production dumps and other secrets. Ask if access to a sensitive area is necessary.
 2. Identify system purpose, actors, functions, quality requirements, component boundaries, dependencies, data ownership, trust boundaries and meaningful design trade-offs. Clearly distinguish **observed source facts**, **inferences**, **proposals** and **unknowns**.
-3. Create schema-valid `out/myproject-inputs/brief.json` (SystemBrief) and `out/myproject-inputs/design.json` (FixtureDesign). Look at `examples/cli-utility.json` and `examples/cli-utility.design.json` for structure. Use stable requirement IDs and real component IDs. Do not add arbitrary unsupported fields to the strict JSON schemas.
-4. Record paths/line references and outstanding assumptions separately in `out/myproject-inputs/source-evidence.md`. Never fabricate validation evidence, expert reviews, API contracts or undocumented runtime behavior.
+3. First run `speccanopy source-inventory ~/projects/my-app --output out/myproject-inputs/source-inventory.json` using only the source paths I authorized; do not include secret files or copy source bytes into the inventory. Create schema-valid `out/myproject-inputs/brief.json` (SystemBrief) and `out/myproject-inputs/design.json` (FixtureDesign). Look at `examples/cli-utility.json` and `examples/cli-utility.design.json` for structure. Use stable requirement IDs and real component IDs. Do not add arbitrary unsupported fields to the strict JSON schemas.
+4. Once the architecture has been generated, create `out/myproject-inputs/source-evidence.json` with actual file SHA-256 hashes from the inventory, real architecture IDs and (where appropriate) accurate line spans. Label each claim `observed`, `inferred` or `proposed`; a matching hash does not authenticate the assertion. Record research notes in `source-notes.md`. Never fabricate test evidence, expert reviews, APIs or runtime behavior.
 5. From the **Speccanopy** repo root, run:
    ```bash
    speccanopy design out/myproject-inputs/brief.json --fixture out/myproject-inputs/design.json --output out/myproject
    speccanopy review out/myproject/architecture.json --output out/myproject-review
-   speccanopy document out/myproject/architecture.json --review out/myproject-review/architecture-review.json --output out/myproject-docs
+   speccanopy document out/myproject/architecture.json --review out/myproject-review/architecture-review.json --source-root ~/projects/my-app --source-evidence out/myproject-inputs/source-evidence.json --output out/myproject-docs
    ```
    Fix schema errors by correcting the actual input; do not bypass validation.
-6. Use the baseline docs from `out/myproject-docs/` as a starting point. Reconcile the pages with actual code paths, then after obtaining my permission to write in the application repository, create a readable `docs/architecture/` directory there: `README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`. Embed Mermaid diagrams, cite actual source references, and keep uncertainty visible.
+6. Use the baseline docs from `out/myproject-docs/` as a starting point. Read `source-evidence.md` and `open-questions.md`; reconcile the pages with actual code paths, then after obtaining my permission to write in the application repository, create a readable `docs/architecture/` directory there: `README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`. Embed Mermaid diagrams, cite actual source references, and keep uncertainty visible.
 7. Do not claim independent certification, readiness for production or actual implementation tests. Do not edit my application code.
 8. Conclude with: **files created**, **documented system overview**, **high-risk assumptions**, and **questions I need to answer**.
 

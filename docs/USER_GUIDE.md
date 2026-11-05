@@ -12,7 +12,7 @@
 | **A new application idea** | Goal, intended users, features, security/reliability goals, technology and deployment constraints | A **proposed** architecture with diagrams, decisions and unresolved assumptions; not a description of already-existing code |
 | **No Claude Code** | A valid `SystemBrief` JSON and project-specific `FixtureDesign` JSON | The same deterministic CLI-generated architecture files and optional rule-based review, but no automatic repository analysis or complete narrative handbook |
 
-The CLI does **not** scan an application repository. In the guided workflow **Claude Code** prepares the two JSON inputs from sources you authorize, and **you review the assumptions**.
+The `source-inventory` CLI can now scan allowlisted **file metadata only**, but it cannot infer architecture from source. Claude Code still prepares the project-specific brief, fixture and optional source-evidence map from the files you authorize. **You review the assumptions and semantic claims.** [Source evidence workflow](source-evidence-workflow.md).
 
 ## 2. Set up once — Claude Code subscription, no extra API key
 
@@ -45,7 +45,7 @@ If Speccanopy is already cloned, skip `git clone`. The `--add-dir` option grants
 
 Paste this into the interactive Claude Code terminal after replacing the folder path:
 
-> Read `CLAUDE.md` and `docs/USER_GUIDE.md`. My existing application is at `~/projects/my-app`. I want **architecture documentation for the current implementation**, not changes to application source code. Inspect authorized source files, README, tests, configs, API and database definitions; do not read `.env`, secrets, keys or private production data. Identify system goals, actors, requirements, components, component boundaries, interactions, data ownership, key decisions and quality risks. Produce schema-valid `out/myproject-inputs/brief.json` (SystemBrief) and `out/myproject-inputs/design.json` (FixtureDesign), using Speccanopy's examples. Store file/line references for source-derived claims separately in `out/myproject-inputs/source-evidence.md`, without inventing unsupported JSON fields. Label uncertainties and proposed changes clearly; do not invent test evidence, expert approval or a validated status. Run `speccanopy design`, `speccanopy review` and `speccanopy document` as specified below. With my approval, write readable Markdown into my application's `docs/architecture/` directory, including overview, requirements, components, interactions, data/security, decisions, quality risks and open questions. Include Mermaid diagrams, cite actual source files for observed facts, and do not edit application code. Finish by listing files created, critical findings and questions for me to resolve.
+> Read `CLAUDE.md`, `docs/USER_GUIDE.md` and `docs/source-evidence-workflow.md`. First inventory my authorized project file metadata with `speccanopy source-inventory`. My existing application is at `~/projects/my-app`. I want **architecture documentation for the current implementation**, not changes to application source code. Inspect authorized source files, README, tests, configs, API and database definitions; do not read `.env`, secrets, keys or private production data. Identify system goals, actors, requirements, components, component boundaries, interactions, data ownership, key decisions and quality risks. Produce schema-valid `out/myproject-inputs/brief.json` (SystemBrief) and `out/myproject-inputs/design.json` (FixtureDesign), using Speccanopy's examples. Use real SHA-256 file hashes from the inventory and known architecture IDs to prepare `out/myproject-inputs/source-evidence.json` with paths, lines and observed/inferred/proposed assertions. Keep extra notes separately in `source-notes.md`; do not invent unsupported JSON fields. Label uncertainties and proposed changes clearly; do not invent test evidence, expert approval or a validated status. Run `speccanopy design`, `speccanopy review` and `speccanopy document` as specified below; optionally include the source-root and evidence-map flags and show the resulting source report. With my approval, write readable Markdown into my application's `docs/architecture/` directory, including overview, requirements, components, interactions, data/security, decisions, quality risks and open questions. Include Mermaid diagrams, cite actual source files for observed facts, and do not edit application code. Finish by listing files created, critical findings and questions for me to resolve.
 
 A reusable copy of this prompt is in [prompts/claude-code-document-project.md](../prompts/claude-code-document-project.md).
 
@@ -75,6 +75,22 @@ speccanopy document out/myproject/architecture.json \
   --output out/myproject-docs
 ```
 
+For **source-linked documentation**, first run the local inventory and ask Claude to author a valid source map based on real file hashes. Render to a **different empty folder** from the preceding basic example:
+
+```bash
+speccanopy source-inventory ~/projects/my-app \
+  --output out/myproject-inputs/source-inventory.json
+
+# After Claude Code creates out/myproject-inputs/source-evidence.json:
+speccanopy document out/myproject/architecture.json \
+  --review out/myproject-review/architecture-review.json \
+  --source-root ~/projects/my-app \
+  --source-evidence out/myproject-inputs/source-evidence.json \
+  --output out/myproject-source-docs
+```
+
+This adds `source-evidence.md` and source questions; byte-matching does not prove the author's claim. [Full source evidence guide](source-evidence-workflow.md).
+
 An optional `review --config out/myproject-inputs/review.json` adds scenario and style assumptions. Without supplied style drivers, Speccanopy may abstain from recommending a style. This is legitimate rather than a failure.
 
 **Smoke test without Claude or a real project:**
@@ -98,7 +114,9 @@ speccanopy/
     ├── myproject-inputs/             # Claude Code-prepared inputs (not CLI exports)
     │   ├── brief.json
     │   ├── design.json
-    │   └── source-evidence.md        # Optional: source references and unknowns
+    │   ├── source-inventory.json    # Optional allowlisted file metadata/hashes
+    │   ├── source-evidence.json     # Optional authored source-claim map
+    │   └── source-notes.md         # Optional extra research notes
     ├── myproject/                    # speccanopy design outputs
     │   ├── architecture.json         # Normalized draft architecture
     │   ├── architecture.mmd          # Mermaid containment tree
@@ -113,7 +131,7 @@ speccanopy/
         └── quality-review.json
 ```
 
-**New built-in baseline Markdown output:** `speccanopy document` automatically produces `out/myproject-docs/` with nine Markdown pages (`README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`) and two Mermaid files (`architecture.mmd` and `relationships.mmd`). These pages describe the supplied architecture, not verified facts about a repository. See [renderer documentation](architecture-documentation-renderer.md).
+**New built-in baseline Markdown output:** `speccanopy document` automatically produces `out/myproject-docs/` with nine Markdown pages (`README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`) and two Mermaid files (`architecture.mmd` and `relationships.mmd`). These pages describe the supplied architecture, not verified facts about a repository. With the paired source options, a tenth `source-evidence.md` page is generated and `open-questions.md` identifies missing/changed files and unlinked IDs. See [renderer documentation](architecture-documentation-renderer.md).
 
 **Additionally written by Claude Code if you ask it to generate readable docs** (with your approval to write in the app):
 

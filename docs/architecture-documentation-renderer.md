@@ -55,6 +55,22 @@ Content is deterministic for the same parsed input, based on existing schema fie
 
 **Caveat:** Even `validated_for_scope` is a *schema* state backed by author-provided verification evidence. This renderer does not run tests, authenticate experts, prove observed production behavior, or establish code provenance. It never promotes an architecture's status.
 
+## Optional source-file provenance
+
+The `source-inventory` command creates local, allowlisted file metadata; Claude Code can use the real hashes to author a separate claim map. The Markdown renderer accepts this **optional pair**:
+
+```bash
+speccanopy source-inventory ~/projects/my-app \
+  --output out/myproject-inputs/source-inventory.json
+# After a valid out/myproject-inputs/source-evidence.json is authored:
+speccanopy document out/myproject/architecture.json \
+  --source-root ~/projects/my-app \
+  --source-evidence out/myproject-inputs/source-evidence.json \
+  --output out/myproject-source-docs
+```
+
+It then produces a tenth Markdown page (`source-evidence.md`) listing digest-bound source references, missing/changed/unreadable file status and unlinked architecture IDs. **This is file-byte checking, not source-code semantic verification.** Read the [source evidence workflow guide](source-evidence-workflow.md) for map format and limitations.
+
 ## How Claude Code uses this renderer
 
 When documenting a **real existing project**, Claude Code can inspect only authorized files, prepare `SystemBrief` and `FixtureDesign`, and run:

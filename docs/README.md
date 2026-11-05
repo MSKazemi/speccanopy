@@ -12,6 +12,7 @@
 | [Short quick start](claude-code-quickstart.md) | Minimal copy/paste terminal and prompt instructions |
 | [Project documentation readiness](project-documentation-readiness.md) | Detailed existing-repository workflow and missing product features |
 | [Claude Code vs Anthropic API](claude-integration.md) | Subscription workflow vs separate API billing |
+| [Source inventory and evidence mapping](source-evidence-workflow.md) | Inventory local source metadata, check SHA-256-backed citations, report changed/missing files |
 | [Markdown architecture renderer](architecture-documentation-renderer.md) | Turn an existing architecture JSON into nine Markdown pages and two Mermaid diagrams |
 | [CLI design engine](phase2-engine.md) | JSON/Mermaid outputs and structural readiness |
 | [Architecture review](phase3-review.md) | Rule-based design and quality review |

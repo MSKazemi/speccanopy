@@ -3,7 +3,7 @@
 This project develops an **AI-assisted software architecture DESIGN engine**. It does
 **not** implement, build, test or deploy the applications described by its briefs.
 
-For documentation of a separate application, **start with `docs/USER_GUIDE.md`** and copy the prompt from `prompts/claude-code-document-project.md`. Distinguish observed source facts from inferred architectural proposals. Require approval before writing into the target repository.
+For documentation of a separate application, **start with `docs/USER_GUIDE.md`** and copy the prompt from `prompts/claude-code-document-project.md`. Distinguish observed source facts from inferred architectural proposals. For authorized local projects, use `speccanopy source-inventory` to produce a *metadata-only* file list and real SHA-256 hashes; prepare `source-evidence.json` using the documented schema. See `docs/source-evidence-workflow.md`. Matching digests do not authenticate architectural assertions. Require approval before writing into the target repository.
 
 Read README.md, docs/vision-and-goal.md, docs/architecture-contract.md and
 docs/execution-roadmap.md before modifying architecture contracts or outputs.
@@ -69,6 +69,6 @@ Issue #2 remains open until actual independently qualified reviewers participate
 
 For the shortest **copy-paste instructions and exact input/output filenames**, follow `docs/claude-code-quickstart.md`.
 
-To document a **separate existing application** (as distinct from developing the Speccanopy engine), follow `docs/project-documentation-readiness.md`: inspect authorized sources, draft a structured `SystemBrief` and `FixtureDesign`, run `design`/`review`, then use `speccanopy document` to render a **baseline** nine-page Markdown pack in a new empty directory. Reconcile its assertions with authorized source evidence and copy approved pages into the application's `docs/architecture/`. There is still no built-in source scanner or source-provenance verifier. Mark source-derived facts separately from inferred/proposed design decisions.
+To document a **separate existing application** (as distinct from developing the Speccanopy engine), follow `docs/project-documentation-readiness.md`: inspect authorized sources, draft a structured `SystemBrief` and `FixtureDesign`, run `design`/`review`, then use `speccanopy document` to render a **baseline** nine-page Markdown pack in a new empty directory. Reconcile its assertions with authorized source evidence and copy approved pages into the application's `docs/architecture/`. The new allowlisted source inventory and `document --source-root ... --source-evidence ...` check file snapshot links, but there is still no automatic semantic code analyzer or human-verified source interpretation. Mark source-derived facts separately from inferred/proposed design decisions.
 
 Details: `docs/claude-integration.md`.

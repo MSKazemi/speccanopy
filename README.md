@@ -55,7 +55,9 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 ## Document a real project
 
-**Partially ready:** Speccanopy now generates a structured architecture, Mermaid diagrams, requirement coverage, a rule-based review **and a baseline Markdown documentation pack** with `speccanopy document`. It still does **not** scan a real source repository, authenticate code-level claims, or synchronize documents with changes. [Documentation renderer guide](docs/architecture-documentation-renderer.md).
+**Partially ready:** Speccanopy now generates a structured architecture, Mermaid diagrams, requirement coverage, a rule-based review **and a baseline Markdown documentation pack** with `speccanopy document`. It now also inventories allowlisted local project file metadata and checks SHA-256-bound, authored source citations. It still does **not** automatically understand application code, verify the meaning of an architectural assertion, or keep docs synchronized with every change. [Source evidence workflow](docs/source-evidence-workflow.md). [Documentation renderer guide](docs/architecture-documentation-renderer.md).
+
+Use `speccanopy source-inventory ~/projects/my-app --output out/myproject-inputs/source-inventory.json` to create a metadata-only file inventory. Claude Code can use those hashes in `source-evidence.json`; `document --source-root ... --source-evidence ...` then checks source snapshots and reports missing or changed files. [Details](docs/source-evidence-workflow.md).
 
 Follow the [practical project-documentation guide](docs/project-documentation-readiness.md) to use Claude Code for requirements/source discovery, Speccanopy for validated structure and review, and Claude Code again for narrative documents. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks the missing one-command documentation workflow.
 
