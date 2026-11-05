@@ -1,5 +1,9 @@
 # Speccanopy
 
+**Independent architecture reviewers wanted:** Help critically evaluate two **public synthetic** designs in a voluntary research pilot. [Volunteer as a reviewer](https://github.com/MSKazemi/speccanopy/issues/3) · [Suggest a rights-cleared benchmark case](https://github.com/MSKazemi/speccanopy/issues/4) · [Contribution guide](CONTRIBUTING.md).
+
+*There are no independently authenticated expert reviews or permissioned real-world benchmark cases in the repository yet. Do not share private materials through public issues or pull requests.*
+
 **Speccanopy** aims to become a **universal, AI-assisted software architecture design engine** that turns requirements into coherent, validated, implementation-ready architecture specifications across application types and architecture styles.
 
 **Confirmed product boundary:** Speccanopy designs software architecture; it does **not** autonomously implement, build, test, or deploy the software applications it designs.
