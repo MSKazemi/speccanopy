@@ -1,6 +1,6 @@
 # Speccanopy execution roadmap — Universal Software Architect
 
-**Status:** Active roadmap; Phases 1–3 (contract, deterministic recursion, advisory quality/style review) implemented on 2026-11-04  
+**Status:** Active roadmap; Phases 1–4 include schema, deterministic recursion, advisory review and an optional AI candidate proposer with human acknowledgement (2026-11-05).  
 **Date:** 2026-11-04  
 **Product boundary:** Speccanopy designs and validates architecture; it does not autonomously implement, build, test or deploy the software applications being designed.
 
@@ -62,6 +62,8 @@ Compare candidate architecture styles based on functional constraints, team/oper
 
 ### 5 — Add AI proposals with controlled validation and human review
 
+**Progress (2026-11-05):** A provider-neutral, Responses API structured-output adapter now proposes component boundaries from a `SystemBrief`; strict local schema and requirement-ID checks, bounded model requests/schema repairs, SHA-256 provenance, explicit `pending_human_review` output and an approval receipt are implemented. The offline scripted path and mocked transport have tests; a live paid model call has **not** been made. Approval releases a hierarchy for further design, never marks it architecturally validated. Semantic critique-driven redesign, source-quality evaluations and authenticated review are still pending. See [Phase 4 guide](phase4-ai-proposals.md).
+
 Introduce a provider-neutral AI adapter that proposes requirements questions, style candidates, component boundaries and targeted refinements. Apply schema validation and deterministic coverage/integrity checks to every proposal. Record provenance and confidence/uncertainty where meaningful.
 
 Do **not** use an LLM's self-assessment as the only evidence of completeness. Treat controversial or high-risk decisions as reviewable. Limit all refinement cycles and report unresolved areas instead of fabricating success.
@@ -111,4 +113,4 @@ The first release should provide a CLI and structured artifacts. Only after the 
 
 ## Decision summary
 
-**Completed:** architecture contracts, three curated recursive architecture fixtures, and an advisory style/quality reviewer with explicit driver scoring, scenario checks and auditable outputs. **Next:** a schema-constrained AI component proposer, source provenance, targeted refinement and human approval. The goal remains architecture design, not autonomous application building. See [Phase 3 review](phase3-review.md).
+**Completed as test-driven prototypes:** architecture contracts, bounded recursive generator, advisory style/quality reviewer, and model-backed component *proposals* with structured output, provenance and an explicit human acknowledgement gate. **Next:** empirical benchmarking and bounded targeted *architectural* refinement, plus richer runtime, data and deployment-design views. The goal remains architecture design, not application building. See [Phase 4](phase4-ai-proposals.md).

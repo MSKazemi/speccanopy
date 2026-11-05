@@ -26,15 +26,17 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 3 architecture review guide:** [docs/phase3-review.md](docs/phase3-review.md).
 
+**Phase 4 AI-assisted proposals and approval:** [docs/phase4-ai-proposals.md](docs/phase4-ai-proposals.md).
+
 ## Status
 
-**Phases 1–3 are implemented:** validated architecture models, the deterministic recursive generator, and a separate rule-based architecture review CLI. Phase 3 compares primary architecture style candidates using explicit drivers, explains trade-offs, audits quality scenarios and interface/data risks, and records open evidence gaps. **91 tests passed locally.** Reviews do not automatically approve or alter a design. **AI-generated proposals and real-world architecture certification are not implemented yet.**
+**Phases 1–4 are implemented as prototypes:** typed architecture contracts, deterministic recursive generation, advisory style/quality review, and an optional AI-assisted component proposer with strict schema validation, bounded model calls, provenance and explicit human-acknowledgement workflow. **120 tests passed locally** (including the existing 91 tests). A scripted offline example is reproducible. **The live Responses API adapter has mocked transport tests only—no paid model call has been performed in this milestone.** AI outputs remain incomplete architecture drafts and need human review; independently validated architecture generation and full design refinement are not implemented.
 
 ## Next implementation steps
 
-1. Add an optional, provider-neutral AI proposer for architectural component candidates, with schema checks and provenance.
-2. Evaluate proposed designs with human review and targeted refinement; keep acceptance separate from heuristic scores.
-3. Expand held-out benchmarks, domain-specific quality rules, and support for hybrid architectural patterns.
+1. Evaluate AI-generated component boundaries against expert-reviewed benchmark architectures across additional application domains.
+2. Add bounded targeted architectural critique and refinement based on Phase 3 review findings, not merely schema repair.
+3. Add provenance and human review for interfaces, data ownership, integration contracts and quality-attribute decisions.
 
 ## Run Speccanopy
 
@@ -56,6 +58,23 @@ speccanopy review out/ecommerce/architecture.json \
 ```
 
 This produces architecture-style comparisons, quality scenario findings, coverage reports and a Markdown review packet. Without explicit style drivers the reviewer abstains from style selection.
+
+Draft **model-proposed component boundaries** from a validated brief:
+
+```bash
+export OPENAI_API_KEY='your-api-key'
+speccanopy propose-ai examples/cli-utility.json \
+  --model YOUR_AVAILABLE_MODEL --output out/ai-cli
+
+# Inspect out/ai-cli/proposal-review.md and ai-proposals.json first.
+speccanopy approve-ai out/ai-cli/ai-proposals.json \
+  --reviewer architecture-reviewer --acknowledge-review \
+  --output out/ai-cli/approved.design.json
+speccanopy design examples/cli-utility.json \
+  --fixture out/ai-cli/approved.design.json --output out/ai-cli/approved-design
+```
+
+For offline testing without an API key, add `--backend scripted --responses examples/ai-scripted-cli.json` to `propose-ai`. This uses authored test responses, **not** a real AI model. The resulting architecture is still `incomplete_requires_review`: proposal approval is not architecture certification. See the Phase 4 guide for privacy and scope limitations.
 
 Alternatively run `PYTHONPATH=src python -m speccanopy.cli design examples/cli-utility.json --output out/cli-utility` without installing a console script.
 

@@ -1,0 +1,102 @@
+{
+  "generator": "ai-assisted-draft",
+  "statistics": {
+    "components": 4,
+    "relationships": 0,
+    "max_depth": 1,
+    "processed": 4,
+    "status": "incomplete_requires_review"
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "component_id": "system",
+      "depth": 0,
+      "action": "expanded",
+      "details": "Accepted 3 proposed children",
+      "child_ids": [
+        "read",
+        "transform",
+        "write"
+      ],
+      "child_rationales": {
+        "read": "One boundary owns input decoding and read error reporting",
+        "transform": "Separate transformation keeps parsing concerns distinct",
+        "write": "Safe output handling is a distinct reliability concern"
+      }
+    },
+    {
+      "sequence": 2,
+      "component_id": "read",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 3,
+      "component_id": "transform",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 4,
+      "component_id": "write",
+      "depth": 1,
+      "action": "leaf",
+      "details": "No further components proposed; review readiness evidence",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 5,
+      "component_id": "write",
+      "depth": 1,
+      "action": "requires_review",
+      "details": "interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 6,
+      "component_id": "transform",
+      "depth": 1,
+      "action": "requires_review",
+      "details": "interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 7,
+      "component_id": "read",
+      "depth": 1,
+      "action": "requires_review",
+      "details": "interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 8,
+      "component_id": "system",
+      "depth": 0,
+      "action": "requires_review",
+      "details": "interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale; children not ready: ['read', 'transform', 'write']",
+      "child_ids": [],
+      "child_rationales": {}
+    },
+    {
+      "sequence": 9,
+      "component_id": "system",
+      "depth": 0,
+      "action": "completed",
+      "details": "Generated incomplete_requires_review; verified=0, planned=0, uncovered=4",
+      "child_ids": [],
+      "child_rationales": {}
+    }
+  ],
+  "note": "Model-proposed hierarchy; untrusted proposals pending human review. Not independently validated."
+}

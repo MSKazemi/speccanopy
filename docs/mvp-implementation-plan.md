@@ -114,9 +114,11 @@ Use separate IDs for requirements, components, edges, decisions, and tests. Do n
 
 ## Milestone 3: AI-backed component proposer
 
-- [ ] Use a provider interface rather than direct dependencies throughout core logic.
-- [ ] Require model outputs to validate against typed schemas.
-- [ ] Distinguish model-proposed facts from user-provided requirements.
+**Progress (2026-11-05):** Phase 4 adds a provider-neutral LLM candidate proposer with the OpenAI Responses API adapter, strict JSON response schema, hard model-call and depth limits, bounded invalid-output repair, source digests, a human acknowledgement receipt, and an offline demonstration. **120 tests passed locally; real API inference has not been exercised.** This is candidate component drafting only: model-authored interfaces, semantic overlap checks, evidence-backed completion and review-driven architectural redesign remain open. See [Phase 4](phase4-ai-proposals.md).
+
+- [x] Use a provider interface rather than direct dependencies throughout core logic.
+- [x] Require model outputs to validate against typed schemas.
+- [x] Distinguish model-proposed facts from user-provided requirements.
 - [ ] Detect overlap, missing coverage, and unsupported assertions.
 - [ ] Preserve traces and support human review/overrides.
 - [ ] Evaluate variability across repeated runs with the same input.
@@ -175,4 +177,4 @@ UI, hosted workflows, PR automation, production infrastructure, optimization cla
 
 ## First coding action
 
-**Next coding slice:** Add comparison of architecture-style candidates and independent quality-attribute review scenarios, then integrate an optional AI-backed proposer with strict schemas, provenance and human approval. The deterministic engine already consumes provider-neutral proposals. The next work should not claim universal correctness or implement target application code.
+**Next coding slice:** Evaluate AI-generated proposal quality with held-out expert-reviewed cases; add bounded targeted architecture refinement driven by design-quality findings and explicit human signoff on interfaces/data/quality trade-offs. Phase 4 already implements candidate proposals, strict schemas and a reviewer acknowledgement; that does **not** imply validated architectures.

@@ -1,0 +1,32 @@
+{
+  "coverage": {
+    "verified": [],
+    "planned_only": [],
+    "uncovered": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "NFR-001"
+    ]
+  },
+  "component_owners": {
+    "FR-001": [
+      "read",
+      "system"
+    ],
+    "FR-002": [
+      "system",
+      "transform"
+    ],
+    "FR-003": [
+      "system",
+      "write"
+    ],
+    "NFR-001": [
+      "read",
+      "system",
+      "write"
+    ]
+  },
+  "status": "incomplete_requires_review"
+}

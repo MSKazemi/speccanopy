@@ -1,0 +1,41 @@
+{
+  "drivers": [
+    {
+      "key": "operational_simplicity",
+      "importance": 5,
+      "desired": 5,
+      "rationale": "Small local utility, simple distribution"
+    },
+    {
+      "key": "modular_boundaries",
+      "importance": 2,
+      "desired": 3,
+      "rationale": "A few replaceable local functions"
+    },
+    {
+      "key": "independent_deployment",
+      "importance": 3,
+      "desired": 1,
+      "rationale": "Only one CLI deployment unit is needed"
+    },
+    {
+      "key": "asynchronous_workflows",
+      "importance": 2,
+      "desired": 1,
+      "rationale": "Synchronous file conversion workflow"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "SC-CLI-RELIABILITY",
+      "requirement_id": "NFR-001",
+      "stimulus": "Source file read fails or destination cannot be written",
+      "expected_response": "Report the failure while preserving the original file",
+      "measure": "Architecture review confirms explicit failure paths and an atomic output strategy",
+      "component_ids": [
+        "read",
+        "write"
+      ]
+    }
+  ]
+}

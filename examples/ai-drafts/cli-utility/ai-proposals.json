@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "status": "pending_human_review",
+  "brief": {
+    "system": "Text normalization CLI utility",
+    "goals": [
+      "Normalize local UTF-8 text files and save normalized output"
+    ],
+    "actors": [
+      "CLI user"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Read a user-provided local UTF-8 text file",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Normalize whitespace and line endings",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Write normalized text to a requested destination",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "reliability",
+        "statement": "Report input/output errors clearly without silently losing the original file",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "single-process modular CLI",
+      "max_depth": 4,
+      "max_nodes": 20,
+      "max_refinement_rounds": 2
+    }
+  },
+  "brief_sha256": "6190afdda91fa20b91d327181087277f319140b6bb4f14f8ed72cf8b1f61f247",
+  "fixture": {
+    "root": {
+      "id": "system",
+      "name": "Text normalization CLI utility",
+      "responsibility": "Architectural responsibilities required to satisfy: Normalize local UTF-8 text files and save normalized output",
+      "boundary": "Scope defined by the supplied software application requirements",
+      "parent_id": null,
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "interfaces": [],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": null,
+      "status": "proposed"
+    },
+    "selected_style": "single-process modular CLI",
+    "proposals_by_parent": {
+      "system": [
+        {
+          "id": "read",
+          "name": "File Reader",
+          "responsibility": "Read UTF-8 input safely",
+          "boundary": "Local file input access",
+          "requirement_ids": [
+            "FR-001",
+            "NFR-001"
+          ],
+          "rationale": "One boundary owns input decoding and read error reporting",
+          "priority_factors": null,
+          "interfaces": [],
+          "interfaces_not_applicable_reason": null,
+          "owned_data": [],
+          "data_not_applicable_reason": null,
+          "quality_targets": {},
+          "assumptions": [
+            "Paths are local"
+          ],
+          "risks": [
+            "Malformed UTF-8 may cause read errors"
+          ],
+          "validation_evidence": [],
+          "stop_reason": null
+        },
+        {
+          "id": "transform",
+          "name": "Text Transformation",
+          "responsibility": "Normalize whitespace and line endings",
+          "boundary": "Pure text transformation",
+          "requirement_ids": [
+            "FR-002"
+          ],
+          "rationale": "Separate transformation keeps parsing concerns distinct",
+          "priority_factors": null,
+          "interfaces": [],
+          "interfaces_not_applicable_reason": null,
+          "owned_data": [],
+          "data_not_applicable_reason": null,
+          "quality_targets": {},
+          "assumptions": [],
+          "risks": [],
+          "validation_evidence": [],
+          "stop_reason": null
+        },
+        {
+          "id": "write",
+          "name": "File Writer",
+          "responsibility": "Write output while preserving source on failure",
+          "boundary": "Local file output access",
+          "requirement_ids": [
+            "FR-003",
+            "NFR-001"
+          ],
+          "rationale": "Safe output handling is a distinct reliability concern",
+          "priority_factors": null,
+          "interfaces": [],
+          "interfaces_not_applicable_reason": null,
+          "owned_data": [],
+          "data_not_applicable_reason": null,
+          "quality_targets": {},
+          "assumptions": [
+            "Destination is writable"
+          ],
+          "risks": [
+            "Partial writes must be handled"
+          ],
+          "validation_evidence": [],
+          "stop_reason": null
+        }
+      ]
+    },
+    "relationships": [],
+    "verification_cases": [],
+    "decisions": [],
+    "findings": []
+  },
+  "fixture_sha256": "57a2297549fdcf8a843bf6811c3e834fe882437c3bd85d9276a3b5b05358a10b",
+  "provider": "scripted",
+  "model": "scripted-v1",
+  "prompt_version": "architecture-proposals-v1",
+  "generation_status": "incomplete_requires_review",
+  "component_count": 4,
+  "coverage": {
+    "verified": [],
+    "planned_only": [],
+    "uncovered": [
+      "FR-001",
+      "FR-002",
+      "FR-003",
+      "NFR-001"
+    ]
+  },
+  "model_calls": 4,
+  "events": [
+    {
+      "sequence": 1,
+      "parent_id": "system",
+      "depth": 0,
+      "attempt": 1,
+      "outcome": "accepted",
+      "prompt_sha256": "c32f38ad751cc01550ea6b0d659529a51f850da207a86ea2bff044bb401ad725",
+      "response_sha256": "5fe6466755897531c2a2a26483c5bcdcfe3e26b957d17da6e4df32bfe8552612",
+      "response_id": null,
+      "child_ids": [
+        "read",
+        "transform",
+        "write"
+      ],
+      "detail": "CLI application benefits from independent read, transformation and write boundaries."
+    },
+    {
+      "sequence": 2,
+      "parent_id": "read",
+      "depth": 1,
+      "attempt": 1,
+      "outcome": "accepted",
+      "prompt_sha256": "27127adfa91e3b5e01a3f2af82b2e227a653b330f54652d655c973849e4da862",
+      "response_sha256": "15bc200f4a7aaec09f0afad3b5e13ef745463c708e104a8d4b109ffa91b22e40",
+      "response_id": null,
+      "child_ids": [],
+      "detail": "Read module is sufficient for a first architectural review"
+    },
+    {
+      "sequence": 3,
+      "parent_id": "transform",
+      "depth": 1,
+      "attempt": 1,
+      "outcome": "accepted",
+      "prompt_sha256": "c7c1b823e6721e2224f46171fa2f803268d35672ed0fc23435a87f41ad29b29c",
+      "response_sha256": "3085d1a0f0dad2b75d71103615c9ed5322c7dbd2c7faba9a7786c6a566e892c8",
+      "response_id": null,
+      "child_ids": [],
+      "detail": "Pure transformation requires no further module decomposition"
+    },
+    {
+      "sequence": 4,
+      "parent_id": "write",
+      "depth": 1,
+      "attempt": 1,
+      "outcome": "accepted",
+      "prompt_sha256": "a2e78f23f239cc820f2257a92c286ff4a5282c479bb20740d02100783cfa6425",
+      "response_sha256": "f2c046f89f0a373de4eb4c27be1e02e6e90e023640c562c527b36da1cbaf4514",
+      "response_id": null,
+      "child_ids": [],
+      "detail": "Write boundary needs interface and failure-mode review, not more hierarchy"
+    }
+  ],
+  "open_questions": [
+    "system: Should the output replace an existing destination atomically?"
+  ],
+  "warnings": []
+}

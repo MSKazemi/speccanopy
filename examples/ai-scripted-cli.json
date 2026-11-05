@@ -1,0 +1,33 @@
+{
+  "system": {
+    "expand": true,
+    "reason": "CLI application benefits from independent read, transformation and write boundaries.",
+    "children": [
+      {
+        "id": "read", "name": "File Reader",
+        "responsibility": "Read UTF-8 input safely", "boundary": "Local file input access",
+        "requirement_ids": ["FR-001", "NFR-001"],
+        "rationale": "One boundary owns input decoding and read error reporting",
+        "assumptions": ["Paths are local"], "risks": ["Malformed UTF-8 may cause read errors"]
+      },
+      {
+        "id": "transform", "name": "Text Transformation",
+        "responsibility": "Normalize whitespace and line endings", "boundary": "Pure text transformation",
+        "requirement_ids": ["FR-002"],
+        "rationale": "Separate transformation keeps parsing concerns distinct",
+        "assumptions": [], "risks": []
+      },
+      {
+        "id": "write", "name": "File Writer",
+        "responsibility": "Write output while preserving source on failure", "boundary": "Local file output access",
+        "requirement_ids": ["FR-003", "NFR-001"],
+        "rationale": "Safe output handling is a distinct reliability concern",
+        "assumptions": ["Destination is writable"], "risks": ["Partial writes must be handled"]
+      }
+    ],
+    "open_questions": ["Should the output replace an existing destination atomically?"]
+  },
+  "read": {"expand": false, "reason": "Read module is sufficient for a first architectural review", "children": [], "open_questions": []},
+  "transform": {"expand": false, "reason": "Pure transformation requires no further module decomposition", "children": [], "open_questions": []},
+  "write": {"expand": false, "reason": "Write boundary needs interface and failure-mode review, not more hierarchy", "children": [], "open_questions": []}
+}

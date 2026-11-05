@@ -39,7 +39,11 @@ def relationships_mermaid(spec: ArchitectureSpec) -> str:
     return "\n".join(lines) + "\n"
 
 
-def export_generation(result: GenerationResult, destination: str | Path) -> dict[str, Path]:
+def export_generation(
+    result: GenerationResult, destination: str | Path, *,
+    generator: str = "deterministic-fixture",
+    note: str = "Curated proposals and design-level verification plans; not AI-generated or independently validated.",
+) -> dict[str, Path]:
     out = Path(destination)
     out.mkdir(parents=True, exist_ok=True)
     spec = result.architecture
@@ -55,9 +59,9 @@ def export_generation(result: GenerationResult, destination: str | Path) -> dict
         "decisions.json": {"selected_style": spec.selected_style,
                            "decisions": [x.model_dump() for x in spec.decisions],
                            "findings": [x.model_dump() for x in spec.findings]},
-        "generation-trace.json": {"generator": "deterministic-fixture", "statistics": result.stats(),
+        "generation-trace.json": {"generator": generator, "statistics": result.stats(),
                                   "events": [x.model_dump() for x in result.trace],
-                                  "note": "Curated proposals and design-level verification plans; not AI-generated or independently validated."},
+                                  "note": note},
     }
     paths: dict[str, Path] = {}
     for name, value in items.items():

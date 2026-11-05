@@ -1,0 +1,216 @@
+{
+  "brief": {
+    "system": "Text normalization CLI utility",
+    "goals": [
+      "Normalize local UTF-8 text files and save normalized output"
+    ],
+    "actors": [
+      "CLI user"
+    ],
+    "functional_requirements": [
+      {
+        "id": "FR-001",
+        "statement": "Read a user-provided local UTF-8 text file",
+        "mandatory": true
+      },
+      {
+        "id": "FR-002",
+        "statement": "Normalize whitespace and line endings",
+        "mandatory": true
+      },
+      {
+        "id": "FR-003",
+        "statement": "Write normalized text to a requested destination",
+        "mandatory": true
+      }
+    ],
+    "quality_requirements": [
+      {
+        "id": "NFR-001",
+        "attribute": "reliability",
+        "statement": "Report input/output errors clearly without silently losing the original file",
+        "mandatory": true
+      }
+    ],
+    "constraints": {
+      "preferred_architecture": "single-process modular CLI",
+      "max_depth": 4,
+      "max_nodes": 20,
+      "max_refinement_rounds": 2
+    }
+  },
+  "selected_style": "single-process modular CLI",
+  "components": [
+    {
+      "id": "system",
+      "name": "Text normalization CLI utility",
+      "responsibility": "Architectural responsibilities required to satisfy: Normalize local UTF-8 text files and save normalized output",
+      "boundary": "Scope defined by the supplied software application requirements",
+      "parent_id": null,
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "interfaces": [],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": null,
+      "status": "requires_review"
+    },
+    {
+      "id": "read",
+      "name": "File Reader",
+      "responsibility": "Read UTF-8 input safely",
+      "boundary": "Local file input access",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-001",
+        "NFR-001"
+      ],
+      "interfaces": [],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [
+        "Paths are local"
+      ],
+      "risks": [
+        "Malformed UTF-8 may cause read errors"
+      ],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": 0.0,
+      "status": "requires_review"
+    },
+    {
+      "id": "transform",
+      "name": "Text Transformation",
+      "responsibility": "Normalize whitespace and line endings",
+      "boundary": "Pure text transformation",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "interfaces": [],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [],
+      "risks": [],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": 0.0,
+      "status": "requires_review"
+    },
+    {
+      "id": "write",
+      "name": "File Writer",
+      "responsibility": "Write output while preserving source on failure",
+      "boundary": "Local file output access",
+      "parent_id": "system",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-001"
+      ],
+      "interfaces": [],
+      "interfaces_not_applicable_reason": null,
+      "owned_data": [],
+      "data_not_applicable_reason": null,
+      "quality_targets": {},
+      "assumptions": [
+        "Destination is writable"
+      ],
+      "risks": [
+        "Partial writes must be handled"
+      ],
+      "validation_evidence": [],
+      "stop_reason": null,
+      "priority_score": 0.0,
+      "status": "requires_review"
+    }
+  ],
+  "relationships": [],
+  "verification_cases": [],
+  "decisions": [],
+  "findings": [
+    {
+      "id": "GEN-FIND-001",
+      "severity": "medium",
+      "description": "Architecture component write requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "write"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-002",
+      "severity": "medium",
+      "description": "Architecture component transform requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "component_ids": [
+        "transform"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-003",
+      "severity": "medium",
+      "description": "Architecture component read requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "requirement_ids": [
+        "FR-001",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "read"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-004",
+      "severity": "medium",
+      "description": "Architecture component system requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale; children not ready: ['read', 'transform', 'write']",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "system"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-005",
+      "severity": "high",
+      "description": "Uncovered mandatory requirements: ['FR-001', 'FR-002', 'FR-003', 'NFR-001']",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "system"
+      ],
+      "status": "open"
+    }
+  ],
+  "status": "incomplete_requires_review"
+}

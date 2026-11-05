@@ -1,0 +1,74 @@
+{
+  "selected_style": "single-process modular CLI",
+  "decisions": [],
+  "findings": [
+    {
+      "id": "GEN-FIND-001",
+      "severity": "medium",
+      "description": "Architecture component write requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "requirement_ids": [
+        "FR-003",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "write"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-002",
+      "severity": "medium",
+      "description": "Architecture component transform requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "requirement_ids": [
+        "FR-002"
+      ],
+      "component_ids": [
+        "transform"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-003",
+      "severity": "medium",
+      "description": "Architecture component read requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale",
+      "requirement_ids": [
+        "FR-001",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "read"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-004",
+      "severity": "medium",
+      "description": "Architecture component system requires review: interface contract or explicit not-applicable reason; data ownership or explicit not-applicable reason; architectural review evidence; stop rationale; children not ready: ['read', 'transform', 'write']",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "system"
+      ],
+      "status": "open"
+    },
+    {
+      "id": "GEN-FIND-005",
+      "severity": "high",
+      "description": "Uncovered mandatory requirements: ['FR-001', 'FR-002', 'FR-003', 'NFR-001']",
+      "requirement_ids": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "NFR-001"
+      ],
+      "component_ids": [
+        "system"
+      ],
+      "status": "open"
+    }
+  ]
+}

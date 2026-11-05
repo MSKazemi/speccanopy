@@ -65,3 +65,17 @@ __all__ += [
     "StyleDriver", "assess_architecture", "compare_styles", "review_quality",
     "export_review", "review_markdown",
 ]
+
+from .ai import (
+    AIChildrenResponse, AIComponentProposer, AIProposalBundle, AIProposalError,
+    AIProposalEvent, ApprovalReceipt, OpenAIResponsesClient, ScriptedProposalClient,
+    StructuredProposalClient, approve_proposal_bundle, draft_architecture,
+)
+from .ai_exporters import export_ai_draft, export_approved, review_packet
+
+__all__ += [
+    "AIChildrenResponse", "AIComponentProposer", "AIProposalBundle", "AIProposalError",
+    "AIProposalEvent", "ApprovalReceipt", "OpenAIResponsesClient", "ScriptedProposalClient",
+    "StructuredProposalClient", "approve_proposal_bundle", "draft_architecture",
+    "export_ai_draft", "export_approved", "review_packet",
+]
