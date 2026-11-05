@@ -1,5 +1,7 @@
 # Copy/paste into Claude Code — Document my existing application
 
+**Python application?** Start with the new [Claude Code Python prompt](claude-code-python-intake.md) and [complete Python project-intake guide](../docs/python-project-intake.md). The manual path below remains useful for non-Python or complex applications.
+
 Replace `~/projects/my-app` with the actual application directory. Launch Claude from the Speccanopy checkout with access to that folder (see [the user guide](../docs/USER_GUIDE.md)).
 
 ---

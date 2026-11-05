@@ -55,7 +55,34 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 ## Document a real project
 
-**Partially ready:** Speccanopy now generates a structured architecture, Mermaid diagrams, requirement coverage, a rule-based review **and a baseline Markdown documentation pack** with `speccanopy document`. It now also inventories allowlisted local project file metadata and checks SHA-256-bound, authored source citations. It still does **not** automatically understand application code, verify the meaning of an architectural assertion, or keep docs synchronized with every change. [Source evidence workflow](docs/source-evidence-workflow.md). [Documentation renderer guide](docs/architecture-documentation-renderer.md).
+**New Python shortcut:** `speccanopy project-intake` now drafts schema-valid architecture inputs using bounded, offline Python module/import analysis. You provide the system name, goal and real requirements; the output remains **provisional**, with no invented interfaces or verified evidence. [Step-by-step Python intake guide](docs/python-project-intake.md) · [Copyable Claude Code prompt](prompts/claude-code-python-intake.md).
+
+```bash
+speccanopy project-intake ~/projects/my-app \
+  --system "My App" \
+  --goal "Document the current architecture" \
+  --requirement "Users can create records" \
+  --output out/my-app-inputs
+
+speccanopy design out/my-app-inputs/brief.json \
+  --fixture out/my-app-inputs/design.json \
+  --output out/my-app-architecture
+
+speccanopy review out/my-app-architecture/architecture.json \
+  --output out/my-app-review
+
+speccanopy document out/my-app-architecture/architecture.json \
+  --review out/my-app-review/architecture-review.json \
+  --source-root ~/projects/my-app \
+  --source-evidence out/my-app-inputs/source-evidence.json \
+  --output out/my-app-docs
+```
+
+This is **Python-only structural intake**, not complete software understanding. For TypeScript, Go, other languages, private requirements, or a complex system, continue with the [Claude Code guided intake](docs/USER_GUIDE.md) and check the produced claims yourself.
+
+
+
+**Partially ready:** Speccanopy now generates a structured architecture, Mermaid diagrams, requirement coverage, a rule-based review **and a baseline Markdown documentation pack** with `speccanopy document`. It now also inventories allowlisted local project file metadata and checks SHA-256-bound, authored source citations. It also detects static Python module declarations and internal import references through the optional `project-intake` command. It still does **not** automatically understand business behavior, verify the meaning of an architectural assertion, support all languages, or synchronize docs with every change. [Source evidence workflow](docs/source-evidence-workflow.md). [Documentation renderer guide](docs/architecture-documentation-renderer.md).
 
 Use `speccanopy source-inventory ~/projects/my-app --output out/myproject-inputs/source-inventory.json` to create a metadata-only file inventory. Claude Code can use those hashes in `source-evidence.json`; `document --source-root ... --source-evidence ...` then checks source snapshots and reports missing or changed files. [Details](docs/source-evidence-workflow.md).
 

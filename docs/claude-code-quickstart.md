@@ -2,7 +2,19 @@
 
 **For all guidance and troubleshooting see the [complete user guide](USER_GUIDE.md).**
 
-**Status (2026-11-05): Guided architecture-documentation workflow, NOT a one-command repo-to-doc generator.** Claude Code authors the project-specific inputs and readable narrative; the Speccanopy CLI validates structure, generates diagrams, and performs rule-based review. A Claude Code subscription suffices for the interactive workflow. The optional direct `propose-ai --backend claude` API endpoint needs its own Anthropic API key; do not use that command for this subscription-based tutorial.
+**Current status:** Existing Python applications can use `speccanopy project-intake` for a provisional module/import-based brief and fixture. For other languages, Claude Code still authors the inputs. Speccanopy validates structure, generates diagrams, performs rule-based review and renders baseline Markdown; this is NOT a universal one-command repo-to-doc generator. A Claude Code subscription suffices for the interactive workflow. The optional direct `propose-ai --backend claude` API endpoint needs its own Anthropic API key; do not use that command for this subscription-based tutorial.
+
+**Python project shortcut:** Read [the full Python intake guide](python-project-intake.md) or run:
+
+```bash
+speccanopy project-intake ~/projects/my-app \
+  --system "My App" \
+  --goal "Describe its present architecture" \
+  --requirement "Users can create records" \
+  --output out/my-app-inputs
+```
+
+The command generates provisional `brief.json`, `design.json`, an AST module/import summary and a source-evidence JSON map. It does **not** execute the target app, discover real business requirements, or verify architecture semantics. Then run `speccanopy design`, `review`, and `document` as shown in the guide.
 
 ## Input — what you supply
 

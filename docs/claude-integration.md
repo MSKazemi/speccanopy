@@ -145,6 +145,10 @@ API references (verify against current versions before a live production rollout
 [structured JSON output](https://platform.claude.com/docs/en/build-with-claude/structured-outputs),
 and [Claude Code CLAUDE.md](https://code.claude.com/docs/en/memory).
 
+## Python project intake without separate API billing
+
+`speccanopy project-intake` can now draft a valid brief, provisional module-based fixture, inventory and static-import evidence map **offline** from an authorized Python source directory and user-provided requirements. Claude Code can refine these artifacts using your eligible subscription. The AST parser does **not execute target modules or infer actual business behavior**. [Python project-intake guide](python-project-intake.md).
+
 ## Source-linked documentation through Claude Code
 
 For existing local applications, `speccanopy source-inventory` can create a **metadata-only, filtered file inventory**. Claude Code can then author an explicit mapping between architecture IDs and real file hashes; `speccanopy document --source-root ... --source-evidence ...` checks whether those cited file snapshots still match and generates a `source-evidence.md` page. Matching hashes are **not** proof of semantic architecture correctness. No Anthropic API key is required for these deterministic local commands. [Guide](source-evidence-workflow.md).

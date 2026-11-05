@@ -71,6 +71,10 @@ speccanopy document out/myproject/architecture.json \
 
 It then produces a tenth Markdown page (`source-evidence.md`) listing digest-bound source references, missing/changed/unreadable file status and unlinked architecture IDs. **This is file-byte checking, not source-code semantic verification.** Read the [source evidence workflow guide](source-evidence-workflow.md) for map format and limitations.
 
+## From a Python application folder
+
+The new [Python project intake](python-project-intake.md) prepares the initial brief, fixture, inventory and evidence map **without executing the application**. Then use `design`, `review`, and `document` as below. The resulting source-linked Markdown represents provisional module/import observations, not verified business behavior.
+
 ## How Claude Code uses this renderer
 
 When documenting a **real existing project**, Claude Code can inspect only authorized files, prepare `SystemBrief` and `FixtureDesign`, and run:

@@ -8,6 +8,8 @@
 
 | Guide | Purpose |
 | --- | --- |
+| [Python project intake — start here for Python](python-project-intake.md) | Complete input → offline AST draft → design/review/document with source hashes and Claude Code |
+| [Claude Code prompt for Python](../prompts/claude-code-python-intake.md) | Copy-paste guided project documentation instructions for Python source |
 | [User guide — start here](USER_GUIDE.md) | Complete existing/new-project walkthrough, Claude Code subscription, JSON inputs, output files, troubleshooting |
 | [Short quick start](claude-code-quickstart.md) | Minimal copy/paste terminal and prompt instructions |
 | [Project documentation readiness](project-documentation-readiness.md) | Detailed existing-repository workflow and missing product features |

@@ -4,6 +4,20 @@
 
 Use the existing Claude Code subscription to inspect authorized project sources and author a draft `SystemBrief`, `FixtureDesign` and `SourceEvidence` map. The local Speccanopy commands do **not** call Anthropic's Messages API.
 
+## Python shortcut: generate the source map from AST syntax
+
+For supported Python projects, `speccanopy project-intake` drafts `brief.json`, `design.json`, `source-inventory.json`, `source-evidence.json`, `module-observations.json` and `intake-review.md` using bounded offline Python AST inspection and **your supplied real requirements**:
+
+```bash
+speccanopy project-intake ~/projects/my-app \
+  --system "My App" \
+  --goal "Document the current Python architecture" \
+  --requirement "Users can create records" \
+  --output out/my-app-inputs
+```
+
+Automatically generated source claims attest only to **Python module existence and import syntax**. They do NOT establish that user requirements are met. Read the [Python project intake guide](python-project-intake.md) for the complete workflow. The manual/Claude-guided mapping below remains appropriate for other languages and detailed claims.
+
 ## Input and output
 
 **Input:** an authorized local application repository, a generated `architecture.json`, and optionally a human/Claude-authored evidence mapping from architecture IDs to source files.

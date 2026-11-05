@@ -12,7 +12,7 @@
 | **A new application idea** | Goal, intended users, features, security/reliability goals, technology and deployment constraints | A **proposed** architecture with diagrams, decisions and unresolved assumptions; not a description of already-existing code |
 | **No Claude Code** | A valid `SystemBrief` JSON and project-specific `FixtureDesign` JSON | The same deterministic CLI-generated architecture files and optional rule-based review, but no automatic repository analysis or complete narrative handbook |
 
-The `source-inventory` CLI can now scan allowlisted **file metadata only**, but it cannot infer architecture from source. Claude Code still prepares the project-specific brief, fixture and optional source-evidence map from the files you authorize. **You review the assumptions and semantic claims.** [Source evidence workflow](source-evidence-workflow.md).
+Speccanopy's `source-inventory` lists allowlisted file metadata, and the new `project-intake` command additionally analyzes bounded **Python AST module/import declarations** to draft a valid brief/fixture/source map from your supplied requirements. It still does **not** infer actual business behavior or architectural correctness. For non-Python projects, Claude Code prepares those project-specific inputs from approved files. **You review the assumptions and semantic claims.** [Source evidence workflow](source-evidence-workflow.md).
 
 ## 2. Set up once — Claude Code subscription, no extra API key
 
@@ -40,6 +40,37 @@ claude --add-dir ~/projects/my-app
 If Speccanopy is already cloned, skip `git clone`. The `--add-dir` option grants access to a separate application folder; accept only the access you intend. Claude Code reads the Speccanopy root [CLAUDE.md](../CLAUDE.md). You can check your Claude Code authentication with `/status`.
 
 **Billing distinction:** This workflow runs **inside Claude Code** with your eligible subscription and executes local Speccanopy commands. It does **not** use `speccanopy propose-ai --backend claude`: that is a **separate** Anthropic Messages API integration requiring `ANTHROPIC_API_KEY` and an API-enabled account. Do not reuse subscription/session credentials in it. On PowerShell, instead of `unset`, use `Remove-Item Env:\ANTHROPIC_API_KEY -ErrorAction SilentlyContinue`.
+
+## 2A. Recommended shortcut for an existing Python application
+
+For a Python application, Speccanopy now prepares the **initial JSON inputs automatically**, without an Anthropic API key and without executing target application code. Provide an application directory, system name, goal, and at least one real functional requirement:
+
+```bash
+speccanopy project-intake ~/projects/my-app \
+  --system "My App" \
+  --goal "Document the architecture of the existing application" \
+  --requirement "Users can create records" \
+  --output out/my-app-inputs
+
+speccanopy design out/my-app-inputs/brief.json \
+  --fixture out/my-app-inputs/design.json \
+  --output out/my-app-architecture
+
+speccanopy review out/my-app-architecture/architecture.json \
+  --output out/my-app-review
+
+speccanopy document out/my-app-architecture/architecture.json \
+  --review out/my-app-review/architecture-review.json \
+  --source-root ~/projects/my-app \
+  --source-evidence out/my-app-inputs/source-evidence.json \
+  --output out/my-app-docs
+```
+
+**Input:** an authorized Python folder + your actual goals/requirements. **Output:** six intake artifacts (`brief.json`, `design.json`, `source-inventory.json`, `source-evidence.json`, `module-observations.json`, `intake-review.md`), then architecture JSON/diagrams/reviews and ten baseline Markdown pages (the tenth is `source-evidence.md`) plus two Mermaid files.
+
+**Expected:** the resulting architecture is **incomplete/requires review**. Python source modules and import statements have been found, but requirements are not automatically mapped to modules, and real interfaces, data ownership, runtime behavior and architecture style are still open. Open `out/my-app-inputs/intake-review.md` and `out/my-app-docs/open-questions.md` first. For more details, limits and a ready-to-copy Claude prompt, use the [Python project intake guide](python-project-intake.md) and [Claude Code Python prompt](../prompts/claude-code-python-intake.md).
+
+For projects using other languages or more modules than the supported cap, use the guided Claude Code workflow below. No output should be treated as independent production certification.
 
 ## 3. Give Claude Code this instruction (existing project)
 
