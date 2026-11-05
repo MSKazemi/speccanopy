@@ -55,7 +55,7 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 ## Document a real project
 
-**Partially ready:** Speccanopy can generate a reviewable structured architecture, two Mermaid views, requirement coverage and an architecture review; it does **not** yet scan an arbitrary source repo or generate a full Markdown architecture documentation pack automatically.
+**Partially ready:** Speccanopy now generates a structured architecture, Mermaid diagrams, requirement coverage, a rule-based review **and a baseline Markdown documentation pack** with `speccanopy document`. It still does **not** scan a real source repository, authenticate code-level claims, or synchronize documents with changes. [Documentation renderer guide](docs/architecture-documentation-renderer.md).
 
 Follow the [practical project-documentation guide](docs/project-documentation-readiness.md) to use Claude Code for requirements/source discovery, Speccanopy for validated structure and review, and Claude Code again for narrative documents. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks the missing one-command documentation workflow.
 
@@ -113,6 +113,17 @@ speccanopy review out/ecommerce/architecture.json \
 ```
 
 This produces architecture-style comparisons, quality scenario findings, coverage reports and a Markdown review packet. Without explicit style drivers the reviewer abstains from style selection.
+
+Render a **baseline Markdown architecture documentation pack**:
+
+```bash
+speccanopy document out/ecommerce/architecture.json \
+  --review out/ecommerce-review/architecture-review.json \
+  --output out/ecommerce-docs
+```
+
+The new command writes nine Markdown pages plus two Mermaid files, without a model API call. It does not overwrite an existing documentation directory. See [usage and limits](docs/architecture-documentation-renderer.md).
+
 
 Draft **model-proposed component boundaries** from a validated brief:
 

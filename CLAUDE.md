@@ -69,6 +69,6 @@ Issue #2 remains open until actual independently qualified reviewers participate
 
 For the shortest **copy-paste instructions and exact input/output filenames**, follow `docs/claude-code-quickstart.md`.
 
-To document a **separate existing application** (as distinct from developing the Speccanopy engine), follow `docs/project-documentation-readiness.md`: inspect authorized sources, draft a structured `SystemBrief` and `FixtureDesign`, run `design`/`review`, and assemble a human-reviewable `docs/architecture/` set. This is a manual Claude Code workflow, not yet a built-in source scanner or documentation renderer. Mark source-derived facts separately from inferred/proposed design decisions.
+To document a **separate existing application** (as distinct from developing the Speccanopy engine), follow `docs/project-documentation-readiness.md`: inspect authorized sources, draft a structured `SystemBrief` and `FixtureDesign`, run `design`/`review`, then use `speccanopy document` to render a **baseline** nine-page Markdown pack in a new empty directory. Reconcile its assertions with authorized source evidence and copy approved pages into the application's `docs/architecture/`. There is still no built-in source scanner or source-provenance verifier. Mark source-derived facts separately from inferred/proposed design decisions.
 
 Details: `docs/claude-integration.md`.
