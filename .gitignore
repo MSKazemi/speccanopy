@@ -6,3 +6,9 @@ __pycache__/
 dist/
 build/
 out/
+
+# Panel evaluation evidence and private source mapping (never commit)
+**/private/manifest.json
+**/*.submission.json
+expert-review-private/
+private-holdout/

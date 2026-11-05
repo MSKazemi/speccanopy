@@ -1,0 +1,21 @@
+{
+  "id": "ecommerce-panel-protocol",
+  "research_case_path": "../research/cases/ecommerce.json",
+  "candidates": [
+    {"id": "modular-monolith-unreviewed", "path": "../generated/ecommerce/architecture.json"},
+    {"id": "distributed-alternative-unreviewed", "path": "../research/candidates/ecommerce-distributed-unreviewed.json"}
+  ],
+  "dimensions": [
+    {"id": "requirement_coverage", "question": "How convincingly are functional and quality requirements traced to responsibilities?", "anchor_hint": "Cite requirement and component IDs"},
+    {"id": "boundary_quality", "question": "Are component responsibilities cohesive and independently understandable?", "anchor_hint": "Cite specific component boundaries"},
+    {"id": "interactions", "question": "Are interfaces, failure behavior, and dependency semantics sufficiently specified?", "anchor_hint": "Cite dependency and interface details"},
+    {"id": "data_consistency", "question": "Is data ownership and expected consistency across components justified?", "anchor_hint": "Cite data owners and consistency risks"},
+    {"id": "security", "question": "Are authorization, trust boundaries, and sensitive operations addressed?", "anchor_hint": "Cite security and identity requirements"},
+    {"id": "reliability", "question": "Are failure recovery, duplicate handling, and availability tradeoffs defensible?", "anchor_hint": "Cite scenario and quality requirement IDs"},
+    {"id": "complexity", "question": "Does the architecture avoid operational complexity unsupported by requirements?", "anchor_hint": "Cite responsibilities and operational assumptions"}
+  ],
+  "min_distinct_reviewers": 2,
+  "partition": "development",
+  "distribution_rights_confirmed": true,
+  "scope": "Review two public synthetic e-commerce architecture alternatives as hypotheses only; no real client data, no independent professional validation yet"
+}

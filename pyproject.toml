@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "speccanopy"
-version = "0.6.0"
+version = "0.7.0"
 description = "Adaptive recursive software architecture design and AI-assisted proposal review and controlled refinement and research evaluation engine"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -12,6 +12,7 @@ dependencies = ["pydantic>=2.9,<3"]
 
 [project.scripts]
 speccanopy = "speccanopy.cli:main"
+speccanopy-experts = "speccanopy.expert_review:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]

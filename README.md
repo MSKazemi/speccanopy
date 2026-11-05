@@ -28,21 +28,24 @@ The decomposition tree is complemented by a dependency/interaction graph, multip
 
 **Phase 4 AI-assisted proposals and approval:** [docs/phase4-ai-proposals.md](docs/phase4-ai-proposals.md).
 
+**Phase 7 external reviewer protocol:** [docs/phase7-expert-panel.md](docs/phase7-expert-panel.md).
+
 **Phase 5 controlled refinement and reference evaluation:** [docs/phase5-refinement-evaluation.md](docs/phase5-refinement-evaluation.md).
 
 **Phase 6 architecture research and multiple alternatives:** [docs/phase6-architecture-research.md](docs/phase6-architecture-research.md).
 
 ## Status
 
-**Phases 1–6 are implemented as research prototypes:** typed architecture contracts, bounded recursive generation, advisory style/quality reviews, structured AI proposals with human acknowledgement, targeted refinement, and a provenance-aware multi-alternative research evaluator. **178 tests passed locally** on Python 3.13 before committing.
+**Phases 1–6 are implemented as prototypes:** typed contracts, deterministic recursion, rule-based style and quality review, optional AI candidate proposals with human acknowledgement, controlled refinement, and multi-alternative synthetic research evaluation.
 
-**Phase 6 evaluation boundaries:** The suite uses five synthetic application briefs and six candidate architectures spanning CLI, e-commerce, file transfer, embedded control and telemetry. Criteria refer to requirement ownership, interfaces, data and interactions rather than exact component IDs. **There are no independently authenticated expert reviews or genuinely blind held-out cases.** Source-bound review claims are self-declared and remain unverified. No live paid-model API call or empirical correctness certificate is claimed.
+**Phase 7 has a reviewer-coordination workflow:** the `speccanopy-experts` CLI creates candidate-source-blinded architecture packets, blank expert review templates, a restricted private source manifest and an aggregation of self-declared reviews. Evidence is bound to case and packet SHA-256 digests, and disagreements are reported without automatic architectural certification. **There are no independently authenticated expert assessments or genuinely private holdout results yet.** Test status is reported by the GitHub Actions workflow.
 
-## Next implementation steps
+## Next research actions
 
-1. Recruit independent qualified reviewers and gather permissible architecture briefs and multiple acceptable design alternatives with verifiable evidence.
-2. Build a genuinely unseen evaluation set and compare semantic quality, security, distributed consistency, resilience and safety/timing failures against professional judgments.
-3. Calibrate the critique/refinement engine on reviewer disagreements without relaxing deterministic validation, provenance or human decision gates.
+1. Recruit qualified independent software architects for Issue #2 and obtain lawful de-identified real-world cases.
+2. Verify reviewers' identities, competence, independence and consent **outside the software**; do not treat declared IDs or hashes as signatures.
+3. Collect at least two independently verified reviews per candidate, preserve disagreements and domain-specific failures, and calibrate rule-based evaluations against these assessments without exposing the private holdout.
+4. Only then claim evidence of improvement in semantic architectural quality; never claim universal optimality.
 
 ## Run Speccanopy
 
@@ -110,6 +113,18 @@ The research cases are **curated and unreviewed**. The public_holdout partition 
 Alternatively run `PYTHONPATH=src python -m speccanopy.cli design examples/cli-utility.json --output out/cli-utility` without installing a console script.
 
 **Important:** The `design` command uses curated `<brief>.design.json` proposal fixtures; it does **not** independently design arbitrary applications from prose. The new `review` command uses explicit `<brief>.review.json` drivers and quality scenarios; its recommendations are heuristic, not certifications. The included architectures remain `draft` and require human approval.
+
+## Prepare independent architecture review packets
+
+```bash
+speccanopy-experts prepare examples/expert-review/ecommerce-study.json \
+  --output out/ecommerce-panel
+speccanopy-experts aggregate out/ecommerce-panel/private/manifest.json \
+  --submissions out/ecommerce-panel/submissions \
+  --output out/ecommerce-panel/report
+```
+
+The example contains no genuine reviewer assessments; the aggregate must remain `awaiting_reviewers`. Keep private manifests, submissions and holdouts outside GitHub. See the [expert-panel protocol](docs/phase7-expert-panel.md).
 
 ## Background
 

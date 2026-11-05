@@ -130,3 +130,9 @@ The first release should provide a CLI and structured artifacts. Only after the 
 **Not yet accomplished:** Real externally authenticated expert assessments, blind held-out comparisons, calibrated semantic correctness metrics, professional review of security/safety/operational trade-offs. Public holdout fixtures are visible and are not genuine independent holdouts. All reviewer claims remain unauthenticated self-declarations.
 
 **Next:** Recruit independent experts and collect non-sensitive or licensed design cases with alternative acceptable solutions; record provenance, review disagreements and false-positive/false-negative rates; perform genuinely withheld tests. Maintain architecture-only product scope and human decision controls.
+
+## Phase 7 — Collect authentic external evaluations
+
+**Software status:** Candidate-blinded packet preparation, response schema/consent/conflict validation and provisional disagreement aggregation implemented. Study and packets are bound to the original Phase 6 research case and candidate digests. See [Phase 7 protocol](phase7-expert-panel.md).
+
+**Research status:** No independently verified human reviews, licensed real-world benchmark set or genuinely hidden holdout has been collected. The code **cannot** verify an expert's identity or competence; that work requires people and an offline attestation process. Keep [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) open until authentic reviews and evidence exist.

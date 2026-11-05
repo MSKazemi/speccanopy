@@ -114,3 +114,7 @@ The schema permits `provenance.review_claims[]` with `reviewer`, `expertise`, `r
 The **software infrastructure** for evaluating alternatives and receiving traceable expert-review claims is implemented. **Actual independent expert panel recruitment, authentication of evidence, a blind holdout set, domain-specific semantic adjudication, calibration against professional design reviews, and AI-driven automatic semantic critique remain outstanding.** This is an honest boundary, not a hidden background task.
 
 Next work should recruit real reviewers and gather permissible cases, quantify cross-reviewer agreement, and use the evidence to improve the architecture critique/refinement model without overfitting a single decomposition tree.
+
+## Phase 7 follow-on
+
+A separate [expert panel review protocol](phase7-expert-panel.md) now prepares source-labeled-private packets from these public research cases, validates self-declared reviewer submissions against immutable packet hashes, and reports provisional agreement and disagreements. It does **not** authenticate experts, create private holdouts, or convert synthetic results into independent evidence. The original Phase 6 scores and limitations remain unchanged.
