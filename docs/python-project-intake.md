@@ -24,6 +24,7 @@ The supplied requirement is included as a **human-authored requirement**, not si
 From a Bash/Zsh terminal:
 
 ```bash
+mkdir -p ~/projects
 git clone https://github.com/MSKazemi/speccanopy.git ~/projects/speccanopy
 cd ~/projects/speccanopy
 python -m pip install -e '.[dev]'

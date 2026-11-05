@@ -6,7 +6,6 @@ application code execution, API calls or independent human verification.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pytest
