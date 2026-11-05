@@ -30,6 +30,7 @@ from .refinement_exporters import (
 from .research import ResearchCase, ResearchSuite, evaluate_case, summarize_suite
 from .research_exporters import export_research
 from .source_evidence import SourceEvidence, assess_sources, scan_sources, save_inventory
+from .project_intake import prepare_project_intake, export_project_intake
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -56,6 +57,21 @@ def main(argv: list[str] | None = None) -> int:
     document.add_argument("--source-root", type=Path, help="Authorized local application root for snapshot verification")
     document.add_argument("--source-evidence", type=Path, help="JSON mapping of authored architecture claims to source hashes")
     document.add_argument("--max-source-bytes", type=int, default=1000000)
+
+    intake = sub.add_parser(
+        "project-intake", help="Draft Python module architecture inputs from bounded offline AST analysis"
+    )
+    intake.add_argument("project", type=Path, help="Authorized local Python application root")
+    intake.add_argument("--system", required=True, help="Human-supplied system name")
+    intake.add_argument("--goal", required=True, help="Human-supplied project goal")
+    intake.add_argument(
+        "--requirement", required=True, action="append",
+        help="Human-supplied functional requirement; repeat as needed",
+    )
+    intake.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    intake.add_argument("--max-modules", type=int, default=30)
+    intake.add_argument("--max-files", type=int, default=2000)
+    intake.add_argument("--max-file-bytes", type=int, default=1000000)
 
     sources = sub.add_parser("source-inventory", help="Inventory allowlisted local files without exporting contents")
     sources.add_argument("project", type=Path, help="Authorized application directory")
@@ -270,6 +286,25 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Mandatory requirements: {len(report.verified)} verified, {len(report.planned_only)} planned, {len(report.uncovered)} uncovered")
         print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
         return 2 if args.strict and result.architecture.status == "incomplete_requires_review" else 0
+
+    if args.command == "project-intake":
+        try:
+            prepared = prepare_project_intake(
+                args.project, system=args.system, goal=args.goal,
+                requirements=args.requirement, max_modules=args.max_modules,
+                max_files=args.max_files, max_file_bytes=args.max_file_bytes,
+            )
+            paths = export_project_intake(prepared, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error preparing project intake: {exc}", file=sys.stderr)
+            return 1
+        print(
+            f"Python source intake: {len(prepared.observations.modules)} modules, "
+            f"{len(prepared.observations.dependencies)} static import edges"
+        )
+        print("PROVISIONAL: owner must check module boundaries and map requirements; no code executed")
+        print(f"Artifacts: {', '.join(str(path) for path in paths.values())}")
+        return 0
 
     if args.command == "source-inventory":
         try:

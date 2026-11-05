@@ -77,7 +77,8 @@ def _file_kind(path: str) -> str | None:
     return "source"
 
 
-def _file_snapshot(root: Path, name: str, *, byte_limit: int) -> tuple[str, int, int]:
+def read_safe_source_bytes(root: Path, name: str, *, byte_limit: int) -> bytes:
+    """Read allowlisted source without executing it, with existing privacy bounds."""
     safe_source_path(name)
     parts = name.split("/")
     path = root.joinpath(*parts)
@@ -114,7 +115,11 @@ def _file_snapshot(root: Path, name: str, *, byte_limit: int) -> tuple[str, int,
             raise ValueError("Source file changed while reading")
     finally:
         os.close(fd)
-    data = b"".join(chunks)
+    return b"".join(chunks)
+
+
+def _file_snapshot(root: Path, name: str, *, byte_limit: int) -> tuple[str, int, int]:
+    data = read_safe_source_bytes(root, name, byte_limit=byte_limit)
     return hashlib.sha256(data).hexdigest(), len(data), len(data.splitlines())
 
 
