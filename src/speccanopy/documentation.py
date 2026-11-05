@@ -12,6 +12,7 @@ from pathlib import Path
 from .exporters import relationships_mermaid, to_mermaid
 from .models import ArchitectureSpec
 from .review import ArchitectureReview
+from .source_evidence import SourceAssessment
 
 
 def _md(value: object) -> str:
@@ -291,7 +292,64 @@ def _quality_risks(spec: ArchitectureSpec, review: ArchitectureReview | None) ->
     return _page(spec, "Quality, risks and evidence", "\n\n".join(parts))
 
 
-def _questions(spec: ArchitectureSpec, review: ArchitectureReview | None) -> str:
+
+
+def _source_evidence_page(spec: ArchitectureSpec, sources: SourceAssessment) -> str:
+    """Link claims to live local file snapshots without asserting semantic truth."""
+    rows = []
+    for check in sources.checks:
+        loc = check.source_path
+        if check.line_start is not None:
+            loc += f":{check.line_start}-{check.line_end}"
+        rows.append([
+            check.architecture_id,
+            loc,
+            check.basis,
+            check.status,
+            check.assertion,
+            check.expected_sha256,
+            check.actual_sha256 or "Unavailable",
+        ])
+    matched = sum(check.status == "matching_snapshot" for check in sources.checks)
+    body = "\n\n".join([
+        "## Meaning of this evidence\n\n"
+        "**A matching SHA-256 means only that a cited LOCAL file currently has "
+        "the referenced bytes.** It does **not** prove the author's assertion, "
+        "the source's behavioral meaning, independent verification, or "
+        "architectural correctness. All assertions and basis labels were "
+        "supplied by a person or AI; no source text is copied into this page.",
+        "## Snapshot status\n\n"
+        "- Claims provided: " + str(len(sources.checks)) + "\n"
+        "- Matching byte snapshots: " + str(matched) + "\n"
+        "- Changed or missing/unreadable/invalid-span snapshots: " +
+        str(len(sources.checks) - matched) + "\n"
+        "- Mandatory requirements without a **matching observed source**: " +
+        str(len(sources.unlinked_mandatory_requirements)) + "\n"
+        "- Components without a **matching observed source**: " +
+        str(len(sources.unlinked_components)),
+        "## Authored source claims\n\n" +
+        _table(
+            ["Architecture ID", "Project-relative file[:lines]", "Author basis",
+             "Byte status", "Authored claim", "Expected SHA-256", "Current SHA-256"],
+            rows, "No source claims were supplied.",
+        ),
+        "## Unlinked mandatory requirements\n\n" +
+        _bullets(sources.unlinked_mandatory_requirements,
+                 "Every mandatory requirement has at least one matching observed "
+                 "file link. This is NOT proof the requirement is implemented."),
+        "## Unlinked components\n\n" +
+        _bullets(sources.unlinked_components,
+                 "Every component has at least one matching observed file link. "
+                 "This is NOT proof of semantic correctness."),
+        "## Caveats\n\n" + _md(sources.caveat) +
+        "\n\nThe report uses project-relative paths, not absolute host paths, "
+        "and does not copy source code or credentials. A source mapping may still "
+        "reveal private filenames, so review it before publishing.",
+    ])
+    return _page(spec, "Source-file evidence and change detection", body)
+
+def _questions(spec: ArchitectureSpec, review: ArchitectureReview | None,
+               sources: SourceAssessment | None = None) -> str:
     questions = [
         "Confirm the authored architecture against the real project's source "
         "and revision. Source-file provenance is not tracked in ArchitectureSpec."
@@ -340,6 +398,33 @@ def _questions(spec: ArchitectureSpec, review: ArchitectureReview | None) -> str
             questions.append("Resolve the advisory review's open issues.")
         for finding in review.quality_review.findings:
             questions.append(f"Investigate heuristic finding {finding.id}: {finding.description}")
+    if sources is not None:
+        questions.append(
+            "Review the author's source-to-architecture mapping for semantic accuracy. "
+            "Matching file hashes alone do not prove any architectural assertion."
+        )
+        if sources.unlinked_mandatory_requirements:
+            questions.append(
+                "Map these mandatory requirements to observed source files or "
+                "mark them as unimplemented/unverified: " +
+                ", ".join(sources.unlinked_mandatory_requirements)
+            )
+        if sources.unlinked_components:
+            questions.append(
+                "Confirm source provenance or proposed-only status of components: " +
+                ", ".join(sources.unlinked_components)
+            )
+        for check in sources.checks:
+            if check.status != "matching_snapshot":
+                questions.append(
+                    f"Investigate {check.status} source for {check.architecture_id}: "
+                    f"{check.source_path}."
+                )
+            elif check.basis != "observed":
+                questions.append(
+                    f"Validate authored {check.basis} claim for "
+                    f"{check.architecture_id}: {check.source_path}."
+                )
     return _page(spec, "Open questions and owner review", "\n\n".join([
         "These are **review prompts, not independently verified defects**.",
         "\n".join("- [ ] " + _md(q) for q in questions),
@@ -348,6 +433,7 @@ def _questions(spec: ArchitectureSpec, review: ArchitectureReview | None) -> str
 
 def render_documentation(
     spec: ArchitectureSpec, review: ArchitectureReview | None = None,
+    sources: SourceAssessment | None = None,
 ) -> dict[str, str]:
     """Render reproducible documents without changing a design's status."""
     if review is not None and (
@@ -377,13 +463,16 @@ def render_documentation(
         "- [Data and security](data-security.md)\n"
         "- [Architecture decisions](decisions.md)\n"
         "- [Quality and risks](quality-risks.md)\n"
-        "- [Open questions](open-questions.md)",
+        "- [Open questions](open-questions.md)" +
+        ("\n- [Source evidence and change status](source-evidence.md)" if sources else ""),
         "## Provenance limits\n\n"
-        "The current schema has no source-file references tying these assertions "
-        "to application code. Authored verification cases, accepted ADR labels, "
-        "and heuristic reviews are not independently authenticated.",
+        "The ArchitectureSpec schema does not itself carry source-file references. "
+        "An optional external source-evidence sidecar may bind authored claims "
+        "to SHA-256 file snapshots, but matching bytes do not prove semantic "
+        "correctness. Authored verification cases, accepted ADR labels, and "
+        "heuristic reviews are not independently authenticated.",
     ])
-    return {
+    pages = {
         "README.md": _page(spec, "Architecture documentation: " + spec.brief.system, index),
         "overview.md": _overview(spec),
         "requirements.md": _requirements(spec),
@@ -392,18 +481,22 @@ def render_documentation(
         "data-security.md": _data_security(spec),
         "decisions.md": _decisions(spec),
         "quality-risks.md": _quality_risks(spec, review),
-        "open-questions.md": _questions(spec, review),
+        "open-questions.md": _questions(spec, review, sources),
         "architecture.mmd": to_mermaid(spec),
         "relationships.mmd": relationships_mermaid(spec),
     }
+    if sources is not None:
+        pages["source-evidence.md"] = _source_evidence_page(spec, sources)
+    return pages
 
 
 def export_documentation(
     spec: ArchitectureSpec, destination: str | Path,
     *, review: ArchitectureReview | None = None,
+    sources: SourceAssessment | None = None,
 ) -> dict[str, Path]:
     """Refuse silent replacement of hand-edited or pre-existing documentation."""
-    rendered = render_documentation(spec, review)
+    rendered = render_documentation(spec, review, sources)
     out = Path(destination)
     if out.is_symlink() or (out.exists() and (not out.is_dir() or any(out.iterdir()))):
         raise ValueError("Documentation output must be an empty directory; existing files not overwritten")

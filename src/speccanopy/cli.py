@@ -29,6 +29,7 @@ from .refinement_exporters import (
 )
 from .research import ResearchCase, ResearchSuite, evaluate_case, summarize_suite
 from .research_exporters import export_research
+from .source_evidence import SourceEvidence, assess_sources, scan_sources, save_inventory
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -52,6 +53,16 @@ def main(argv: list[str] | None = None) -> int:
     document.add_argument("--review", type=Path, help="Optional matching architecture-review.json")
     document.add_argument("--output", type=Path, required=True, help="New or empty docs directory")
     document.add_argument("--strict", action="store_true", help="Exit 2 when architecture or review remains unvalidated")
+    document.add_argument("--source-root", type=Path, help="Authorized local application root for snapshot verification")
+    document.add_argument("--source-evidence", type=Path, help="JSON mapping of authored architecture claims to source hashes")
+    document.add_argument("--max-source-bytes", type=int, default=1000000)
+
+    sources = sub.add_parser("source-inventory", help="Inventory allowlisted local files without exporting contents")
+    sources.add_argument("project", type=Path, help="Authorized application directory")
+    sources.add_argument("--output", type=Path, required=True, help="New JSON metadata file")
+    sources.add_argument("--max-files", type=int, default=2000)
+    sources.add_argument("--max-file-bytes", type=int, default=1000000)
+
 
     propose_ai = sub.add_parser("propose-ai", help="Draft a component hierarchy using structured AI model proposals")
     propose_ai.add_argument("brief", type=Path)
@@ -260,21 +271,51 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
         return 2 if args.strict and result.architecture.status == "incomplete_requires_review" else 0
 
+    if args.command == "source-inventory":
+        try:
+            inventory = scan_sources(args.project, max_files=args.max_files,
+                                     max_bytes=args.max_file_bytes)
+            path = save_inventory(inventory, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error inventorying sources: {exc}", file=sys.stderr)
+            return 1
+        print(f"Source inventory: {len(inventory.files)} metadata-only file records; "
+              f"{inventory.skipped_oversized} oversized excluded")
+        print(f"Artifact: {path}")
+        print("Hashes are not semantic architecture verification; keep paths private if sensitive")
+        return 0
+
     if args.command == "document":
         try:
             spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
             review = (ArchitectureReview.model_validate_json(args.review.read_text(encoding="utf-8"))
                       if args.review else None)
-            paths = export_documentation(spec, args.output, review=review)
+            if (args.source_root is None) != (args.source_evidence is None):
+                raise ValueError("--source-root and --source-evidence must be provided together")
+            sources_report = None
+            if args.source_evidence is not None:
+                claims = SourceEvidence.model_validate_json(
+                    args.source_evidence.read_text(encoding="utf-8")
+                )
+                sources_report = assess_sources(
+                    spec, claims, args.source_root, max_bytes=args.max_source_bytes
+                )
+            paths = export_documentation(spec, args.output, review=review,
+                                         sources=sources_report)
         except (OSError, ValidationError, ValueError) as exc:
             print(f"Error documenting architecture: {exc}", file=sys.stderr)
             return 1
         print(f"Documentation: {spec.brief.system}")
         print(f"Source architecture status: {spec.status} — no independent approval inferred")
+        if sources_report is not None:
+            matched = sum(x.status == "matching_snapshot" for x in sources_report.checks)
+            print(f"Source citations: {matched}/{len(sources_report.checks)} byte snapshots match; "
+                  "not proof of architectural correctness")
         print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
         return 2 if args.strict and (
             spec.status != "validated_for_scope" or
-            (review is not None and review.overall_status == "requires_review")
+            (review is not None and review.overall_status == "requires_review") or
+            (sources_report is not None and sources_report.requires_review)
         ) else 0
 
     if args.command == "review":
