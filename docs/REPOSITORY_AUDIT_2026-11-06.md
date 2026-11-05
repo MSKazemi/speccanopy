@@ -6,6 +6,8 @@
 
 **Method / scope:** Read GitHub repository metadata, open issues and pull requests, workflow runs/jobs/logs, the full recursive repository tree (147 files: 19 source, 12 test, 22 docs, 84 examples, 10 other), all 19 source modules, 12 test modules, architecture/research sample outputs, the roadmap, MVP checklist, and documentation. Checked the local relative Markdown link destinations against the repository tree. Compared direct Claude API request structure with current [Anthropic structured-output](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) and [versioning](https://platform.claude.com/docs/en/api/versioning) documentation. This was a **remote static/repository audit plus existing CI evidence**, not a fresh independent security penetration test or live model/real-app exercise.
 
+**Post-audit progress (2026-11-06):** The first deterministic Markdown renderer slice of Issue #5 has now been implemented as `speccanopy document` (see [renderer guide](architecture-documentation-renderer.md)). The gaps below describe the original audit baseline; source-aware intake, evidence reconciliation, documentation drift controls and an actual-app pilot remain open.
+
 ## Observed repository state
 
 | Check | Evidence at baseline | Interpretation |

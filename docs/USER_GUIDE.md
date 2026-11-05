@@ -1,6 +1,6 @@
 # User guide — Document a software project with Speccanopy + Claude Code
 
-**Start here.** Speccanopy is currently a **guided architecture-documentation prototype**, not a one-command source-to-documentation product. With your Claude Code subscription, Claude helps gather project facts, build inputs, and write readable Markdown; the Speccanopy CLI validates a structured architecture and generates diagrams and advisory reviews. You decide which architecture assertions and decisions to accept.
+**Start here.** Speccanopy is currently a **guided architecture-documentation prototype**, not a one-command source-to-documentation product. With your Claude Code subscription, Claude helps gather project facts and inputs; Speccanopy validates a structured architecture, generates diagrams, performs advisory reviews, **and renders a baseline Markdown architecture pack**. Claude Code can reconcile it with actual project sources. You decide which architecture assertions and decisions to accept.
 
 **Scope:** Speccanopy designs and documents **software architecture**. It does not implement, build, test or deploy the application that it describes.
 
@@ -45,7 +45,7 @@ If Speccanopy is already cloned, skip `git clone`. The `--add-dir` option grants
 
 Paste this into the interactive Claude Code terminal after replacing the folder path:
 
-> Read `CLAUDE.md` and `docs/USER_GUIDE.md`. My existing application is at `~/projects/my-app`. I want **architecture documentation for the current implementation**, not changes to application source code. Inspect authorized source files, README, tests, configs, API and database definitions; do not read `.env`, secrets, keys or private production data. Identify system goals, actors, requirements, components, component boundaries, interactions, data ownership, key decisions and quality risks. Produce schema-valid `out/myproject-inputs/brief.json` (SystemBrief) and `out/myproject-inputs/design.json` (FixtureDesign), using Speccanopy's examples. Store file/line references for source-derived claims separately in `out/myproject-inputs/source-evidence.md`, without inventing unsupported JSON fields. Label uncertainties and proposed changes clearly; do not invent test evidence, expert approval or a validated status. Run `speccanopy design` and `speccanopy review` as specified below. With my approval, write readable Markdown into my application's `docs/architecture/` directory, including overview, requirements, components, interactions, data/security, decisions, quality risks and open questions. Include Mermaid diagrams, cite actual source files for observed facts, and do not edit application code. Finish by listing files created, critical findings and questions for me to resolve.
+> Read `CLAUDE.md` and `docs/USER_GUIDE.md`. My existing application is at `~/projects/my-app`. I want **architecture documentation for the current implementation**, not changes to application source code. Inspect authorized source files, README, tests, configs, API and database definitions; do not read `.env`, secrets, keys or private production data. Identify system goals, actors, requirements, components, component boundaries, interactions, data ownership, key decisions and quality risks. Produce schema-valid `out/myproject-inputs/brief.json` (SystemBrief) and `out/myproject-inputs/design.json` (FixtureDesign), using Speccanopy's examples. Store file/line references for source-derived claims separately in `out/myproject-inputs/source-evidence.md`, without inventing unsupported JSON fields. Label uncertainties and proposed changes clearly; do not invent test evidence, expert approval or a validated status. Run `speccanopy design`, `speccanopy review` and `speccanopy document` as specified below. With my approval, write readable Markdown into my application's `docs/architecture/` directory, including overview, requirements, components, interactions, data/security, decisions, quality risks and open questions. Include Mermaid diagrams, cite actual source files for observed facts, and do not edit application code. Finish by listing files created, critical findings and questions for me to resolve.
 
 A reusable copy of this prompt is in [prompts/claude-code-document-project.md](../prompts/claude-code-document-project.md).
 
@@ -69,6 +69,10 @@ speccanopy design out/myproject-inputs/brief.json \
 
 speccanopy review out/myproject/architecture.json \
   --output out/myproject-review
+
+speccanopy document out/myproject/architecture.json \
+  --review out/myproject-review/architecture-review.json \
+  --output out/myproject-docs
 ```
 
 An optional `review --config out/myproject-inputs/review.json` adds scenario and style assumptions. Without supplied style drivers, Speccanopy may abstain from recommending a style. This is legitimate rather than a failure.
@@ -109,6 +113,8 @@ speccanopy/
         └── quality-review.json
 ```
 
+**New built-in baseline Markdown output:** `speccanopy document` automatically produces `out/myproject-docs/` with nine Markdown pages (`README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`) and two Mermaid files (`architecture.mmd` and `relationships.mmd`). These pages describe the supplied architecture, not verified facts about a repository. See [renderer documentation](architecture-documentation-renderer.md).
+
 **Additionally written by Claude Code if you ask it to generate readable docs** (with your approval to write in the app):
 
 ```text
@@ -126,7 +132,7 @@ my-app/
         └── open-questions.md         # Unknown or unapproved decisions
 ```
 
-**The second set is NOT automatically created by the current Speccanopy CLI.** Claude Code writes it from the generated data and the original application's evidence. The exact document filenames may vary according to the project and your instructions. Speccanopy's own `out/` is ignored by Git; keep versioned application documentation under the application repository if desired.
+**The version in the application repository is not created there automatically.** Speccanopy writes the baseline pages into `out/myproject-docs/`; Claude Code can then reconcile them with the actual source and, with your approval, create or update the application's `docs/architecture/`. The exact document filenames may vary according to the project and your instructions. Speccanopy's own `out/` is ignored by Git; keep versioned application documentation under the application repository if desired.
 
 ### Understanding the results
 

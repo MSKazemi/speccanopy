@@ -14,7 +14,8 @@ Speccanopy's product scope is **software architecture design and architecture do
 | Evaluate existing `ArchitectureSpec` | Yes | `speccanopy review` produces heuristic rules and a review report, not correctness certification |
 | Trace requirements to components and planned evidence | Yes | Claims about coverage cannot turn planned reviews into verified real-world evidence |
 | Create containment and interaction diagrams | Yes | Mermaid `.mmd`, not always a complete runtime, data-flow or deployment architecture |
-| Generate a standalone comprehensive architecture document | **Not built in** | Current Markdown outputs are **proposal/review reports**, not a complete technical architecture handbook |
+| Render an architecture Markdown pack from `ArchitectureSpec` | **Yes, baseline** | `speccanopy document --output EMPTY_DIRECTORY` produces nine Markdown pages and two Mermaid files, without inspecting application code |
+| Generate complete, source-verified docs for arbitrary real applications | **Not built in** | Claude-assisted intake, source provenance, owner review and drift detection are still required |
 | Read any existing source-code repository and infer its architecture | **Not built in** | Claude Code may help manually, with source access; Speccanopy has no built-in repository scanner |
 | Regenerate docs reliably after code/requirement changes | **Not built in** | An owner must reconcile drift and manually maintain accepted decisions |
 | Generate all kinds of project documentation (end-user help, API reference, deployment runbook) | **No** | Out of the current tool's automatic scope |
@@ -70,9 +71,13 @@ speccanopy design myproject.brief.json \
 
 speccanopy review out/myproject/architecture.json \
   --output out/myproject-review
+
+speccanopy document out/myproject/architecture.json \
+  --review out/myproject-review/architecture-review.json \
+  --output out/myproject-docs
 ```
 
-6. Ask Claude Code to assemble your application's `docs/architecture/` from the **validated structure** plus the **actual source evidence**: `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md` and `open-questions.md`. Include or embed the Mermaid diagrams; cite requirement IDs and original source files. State which parts are **observed**, **inferred/proposed**, **verified**, and **unknown**.
+6. Speccanopy now renders a draft baseline in `out/myproject-docs/`. Ask Claude Code to **review and reconcile** that baseline, then assemble your application's `docs/architecture/` from the **structured design** plus **actual source evidence**: `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md` and `open-questions.md`. Include or embed the Mermaid diagrams; cite requirement IDs and original source files. State which parts are **observed**, **inferred/proposed**, **verified**, and **unknown**.
 7. You, as project owner, check important contracts and business rules, resolve open questions and accept/reject design decisions. Save the documents with your project's code and repeat when sources change. There is **no automatic drift detector** yet.
 
 A suitable Claude Code instruction is:
@@ -141,7 +146,7 @@ Tracked in [Issue #5 — project architecture documentation workflow](https://gi
 ### Priority 0: minimum viable documentation product
 
 1. **Project intake:** read an existing repository and produce traceable initial requirements/components from authorized source files, with source references and explicit unknowns. A Claude Code helper is a reasonable first integration; there is no reason to assume a scanner can infer every architectural decision from code.
-2. **Architecture-document renderer:** add a deterministic command that turns `ArchitectureSpec`, diagrams and ADRs into a complete Markdown **architecture pack** rather than only a JSON payload and review report. Missing design views must appear as missing, not be guessed.
+2. **Architecture-document renderer (initial implementation complete):** `speccanopy document` now emits a deterministic baseline architecture pack from `ArchitectureSpec`, preserving missing information as gaps. Remaining: source-backed claims, appropriate design completeness and actual application verification.
 3. **Review and provenance gates:** separate observed implementation from proposed future architecture and verified decisions, with missing requirement/source evidence checks and human signoff for accepted changes.
 4. **Real-project end-to-end example and CI:** start from a permissible small application repository, extract a brief, design/review it and render a source-linked documentation pack; test reproducibility and invalid/missing evidence.
 

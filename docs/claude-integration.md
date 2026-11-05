@@ -28,7 +28,7 @@ If you need to switch authentication inside Claude Code, use `/login` and choose
 
 **Prompt Claude Code:**
 
-> Read CLAUDE.md and docs/project-documentation-readiness.md. Inspect only the source files I authorize in my application project and exclude secrets. Build a requirements brief and architecture fixture with file-level provenance and unknowns, execute `speccanopy design` and `speccanopy review`, and create a readable `docs/architecture/` Markdown pack with the Mermaid diagrams and an open-questions section. Do not claim certified expertise or change the application code without my approval.
+> Read CLAUDE.md and docs/project-documentation-readiness.md. Inspect only the source files I authorize in my application project and exclude secrets. Build a requirements brief and architecture fixture with file-level provenance and unknowns, execute `speccanopy design`, `speccanopy review` and `speccanopy document`, then reconcile the baseline Markdown pack with the actual project source and create a readable `docs/architecture/` pack with the Mermaid diagrams and an open-questions section. Do not claim certified expertise or change the application code without my approval.
 
 This approach is **guided, not a one-command automatic feature**. The CLI's `propose-ai --backend claude` is a separate optional method for API users, not a prerequisite for using Speccanopy with Claude Code.
 
