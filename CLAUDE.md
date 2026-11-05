@@ -3,6 +3,8 @@
 This project develops an **AI-assisted software architecture DESIGN engine**. It does
 **not** implement, build, test or deploy the applications described by its briefs.
 
+For documentation of a separate application, **start with `docs/USER_GUIDE.md`** and copy the prompt from `prompts/claude-code-document-project.md`. Distinguish observed source facts from inferred architectural proposals. Require approval before writing into the target repository.
+
 Read README.md, docs/vision-and-goal.md, docs/architecture-contract.md and
 docs/execution-roadmap.md before modifying architecture contracts or outputs.
 

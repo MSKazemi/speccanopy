@@ -1,5 +1,7 @@
 # Claude Code + Speccanopy — exact inputs and outputs
 
+**For all guidance and troubleshooting see the [complete user guide](USER_GUIDE.md).**
+
 **Status (2026-11-05): Guided architecture-documentation workflow, NOT a one-command repo-to-doc generator.** Claude Code authors the project-specific inputs and readable narrative; the Speccanopy CLI validates structure, generates diagrams, and performs rule-based review. A Claude Code subscription suffices for the interactive workflow. The optional direct `propose-ai --backend claude` API endpoint needs its own Anthropic API key; do not use that command for this subscription-based tutorial.
 
 ## Input — what you supply
