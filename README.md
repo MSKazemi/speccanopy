@@ -151,7 +151,7 @@ speccanopy document out/ecommerce/architecture.json \
   --output out/ecommerce-docs
 ```
 
-The new command writes nine Markdown pages plus two Mermaid files, without a model API call. It does not overwrite an existing documentation directory. See [usage and limits](docs/architecture-documentation-renderer.md).
+The command writes thirteen Markdown pages (nine core pages plus data-flow, trust-boundary, deployment and runtime views) and two Mermaid files, without a model API call. It does not overwrite an existing documentation directory. See [usage and limits](docs/architecture-documentation-renderer.md).
 
 
 Draft **model-proposed component boundaries** from a validated brief:

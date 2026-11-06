@@ -14,7 +14,7 @@ Speccanopy's product scope is **software architecture design and architecture do
 | Evaluate existing `ArchitectureSpec` | Yes | `speccanopy review` produces heuristic rules and a review report, not correctness certification |
 | Trace requirements to components and planned evidence | Yes | Claims about coverage cannot turn planned reviews into verified real-world evidence |
 | Create containment and interaction diagrams | Yes | Mermaid `.mmd`, not always a complete runtime, data-flow or deployment architecture |
-| Render an architecture Markdown pack from `ArchitectureSpec` | **Yes, baseline** | `speccanopy document --output EMPTY_DIRECTORY` produces nine Markdown pages and two Mermaid files, without inspecting application code |
+| Render an architecture Markdown pack from `ArchitectureSpec` | **Yes, baseline** | `speccanopy document --output EMPTY_DIRECTORY` produces thirteen Markdown pages (including data-flow, trust-boundary, deployment and runtime views that mark absent data as MISSING) and two Mermaid files, without inspecting application code |
 | Generate complete, source-verified docs for arbitrary real applications | **Not built in** | Claude-assisted intake, source provenance, owner review and drift detection are still required |
 | Inventory allowlisted local source files and check citations | **Yes** | `source-inventory` and optional `document --source-root --source-evidence` compare byte hashes, not architectural meaning |
 | Draft structure from Python source modules/imports | **Yes, provisional Python-only** | `project-intake` parses bounded Python AST, produces valid brief/fixture plus source map; user supplies real requirements, and module roles are unverified |

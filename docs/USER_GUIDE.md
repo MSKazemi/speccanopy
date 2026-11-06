@@ -198,7 +198,7 @@ speccanopy/
         └── quality-review.json
 ```
 
-**New built-in baseline Markdown output:** `speccanopy document` automatically produces `out/myproject-docs/` with nine Markdown pages (`README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`) and two Mermaid files (`architecture.mmd` and `relationships.mmd`). These pages describe the supplied architecture, not verified facts about a repository. With the paired source options, a tenth `source-evidence.md` page is generated and `open-questions.md` identifies missing/changed files and unlinked IDs. See [renderer documentation](architecture-documentation-renderer.md).
+**New built-in baseline Markdown output:** `speccanopy document` automatically produces `out/myproject-docs/` with thirteen Markdown pages (`README.md`, `overview.md`, `requirements.md`, `components.md`, `interactions.md`, `data-security.md`, `decisions.md`, `quality-risks.md`, `open-questions.md`, plus the focused views `view-data-flow.md`, `view-trust-boundaries.md`, `view-deployment.md` and `view-runtime.md`) and two Mermaid files (`architecture.mmd` and `relationships.mmd`). These pages describe the supplied architecture, not verified facts about a repository. With the paired source options, a tenth `source-evidence.md` page is generated and `open-questions.md` identifies missing/changed files and unlinked IDs. See [renderer documentation](architecture-documentation-renderer.md).
 
 **Additionally written by Claude Code if you ask it to generate readable docs** (with your approval to write in the app):
 
@@ -257,7 +257,7 @@ The output is a **proposed design**, not documentation of actual implemented com
 
 **Available as prototypes:** validated architecture schemas; fixture-driven recursive decomposition; Claude Code-assisted input drafting; JSON + Mermaid exports; requirement coverage; heuristic review; explicit uncertain statuses; offline Python `project-intake`; the `document` Markdown pack; allowlisted `source-inventory` with SHA-256-bound source claims; `source-diff` comparison of two inventories; `source-impact` mapping of file changes onto authored source claims; and the `doc-gate` documentation review gate. An offline acceptance suite exercises intake → design → review → document on a committed **synthetic** example ([walkthrough](end-to-end-acceptance.md)).
 
-**Not built in:** semantic (behavioural) architecture extraction, intake for languages other than Python, semantic judgement of whether a changed file invalidates a claim (`source-impact` maps changes by digest only), automatic documentation synchronization with source changes, rename detection beyond identical-byte candidates in `source-diff`, complete runtime/deployment/data views, an acceptance test on an externally permissioned real application, and independently expert-validated architecture quality. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks documentation product readiness; [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) tracks human-review evidence. You do **not** need external expert reviewers merely to draft your own project documentation, but you must not imply AI/heuristics provide independent certification.
+**Not built in:** semantic (behavioural) architecture extraction, intake for languages other than Python, semantic judgement of whether a changed file invalidates a claim (`source-impact` maps changes by digest only), automatic documentation synchronization with source changes, rename detection beyond identical-byte candidates in `source-diff`, complete runtime/deployment/data views, an owner-confirmed acceptance test on a real application (a [maintainer-run pilot on a permissively licensed package](pilot-third-party-python.md) exists, without owner confirmation), and independently expert-validated architecture quality. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks documentation product readiness; [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) tracks human-review evidence. You do **not** need external expert reviewers merely to draft your own project documentation, but you must not imply AI/heuristics provide independent certification.
 
 **Recommended first run:** start with one small existing project, inspect the draft and traceability outputs, and have Claude Code write source-linked `docs/architecture/` pages for your approval.
 
@@ -268,6 +268,7 @@ The output is a **proposed design**, not documentation of actual implemented com
 - [Map source changes to affected claims (`source-impact`)](source-claim-impact.md)
 - [Documentation review gate (`doc-gate`)](documentation-review-gate.md)
 - [End-to-end acceptance walkthrough (synthetic example)](end-to-end-acceptance.md)
+- [Pilot on a real third-party Python package (measured, not owner-confirmed)](pilot-third-party-python.md)
 - [Claude subscription versus API billing](claude-integration.md)
 - [Real-project readiness and detailed walkthrough](project-documentation-readiness.md)
 - [Architecture contract and statuses](architecture-contract.md)
