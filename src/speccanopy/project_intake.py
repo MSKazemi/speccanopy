@@ -14,7 +14,7 @@ import html
 from pathlib import Path, PurePosixPath
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_serializer
 
 from .exporters import check_new_output_dir, prepare_new_output_dir
 from .fixtures import FixtureDesign
@@ -34,11 +34,37 @@ class ModuleObservation(SchemaModel):
     classes: list[str]
     symbols_omitted: int = Field(ge=0)
     internal_imports: list[str]
+    # JavaScript/TypeScript intake only. They stay None for Python intake and are
+    # then omitted from the serialized JSON, so Python output is byte-identical.
+    variables: list[str] | None = None
+    variables_omitted: int | None = Field(default=None, ge=0)
+    external_imports: list[str] | None = None
+    unresolved_imports: list[str] | None = None
+    type_only_imports: list[str] | None = None
+    dynamic_imports: list[str] | None = None
+    nonliteral_dynamic_references: int | None = Field(default=None, ge=0)
+    ambiguous_slashes: int | None = Field(default=None, ge=0)
+    lexical_anomalies: int | None = Field(default=None, ge=0)
+
+    @model_serializer(mode="wrap")
+    def _omit_unset_language_extras(self, handler):
+        data = handler(self)
+        for key in _JS_ONLY_FIELDS:
+            if data.get(key) is None:
+                data.pop(key, None)
+        return data
+
+
+_JS_ONLY_FIELDS = (
+    "variables", "variables_omitted", "external_imports", "unresolved_imports",
+    "type_only_imports", "dynamic_imports", "nonliteral_dynamic_references",
+    "ambiguous_slashes", "lexical_anomalies",
+)
 
 
 class IntakeObservations(SchemaModel):
     status: Literal["provisional_requires_owner_review"] = "provisional_requires_owner_review"
-    method: Literal["python_ast_static_imports"] = "python_ast_static_imports"
+    method: Literal["python_ast_static_imports", "javascript_lexical_imports"] = "python_ast_static_imports"
     modules: list[ModuleObservation]
     dependencies: list[Relationship]
     excluded_non_python_source: list[str]
@@ -61,6 +87,7 @@ class IntakeResult:
     evidence: SourceEvidence
     inventory: SourceInventory
     observations: IntakeObservations
+    language: str = "python"
 
 
 def _id(prefix: str, key: str) -> str:
@@ -110,13 +137,7 @@ def _import_edges(tree: ast.Module, module: str, path: str, known: set[str]) -> 
     return links
 
 
-def prepare_project_intake(
-    project_root: str | Path, *,
-    system: str, goal: str, requirements: list[str],
-    max_modules: int = 30, max_files: int = 2000,
-    max_file_bytes: int = 1_000_000,
-) -> IntakeResult:
-    """Produce a reviewable fixture and syntax-only evidence, never verified design."""
+def _check_arguments(system: str, goal: str, requirements: list[str], max_modules: int) -> None:
     if not 1 <= max_modules <= MAX_MODULES:
         raise ValueError("max_modules must be between 1 and 50")
     if not system.strip() or not goal.strip() or not requirements or any(
@@ -125,6 +146,42 @@ def prepare_project_intake(
         raise ValueError("Supply --system, --goal, and at least one --requirement")
     if len(requirements) > 99:
         raise ValueError("At most 99 user requirements are supported")
+
+
+def _make_brief(system: str, goal: str, requirements: list[str], module_count: int) -> SystemBrief:
+    return SystemBrief(
+        system=system.strip(), goals=[goal.strip()],
+        functional_requirements=[
+            FunctionalRequirement(id=f"FR-USER-{i:03d}", statement=s.strip(), mandatory=True)
+            for i, s in enumerate(requirements, 1)
+        ],
+        constraints=DesignConstraints(
+            max_depth=3, max_nodes=max(20, module_count + 1),
+            max_refinement_rounds=2,
+        ),
+    )
+
+
+def prepare_project_intake(
+    project_root: str | Path, *,
+    system: str, goal: str, requirements: list[str],
+    max_modules: int = 30, max_files: int = 2000,
+    max_file_bytes: int = 1_000_000,
+    language: str = "python",
+) -> IntakeResult:
+    """Produce a reviewable fixture and syntax-only evidence, never verified design.
+
+    ``language`` is ``"python"`` (default, AST) or ``"javascript"`` (JS/TS lexical scan).
+    """
+    if language not in {"python", "javascript"}:
+        raise ValueError("Unsupported language; choose 'python' or 'javascript'")
+    _check_arguments(system, goal, requirements, max_modules)
+    if language == "javascript":
+        from .js_intake import prepare_js_project_intake
+        return prepare_js_project_intake(
+            project_root, system=system, goal=goal, requirements=requirements,
+            max_modules=max_modules, max_files=max_files, max_file_bytes=max_file_bytes,
+        )
     root = Path(project_root)
     inventory = scan_sources(root, max_files=max_files, max_bytes=max_file_bytes)
     selected = [x for x in inventory.files if x.path.endswith(".py") and x.kind == "source"]
@@ -153,17 +210,7 @@ def prepare_project_intake(
             line = getattr(exc, "lineno", None)
             where = f" at line {line}" if line else ""
             raise ValueError(f"Cannot safely parse Python module {file.path}{where}") from None
-    brief = SystemBrief(
-        system=system.strip(), goals=[goal.strip()],
-        functional_requirements=[
-            FunctionalRequirement(id=f"FR-USER-{i:03d}", statement=s.strip(), mandatory=True)
-            for i, s in enumerate(requirements, 1)
-        ],
-        constraints=DesignConstraints(
-            max_depth=3, max_nodes=max(20, len(selected) + 1),
-            max_refinement_rounds=2,
-        ),
-    )
+    brief = _make_brief(system, goal, requirements, len(selected))
     root_component = Component(
         id="system", name=brief.system,
         responsibility="Provisional grouping of Python source modules for owner review.",
@@ -256,6 +303,9 @@ def _md(value: object) -> str:
 
 
 def _report(result: IntakeResult) -> str:
+    if result.language == "javascript":
+        from .js_intake import render_js_report
+        return render_js_report(result)
     obs = result.observations
     lines = [
         "# Provisional Python project architecture intake",

@@ -67,9 +67,16 @@ def main(argv: list[str] | None = None) -> int:
     document.add_argument("--max-source-bytes", type=int, default=1000000)
 
     intake = sub.add_parser(
-        "project-intake", help="Draft Python module architecture inputs from bounded offline AST analysis"
+        "project-intake",
+        help="Draft module architecture inputs from bounded offline static analysis "
+             "(Python AST, or JavaScript/TypeScript lexical scan)",
     )
-    intake.add_argument("project", type=Path, help="Authorized local Python application root")
+    intake.add_argument("project", type=Path, help="Authorized local application root")
+    intake.add_argument(
+        "--language", choices=("python", "javascript"), default="python",
+        help="Source language to analyze: python (.py, AST; default) or javascript "
+             "(.js .jsx .mjs .cjs .ts .tsx, lexical scan; nothing is executed)",
+    )
     intake.add_argument("--system", required=True, help="Human-supplied system name")
     intake.add_argument("--goal", required=True, help="Human-supplied project goal")
     intake.add_argument(
@@ -357,14 +364,17 @@ def main(argv: list[str] | None = None) -> int:
                 args.project, system=args.system, goal=args.goal,
                 requirements=args.requirement, max_modules=args.max_modules,
                 max_files=args.max_files, max_file_bytes=args.max_file_bytes,
+                language=args.language,
             )
             paths = export_project_intake(prepared, args.output)
         except (OSError, ValidationError, ValueError) as exc:
             print(f"Error preparing project intake: {exc}", file=sys.stderr)
             return 1
+        label = "JavaScript/TypeScript" if args.language == "javascript" else "Python"
+        kind = "lexical" if args.language == "javascript" else "static"
         print(
-            f"Python source intake: {len(prepared.observations.modules)} modules, "
-            f"{len(prepared.observations.dependencies)} static import edges"
+            f"{label} source intake: {len(prepared.observations.modules)} modules, "
+            f"{len(prepared.observations.dependencies)} {kind} import edges"
         )
         print("PROVISIONAL: owner must check module boundaries and map requirements; no code executed")
         print(f"Artifacts: {', '.join(str(path) for path in paths.values())}")
