@@ -1,4 +1,4 @@
-# Pilot: Speccanopy on a real third-party Python package
+# Pilot: Speccanopy on real third-party packages (Python and JavaScript)
 
 **Run 2026-11-06 by the maintainers' tooling. Not an owner-confirmed evaluation and not independent expert review.** The package's maintainers were not involved, did not confirm any observed fact, and did not supply requirements. This pilot measures what Speccanopy's deterministic pipeline does on real, unmodified source code. It does not show that the generated architecture is correct.
 
