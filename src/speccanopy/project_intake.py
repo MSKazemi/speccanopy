@@ -200,7 +200,7 @@ def _make_brief(system: str, goal: str, requirements: list[str], module_count: i
             for i, s in enumerate(requirements, 1)
         ],
         constraints=DesignConstraints(
-            max_depth=3, max_nodes=max(20, module_count + 1),
+            max_depth=3, max_nodes=max(20, 2 * module_count + 1),  # root + one group per module + modules
             max_refinement_rounds=2,
         ),
     )

@@ -30,7 +30,8 @@ speccanopy project-intake CHECKOUT/src --system "Speccanopy (owner pilot)" \
   --requirement "Draft provisional architecture inputs from an existing project's source without executing it (Issue #5)" \
   --output work/intake
 python examples/owner-pilot/apply_grouping.py work/intake/design.json work/design-grouped.json
-# raise brief.constraints.max_nodes from 28 to 34 in a copy: work/brief-grouped.json
+# at the pilot's commit (0e0cf40) intake set max_nodes = 28, so the pilot raised it to 34 in a copy,
+# work/brief-grouped.json. Since the budget fix below, intake's own brief.json already fits the grouping.
 speccanopy design work/brief-grouped.json --fixture work/design-grouped.json --output work/design
 speccanopy review work/design/architecture.json --output work/review
 speccanopy doc-gate work/design/architecture.json --review work/review/architecture-review.json \
@@ -80,7 +81,7 @@ speccanopy document work/design/architecture.json --review work/review/architect
 ## Findings for Issue #5
 
 1. **Fixed in this change:** intake had no way to leave out test fixtures. `project-intake --exclude PATH` (repeatable) now does; on the repository root, `--exclude examples` gives the same 27 modules and 109 edges as running on `src/`, within the default `--max-modules 30`, and records the exclusion in `module-observations.json` and `intake-review.md`.
-2. Intake's default node budget (modules + 1) leaves no room for grouping; the user has to raise `max_nodes` by hand.
+2. **Fixed after the pilot:** intake's node budget was `max(20, modules + 1)`, leaving no room for grouping. It is now `max(20, 2 × modules + 1)` (root, at most one group per module, and every module), so a grouping layer builds without hand edits. Projects of up to 9 modules keep the budget of 20.
 3. Going from 4 uncovered to 4 verified requirements took one scripted review step plus real CI evidence; reaching `ready_for_human_signoff` would need per-component interface and data decisions by the owner.
 
 ## Limits
