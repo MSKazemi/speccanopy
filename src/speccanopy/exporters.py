@@ -39,13 +39,28 @@ def relationships_mermaid(spec: ArchitectureSpec) -> str:
     return "\n".join(lines) + "\n"
 
 
+def prepare_new_output_dir(destination: str | Path, label: str) -> Path:
+    """Create a new/empty real output directory; never write into existing files.
+
+    Refuses symlinks (including dangling ones), regular files and non-empty
+    directories *before* anything is created, so hand-edited owner files are
+    never replaced or mixed with generated artifacts.
+    """
+    out = Path(destination)
+    if out.is_symlink() or (out.exists() and (not out.is_dir() or any(out.iterdir()))):
+        raise ValueError(
+            f"{label} output must be a new or empty directory; existing files not overwritten"
+        )
+    out.mkdir(parents=True, exist_ok=True)
+    return out
+
+
 def export_generation(
     result: GenerationResult, destination: str | Path, *,
     generator: str = "deterministic-fixture",
     note: str = "Curated proposals and design-level verification plans; not AI-generated or independently validated.",
 ) -> dict[str, Path]:
-    out = Path(destination)
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Architecture")
     spec = result.architecture
     report = spec.coverage_report()
     owners = {rid: sorted(c.id for c in spec.components if rid in c.requirement_ids)

@@ -869,22 +869,9 @@ STAGE_FILES = {
     "project-intake": INTAKE_FILES, "design": DESIGN_FILES,
     "review": REVIEW_FILES, "document": DOC_FILES,
 }
-DESIGN_REVIEW_BUG = {
-    "design": "BUG: `design` writes into a non-empty/symlinked output dir and overwrites existing files (exporters.export_generation has no guard)",
-    "review": "BUG: `review` writes into a non-empty/symlinked output dir and overwrites existing files (review_exporters.export_review has no guard)",
-}
-
-
-def _stage_params(bug_scope: str):
-    params = []
-    for stage in STAGE_OWNER_FILE:
-        marks = ()
-        if stage in DESIGN_REVIEW_BUG:
-            marks = (pytest.mark.xfail(strict=True, reason=DESIGN_REVIEW_BUG[stage].replace(
-                "non-empty/symlinked output dir and overwrites existing files",
-                bug_scope)),)
-        params.append(pytest.param(stage, id=stage, marks=marks))
-    return params
+# design/review previously wrote into non-empty or symlinked output directories;
+# fixed by exporters.prepare_new_output_dir, so every stage is now guarded.
+STAGES = [pytest.param(stage, id=stage) for stage in STAGE_OWNER_FILE]
 
 
 def _stage_run(stage: str, pl: Pipeline, out: Path) -> Result:
@@ -897,7 +884,7 @@ def _stage_run(stage: str, pl: Pipeline, out: Path) -> Result:
     return run_inproc(document_argv(pl.design, pl.review, pl.intake, pl.project, out))
 
 
-@pytest.mark.parametrize("stage", _stage_params("overwrites owner files in an existing non-empty output dir"))
+@pytest.mark.parametrize("stage", STAGES)
 def test_existing_hand_edited_output_directory_is_never_overwritten_or_mixed(pipeline, tmp_path, stage):
     out = tmp_path / "owner-docs"
     out.mkdir()
@@ -915,7 +902,7 @@ def test_existing_hand_edited_output_directory_is_never_overwritten_or_mixed(pip
     assert result.err.startswith("Error") and "Traceback" not in result.err
 
 
-@pytest.mark.parametrize("stage", _stage_params("writes through a symlinked output directory"))
+@pytest.mark.parametrize("stage", STAGES)
 def test_symlinked_output_directory_is_refused_and_nothing_is_written_through_it(pipeline, tmp_path, stage):
     real = tmp_path / "real-empty-dir"
     real.mkdir()
@@ -955,7 +942,7 @@ def test_rerunning_a_guarded_stage_into_its_own_output_is_refused_and_idempotent
     assert read_tree(out) == before
 
 
-@pytest.mark.parametrize("stage", _stage_params("silently re-writes its own output on a re-run"))
+@pytest.mark.parametrize("stage", STAGES)
 def test_rerunning_any_stage_into_its_own_output_is_refused(pipeline, stage):
     out = {"project-intake": pipeline.intake, "design": pipeline.design,
            "review": pipeline.review, "document": pipeline.docs}[stage]
