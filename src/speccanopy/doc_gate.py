@@ -134,6 +134,11 @@ def evaluate_documentation_gate(
                               subject_id=subject, message=message))
 
     cov = spec.coverage_report()
+    names = {c.id: c.name for c in spec.components}
+
+    def comp_label(cid: str) -> str:
+        name = names.get(cid)
+        return f"{cid} ({name})" if name and name != cid else cid
 
     # Mandatory requirements with no verification link (including those mapped
     # to no component at all, which can never be covered).
@@ -180,7 +185,7 @@ def evaluate_documentation_gate(
                 f"Mandatory requirement {rid} has no matching observed source file link.")
         for cid in sources.unlinked_components:
             add("unknown_source_mapping", "blocking", cid,
-                f"Component {cid} has no matching observed source file link.")
+                f"Component {comp_label(cid)} has no matching observed source file link.")
 
     # Manual decisions.
     if spec.status == "incomplete_requires_review":
@@ -207,13 +212,13 @@ def evaluate_documentation_gate(
     for comp in spec.components:
         if comp.status in {"needs_decomposition", "blocked", "requires_review"}:
             add("manual_decision", "blocking", comp.id,
-                f"Component {comp.id} has status {comp.status}.")
+                f"Component {comp_label(comp.id)} has status {comp.status}.")
         elif comp.status == "proposed":
             add("manual_decision", "attention", comp.id,
-                f"Component {comp.id} is only proposed, not marked ready.")
+                f"Component {comp_label(comp.id)} is only proposed, not marked ready.")
         elif comp.status == "ready":
             add("manual_decision", "attention", comp.id,
-                f"Component {comp.id} is marked ready on authored validation evidence; "
+                f"Component {comp_label(comp.id)} is marked ready on authored validation evidence; "
                 "that evidence is not independently checked.")
     if review is None:
         add("manual_decision", "blocking", None, NO_REVIEW)

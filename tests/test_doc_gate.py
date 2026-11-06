@@ -460,3 +460,16 @@ def test_subject_ids_render_without_backslashes_inside_code_spans():
     spec = _spec(findings=[{"id": "mod_a_b", "severity": "low", "description": "x"}])
     md = render_documentation_gate_markdown(evaluate_documentation_gate(spec))
     assert "`mod_a_b`" in md and "`mod\\_" not in md
+
+
+def test_component_items_name_the_component_not_only_its_opaque_id(tmp_path):
+    # Real-data pilot finding: intake IDs like mod_158538b88c3e3c are unreadable alone.
+    def child(cid, name, status):
+        return {"id": cid, "name": name, "responsibility": "x", "boundary": "y",
+                "parent_id": "root", "status": status}
+    spec = _spec(components=[_comp(), child("mod_abc123", "Python module pkg.signer", "requires_review"),
+                             child("mod_def456", "Python module pkg.exc", "proposed")])
+    gate = evaluate_documentation_gate(spec, sources=_assessment(tmp_path, spec, ["root"]))
+    for cid, name in (("mod_abc123", "Python module pkg.signer"), ("mod_def456", "Python module pkg.exc")):
+        msgs = [i.message for i in gate.items if i.subject_id == cid]
+        assert msgs and all(name in m for m in msgs), msgs
