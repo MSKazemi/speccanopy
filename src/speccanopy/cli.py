@@ -39,6 +39,7 @@ from .source_evidence import (
     SourceEvidence, SourceInventory, assess_sources, scan_sources, save_inventory,
 )
 from .project_intake import prepare_project_intake, export_project_intake
+from .grouping import apply_grouping, export_grouping, load_groups
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -91,6 +92,19 @@ def main(argv: list[str] | None = None) -> int:
     intake.add_argument("--max-modules", type=int, default=30)
     intake.add_argument("--max-files", type=int, default=2000)
     intake.add_argument("--max-file-bytes", type=int, default=1000000)
+
+    group = sub.add_parser(
+        "group",
+        help="Group project-intake modules into components and map requirements, from a groups.json "
+             "(no verification evidence is added)",
+    )
+    group.add_argument("intake", type=Path,
+                       help="project-intake output directory (brief.json, design.json, module-observations.json)")
+    group.add_argument("--groups", type=Path, required=True,
+                       help="groups.json: schema_version 1, decided_by, groups[id,name,responsibility,modules,requirement_ids]")
+    group.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    group.add_argument("--allow-ungrouped", action="store_true",
+                       help="Keep modules that are in no group directly under the root (listed in the review)")
 
     sources = sub.add_parser("source-inventory", help="Inventory allowlisted local files without exporting contents")
     sources.add_argument("project", type=Path, help="Authorized application directory")
@@ -381,6 +395,24 @@ def main(argv: list[str] | None = None) -> int:
             f"{len(prepared.observations.dependencies)} {kind} import edges"
         )
         print("PROVISIONAL: owner must check module boundaries and map requirements; no code executed")
+        print(f"Artifacts: {', '.join(str(path) for path in paths.values())}")
+        return 0
+
+    if args.command == "group":
+        try:
+            check_new_output_dir(args.output, "Grouping")
+            groups, groups_sha256 = load_groups(args.groups)
+            grouped = apply_grouping(args.intake, groups, groups_sha256=groups_sha256,
+                                     allow_ungrouped=args.allow_ungrouped)
+            paths = export_grouping(grouped, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error grouping modules: {exc}", file=sys.stderr)
+            return 1
+        module_count = sum(len(m) for m in grouped.modules_by_group.values())
+        print(f"Grouped {module_count} modules into {len(groups.groups)} groups; "
+              f"{len(grouped.ungrouped)} left under the root; decided_by={groups.decided_by}")
+        print("Only decided_by=owner means owner-confirmed. No verification cases, evidence, "
+              "interfaces, data ownership or ready status were added; those remain owner work")
         print(f"Artifacts: {', '.join(str(path) for path in paths.values())}")
         return 0
 

@@ -9,6 +9,7 @@
 | Guide | Purpose |
 | --- | --- |
 | [Python project intake — start here for Python](python-project-intake.md) | Complete input → offline AST draft → design/review/document with source hashes and Claude Code |
+| [Group intake modules into components](grouping-modules.md) | `group`: apply a small `groups.json` (modules by name, requirements, who decided) to an intake instead of hand-editing the fixture; fails closed on unknown, duplicate or ungrouped modules and over-budget trees |
 | [JavaScript/TypeScript project intake](javascript-project-intake.md) | `project-intake --language javascript`: offline lexical import scan of JS/TS sources; same artifacts as Python intake; no code executed |
 | [Claude Code prompt for Python](../prompts/claude-code-python-intake.md) | Copy-paste guided project documentation instructions for Python source |
 | [User guide — start here](USER_GUIDE.md) | Complete existing/new-project walkthrough, Claude Code subscription, JSON inputs, output files, troubleshooting |

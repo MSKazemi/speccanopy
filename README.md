@@ -84,6 +84,8 @@ speccanopy document out/my-app-architecture/architecture.json \
   --output out/my-app-docs
 ```
 
+To group the intake's modules into the components you actually think in, list them in a small `groups.json` and run `speccanopy group out/my-app-inputs --groups groups.json --output out/my-app-grouped`, then `design` on its `brief.json` and `design.json` ([guide](docs/grouping-modules.md)). Use `--exclude examples` on `project-intake` to leave test fixtures out.
+
 This is **structural intake**, not complete software understanding. JavaScript/TypeScript projects can use `--language javascript`, a bounded lexical import scan ([guide](docs/javascript-project-intake.md)). For Go, other languages, private requirements, or a complex system, continue with the [Claude Code guided intake](docs/USER_GUIDE.md) and check the produced claims yourself.
 
 

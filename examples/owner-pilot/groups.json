@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "decided_by": "owner_delegated",
+  "groups": [
+    {
+      "id": "grp_core",
+      "name": "Core schema and export",
+      "responsibility": "Groups 3 module(s): speccanopy, speccanopy.models, speccanopy.exporters.",
+      "modules": [
+        "speccanopy",
+        "speccanopy.models",
+        "speccanopy.exporters"
+      ],
+      "requirement_ids": []
+    },
+    {
+      "id": "grp_generation",
+      "name": "Architecture generation",
+      "responsibility": "Groups 6 module(s): speccanopy.decomposer, speccanopy.fixtures, speccanopy.proposer, speccanopy.ai, speccanopy.ai_exporters, speccanopy.claude.",
+      "modules": [
+        "speccanopy.decomposer",
+        "speccanopy.fixtures",
+        "speccanopy.proposer",
+        "speccanopy.ai",
+        "speccanopy.ai_exporters",
+        "speccanopy.claude"
+      ],
+      "requirement_ids": [
+        "FR-USER-001"
+      ]
+    },
+    {
+      "id": "grp_review",
+      "name": "Review, refinement and research",
+      "responsibility": "Groups 9 module(s): speccanopy.review, speccanopy.review_exporters, speccanopy.scoring, speccanopy.benchmark, speccanopy.refinement, speccanopy.refinement_exporters, speccanopy.research, speccanopy.research_exporters, speccanopy.expert_review.",
+      "modules": [
+        "speccanopy.review",
+        "speccanopy.review_exporters",
+        "speccanopy.scoring",
+        "speccanopy.benchmark",
+        "speccanopy.refinement",
+        "speccanopy.refinement_exporters",
+        "speccanopy.research",
+        "speccanopy.research_exporters",
+        "speccanopy.expert_review"
+      ],
+      "requirement_ids": [
+        "FR-USER-002"
+      ]
+    },
+    {
+      "id": "grp_documentation",
+      "name": "Documentation rendering and gate",
+      "responsibility": "Groups 2 module(s): speccanopy.documentation, speccanopy.doc_gate.",
+      "modules": [
+        "speccanopy.documentation",
+        "speccanopy.doc_gate"
+      ],
+      "requirement_ids": [
+        "FR-USER-003"
+      ]
+    },
+    {
+      "id": "grp_source",
+      "name": "Source evidence and project intake",
+      "responsibility": "Groups 6 module(s): speccanopy.source_evidence, speccanopy.source_diff, speccanopy.source_impact, speccanopy.structure_diff, speccanopy.project_intake, speccanopy.js_intake.",
+      "modules": [
+        "speccanopy.source_evidence",
+        "speccanopy.source_diff",
+        "speccanopy.source_impact",
+        "speccanopy.structure_diff",
+        "speccanopy.project_intake",
+        "speccanopy.js_intake"
+      ],
+      "requirement_ids": [
+        "FR-USER-004"
+      ]
+    },
+    {
+      "id": "grp_cli",
+      "name": "Command-line entry point",
+      "responsibility": "Groups 1 module(s): speccanopy.cli.",
+      "modules": [
+        "speccanopy.cli"
+      ],
+      "requirement_ids": []
+    }
+  ]
+}
