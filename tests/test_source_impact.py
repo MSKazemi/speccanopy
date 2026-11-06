@@ -211,11 +211,11 @@ def test_uncited_added_and_changed_paths_are_listed_and_force_review():
     assert report.requires_review is True  # every claim unaffected, still review
 
 
-def test_empty_evidence_and_empty_diff_does_not_require_review():
+def test_empty_evidence_requires_review_even_with_identical_inventories():
     inv = _inv()
     report = assess_claim_impact(compare_inventories(inv, inv), _evidence())
     assert report.entries == []
-    assert report.requires_review is False
+    assert report.requires_review is True  # zero claims checked is not an all-clear
 
 
 def test_diff_requires_review_is_propagated():
@@ -406,3 +406,35 @@ def test_export_refuses_dangling_symlink_destination(tmp_path):
     with pytest.raises(ValueError, match="new or empty directory"):
         export_claim_impact(assess_claim_impact(diff, evidence), link)
     assert not (tmp_path / "nowhere").exists()
+
+
+# --- review-round fixes ---------------------------------------------------------
+
+def test_report_rejects_forged_entry_status_reason_and_caveat_and_empty_is_review():
+    import hashlib as _h
+    from speccanopy.source_impact import ClaimImpactReport
+
+    sha = lambda b: _h.sha256(b).hexdigest()  # noqa: E731
+    entry = {
+        "architecture_id": "c1", "source_path": "src/a.py", "assertion": "x",
+        "basis": "observed", "claim_sha256": sha(b"old"), "before_sha256": sha(b"new"),
+        "after_sha256": sha(b"new"), "status": "unaffected",
+        "reason": "Verified.",
+    }
+    base = {
+        "entries": [entry], "status_counts": {
+            "unaffected": 1, "stale_changed": 0, "stale_removed": 0,
+            "not_bound_to_before": 0, "rebound_to_after": 0, "not_in_inventory": 0},
+        "affected_architecture_ids": [], "uncited_added_paths": [],
+        "uncited_changed_paths": [], "diff_requires_review": False,
+        "diff_coverage": "comparable",
+    }
+    with pytest.raises(ValidationError):  # status contradicts digests, forged reason
+        ClaimImpactReport.model_validate(base)
+    with pytest.raises(ValidationError):  # forged caveat
+        ClaimImpactReport.model_validate({
+            **base, "entries": [], "status_counts": {k: 0 for k in base["status_counts"]},
+            "caveat": "Verified by expert."})
+    empty = ClaimImpactReport.model_validate({
+        **base, "entries": [], "status_counts": {k: 0 for k in base["status_counts"]}})
+    assert empty.requires_review  # zero claims checked is not an all-clear

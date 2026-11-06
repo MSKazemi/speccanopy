@@ -58,18 +58,18 @@ Every item is **blocking** (the gate will not reach `ready_for_human_signoff`) o
 
 | Category | Blocking | Attention |
 | --- | --- | --- |
-| `uncovered_requirement` | A mandatory requirement with no verification case linked to an owning component, or mapped to no component at all. | none |
+| `uncovered_requirement` | A mandatory requirement with no verification case linked to an owning component, or mapped to no component at all; a brief with **no** mandatory requirements (one item). | none |
 | `planned_only_requirement` | none | A mandatory requirement whose only verification is planned, not recorded as verified. |
 | `unsupported_claim` | A source claim whose snapshot is `changed`, `missing`, `unreadable` or `line_out_of_range`. | A matching claim with basis `inferred` or `proposed`; any verification case marked `verified` (its evidence is authored text, not independently checked). |
 | `unknown_source_mapping` | No source evidence supplied (one item); mandatory requirements and components without a matching **observed** source link. | none |
-| `manual_decision` | Open `critical`/`high` findings; components `needs_decomposition`, `blocked` or `requires_review`; spec status `incomplete_requires_review`; an advisory review whose overall status is `requires_review`; a supplied review for a different system or status (it is ignored). | `proposed` ADRs; open `medium`/`low` findings; components still `proposed`; spec status `draft`; non-blocking advisory review findings. |
+| `manual_decision` | Open `critical`/`high` findings; components `needs_decomposition`, `blocked` or `requires_review`; spec status `incomplete_requires_review`; **no advisory review supplied** (one item); a supplied review for a different system or status (it is ignored); advisory review findings rated `critical`/`high`. | `proposed` ADRs; ADRs and `critical`/`high` findings marked `accepted` in the authored data (confirm a human owner accepted them); components still `proposed`; components marked `ready` (their validation evidence is authored, not checked); open `medium`/`low` findings; spec status `draft`; an advisory review whose overall status is `requires_review`; `medium`/`low` advisory review findings. |
 | `status_claim` | none | The spec claims `validated_for_scope`. |
 
 Notes:
 
 - Verification cases marked `verified` are flagged whether or not sources are supplied, because the gate cannot check the evidence text.
 - A matching SHA-256 only shows that a cited local file has the recorded bytes. It does not show the author's claim is true, which is why `inferred` and `proposed` claims are also surfaced.
-- The advisory review's own findings are listed with the review's severities. A review is optional; its absence is not itself reported.
+- A missing review blocks, just as missing source evidence does, so leaving out an inconvenient input never improves the outcome. The heuristic `review` reports `requires_review` overall for every draft, so that overall status is only an attention item; the review's individual `critical`/`high` findings block.
 
 ## Outcome
 
@@ -78,7 +78,7 @@ Notes:
 - `requires_review`: at least one blocking item.
 - `ready_for_human_signoff`: zero blocking items.
 
-There is deliberately **no** `validated` or `approved` outcome. The gate output model rejects an outcome, counts or caveat that disagree with its items.
+There is deliberately **no** `validated` or `approved` outcome. The gate output model rejects an outcome, counts or caveat that disagree with its items, and a header (`sources_supplied`, `review_supplied`, `architecture_status`) without the blocking item it always produces. This guards against hand-edited reports; it does not authenticate who produced a report.
 
 ### What `ready_for_human_signoff` means
 

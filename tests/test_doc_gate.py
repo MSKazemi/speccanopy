@@ -187,7 +187,8 @@ def test_manual_decisions_findings_and_component_status():
     assert sev["pr"] == "attention"
     assert sev["F-1"] == sev["F-2"] == "blocking" and sev["F-3"] == "attention"
     assert sev["ADR-1"] == "attention"
-    assert "ADR-2" not in sev and "F-4" not in sev
+    assert sev["ADR-2"] == "attention"  # authored acceptance still needs owner confirmation
+    assert "F-4" not in sev
 
 
 def test_incomplete_status_blocks():
@@ -196,14 +197,14 @@ def test_incomplete_status_blocks():
                for i in _cats(gate, "manual_decision"))
 
 
-def test_review_requires_review_blocks_and_findings_listed():
+def test_review_requires_review_is_attention_and_findings_listed():
     spec = _example("ecommerce")
     review = _review("ecommerce")
     assert review.overall_status == "requires_review"
     gate = evaluate_documentation_gate(spec, review=review)
     assert gate.review_supplied
-    msgs = [i.message for i in _cats(gate, "manual_decision", "blocking")]
-    assert any("requires_review" in m for m in msgs)
+    msgs = [i.message for i in _cats(gate, "manual_decision", "attention")]
+    assert any("overall status is requires_review" in m for m in msgs)
     assert any(i.message.startswith("Advisory review finding") for i in gate.items)
 
 
@@ -233,7 +234,8 @@ def test_validated_for_scope_never_yields_more_than_signoff_readiness(tmp_path):
     assert len(claims) == 1 and claims[0].severity == "attention"
     assert "cannot confirm" in claims[0].message
     full = evaluate_documentation_gate(
-        spec, sources=_assessment(tmp_path, spec, ["root", "FR-1", "QR-1"]))
+        spec, review=_candidate_review(spec),
+        sources=_assessment(tmp_path, spec, ["root", "FR-1", "QR-1"]))
     assert full.outcome == "ready_for_human_signoff"
     assert spec.status == "validated_for_scope"  # untouched
     assert DocumentationGate.model_fields["outcome"].annotation.__args__ == (
@@ -243,8 +245,9 @@ def test_validated_for_scope_never_yields_more_than_signoff_readiness(tmp_path):
 
 def test_all_good_path_reaches_ready_for_human_signoff_but_keeps_attention(tmp_path):
     spec = _spec()  # draft, all components ready, verified coverage
+    review = assess_architecture(spec)  # honest review: overall requires_review is attention
     gate = evaluate_documentation_gate(
-        spec, sources=_assessment(tmp_path, spec, ["root", "FR-1", "QR-1"]))
+        spec, review=review, sources=_assessment(tmp_path, spec, ["root", "FR-1", "QR-1"]))
     assert gate.outcome == "ready_for_human_signoff"
     assert gate.blocking_count == 0
     assert gate.attention_count >= 2  # draft status + self-reported verification
@@ -380,3 +383,80 @@ def test_hand_built_assessment_is_accepted_without_filesystem():
     gate = evaluate_documentation_gate(spec, sources=sources)
     assert [i.subject_id for i in _cats(gate, "unsupported_claim", "blocking")] == ["root"]
     assert {i.subject_id for i in _cats(gate, "unknown_source_mapping")} == {"FR-1", "root"}
+
+
+# --- review-round fixes (gaming / forgery / rendering) ------------------------
+
+def _candidate_review(spec: ArchitectureSpec) -> ArchitectureReview:
+    return assess_architecture(spec).model_copy(
+        update={"overall_status": "candidate_for_human_review"})
+
+
+def test_omitting_review_is_blocking_so_omission_is_never_rewarded(tmp_path):
+    spec = _spec()
+    sources = _assessment(tmp_path, spec, ["root", "FR-1", "QR-1"])
+    without = evaluate_documentation_gate(spec, sources=sources)
+    assert without.outcome == "requires_review"
+    assert any(i.category == "manual_decision" and i.severity == "blocking"
+               and i.subject_id is None and "No advisory review" in i.message
+               for i in without.items)
+    honest = evaluate_documentation_gate(spec, review=assess_architecture(spec), sources=sources)
+    assert honest.outcome == "ready_for_human_signoff"  # supplying an honest review never hurts
+
+
+def test_review_overall_requires_review_is_attention_but_high_findings_block(tmp_path):
+    spec = _spec()
+    review = assess_architecture(spec)
+    assert review.overall_status == "requires_review"
+    gate = evaluate_documentation_gate(
+        spec, review=review, sources=_assessment(tmp_path, spec, ["root", "FR-1", "QR-1"]))
+    overall = [i for i in gate.items if "overall status is requires_review" in i.message]
+    assert len(overall) == 1 and overall[0].severity == "attention"
+    for rf in review.quality_review.findings:
+        sev = {i.severity for i in gate.items if i.subject_id == rf.id}
+        assert sev == {"blocking" if rf.severity in {"critical", "high"} else "attention"}
+
+
+def test_brief_without_mandatory_requirements_blocks(tmp_path):
+    spec = _spec(brief={
+        "system": "Tiny", "goals": ["Be tiny"],
+        "functional_requirements": [{"id": "FR-1", "statement": "Do it", "mandatory": False}],
+        "quality_requirements": [{"id": "QR-1", "attribute": "latency", "statement": "Fast",
+                                  "mandatory": False}],
+    })
+    gate = evaluate_documentation_gate(
+        spec, review=_candidate_review(spec),
+        sources=_assessment(tmp_path, spec, ["root", "FR-1", "QR-1"]))
+    assert gate.outcome == "requires_review"
+    assert any(i.category == "uncovered_requirement" and i.severity == "blocking"
+               and "no mandatory requirements" in i.message for i in gate.items)
+
+
+def test_authored_acceptances_and_ready_components_get_attention():
+    spec = _spec(
+        findings=[{"id": "F-1", "severity": "critical", "description": "Bad", "status": "accepted"}],
+        decisions=[{"id": "ADR-1", "title": "Use X", "choice": "X", "rationale": "Because",
+                    "status": "accepted"}],
+    )
+    gate = evaluate_documentation_gate(spec)
+    by_subject = {i.subject_id: i for i in gate.items if i.category == "manual_decision"}
+    assert by_subject["F-1"].severity == "attention" and "accepted" in by_subject["F-1"].message
+    assert by_subject["ADR-1"].severity == "attention" and "accepted" in by_subject["ADR-1"].message
+    assert by_subject["root"].severity == "attention" and "ready" in by_subject["root"].message
+
+
+def test_gate_model_rejects_header_inconsistent_with_items():
+    gate = evaluate_documentation_gate(_spec("incomplete_requires_review"))
+    data = gate.model_dump()
+    data["items"] = []
+    data["counts"] = {c: 0 for c in CATEGORY_ORDER}
+    data["blocking_count"] = data["attention_count"] = 0
+    data["outcome"] = "ready_for_human_signoff"
+    with pytest.raises(ValidationError):
+        DocumentationGate.model_validate(data)
+
+
+def test_subject_ids_render_without_backslashes_inside_code_spans():
+    spec = _spec(findings=[{"id": "mod_a_b", "severity": "low", "description": "x"}])
+    md = render_documentation_gate_markdown(evaluate_documentation_gate(spec))
+    assert "`mod_a_b`" in md and "`mod\\_" not in md

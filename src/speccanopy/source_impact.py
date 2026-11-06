@@ -105,6 +105,15 @@ class ClaimImpact(SchemaModel):
     status: ImpactStatus
     reason: str
 
+    @model_validator(mode="after")
+    def status_matches_digests(self) -> ClaimImpact:
+        expected = _status_from_digests(self.claim_sha256, self.before_sha256, self.after_sha256)
+        if self.status != expected:
+            raise ValueError(f"Impact status {self.status} contradicts the recorded digests")
+        if self.reason != _REASONS[self.status]:
+            raise ValueError("Impact reason text is fixed per status")
+        return self
+
 
 class ClaimImpactReport(SchemaModel):
     schema_version: Literal[1] = 1
@@ -138,12 +147,15 @@ class ClaimImpactReport(SchemaModel):
         missing = self.mandatory_requirements_without_current_observed_evidence
         if missing is not None and missing != sorted(set(missing)):
             raise ValueError("Impact mandatory requirement list must be unique and sorted")
+        if self.caveat != _CAVEAT:
+            raise ValueError("Impact caveat is fixed")
         return self
 
     @property
     def requires_review(self) -> bool:
         return bool(
             self.diff_requires_review
+            or not self.entries  # zero claims checked is not an all-clear
             or any(e.status != "unaffected" for e in self.entries)
             or self.uncited_added_paths
             or self.uncited_changed_paths
@@ -156,19 +168,24 @@ def _sort_key(entry: ClaimImpact | SourceClaim) -> tuple[str, str, int, int]:
             entry.line_start or 0, entry.line_end or 0)
 
 
+def _status_from_digests(claim: str, before: str | None, after: str | None) -> ImpactStatus:
+    """Classify from digests alone; the diff's delta status is implied by before/after."""
+    if before is None and after is None:
+        return "not_in_inventory"
+    if after is None:  # removed
+        return "stale_removed"
+    if before == after:  # unchanged
+        return "unaffected" if claim == after else "not_bound_to_before"
+    if before is not None and claim == before:  # changed
+        return "stale_changed"
+    # changed or added: a digest equal to the later bytes was (re)authored against them.
+    return "rebound_to_after" if claim == after else "not_bound_to_before"
+
+
 def _status(claim: SourceClaim, delta: SourceFileDelta | None) -> ImpactStatus:
     if delta is None:
         return "not_in_inventory"
-    if delta.status == "removed":
-        return "stale_removed"
-    if delta.status == "unchanged":
-        return "unaffected" if claim.sha256 == delta.after_sha256 else "not_bound_to_before"
-    if delta.status == "changed" and claim.sha256 == delta.before_sha256:
-        return "stale_changed"
-    # changed or added: a digest equal to the later bytes was (re)authored against them.
-    if claim.sha256 == delta.after_sha256:
-        return "rebound_to_after"
-    return "not_bound_to_before"
+    return _status_from_digests(claim.sha256, delta.before_sha256, delta.after_sha256)
 
 
 def _known_ids(spec: ArchitectureSpec) -> set[str]:

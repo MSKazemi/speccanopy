@@ -76,6 +76,19 @@ Read `work/intake/intake-review.md` and `work/docs/open-questions.md` first. The
 
 Continue in the same folder:
 
+First, **before editing anything**, run the documentation gate to see what still needs a human:
+
+```bash
+speccanopy doc-gate work/design/architecture.json \
+  --review work/review/architecture-review.json \
+  --source-root app --source-evidence work/intake/source-evidence.json \
+  --output work/doc-gate
+```
+
+Observed: `Outcome: requires_review (14 blocking, 8 attention)`, exit `0`. Blocking items include the unlinked `FR-USER-*` requirements, the root `system` component, the `incomplete_requires_review` status and the review's high findings; see [Documentation review gate](documentation-review-gate.md).
+
+Then edit a module and look for change detection:
+
 ```bash
 printf '\n# synthetic edit\n' >> app/src/inventory_ledger_demo/ledger.py
 
@@ -94,17 +107,6 @@ speccanopy source-impact work/intake/source-inventory.json work/source-inventory
 ```
 
 Observed: `document` prints `Source citations: 5/7 byte snapshots match` and exits `2` (because of `--strict`; the pack is still written); the two claims citing `ledger.py` are `changed` in `work/docs2/source-evidence.md`. `source-diff` prints `Source diff: 0 added, 0 removed, 1 changed, 5 unchanged` and exits `0`. `source-diff` also lists **new uncited files**, which `document` cannot see — see [Compare source inventories](source-inventory-diff.md). `source-impact` prints `Claim impact: 7 claims (5 unaffected, 2 stale_changed)` and exits `0` (`2` with `--strict`); the two `ledger.py` claims and their architecture IDs are listed as possibly affected in `work/claim-impact/claim-impact.md` ([guide](source-claim-impact.md)).
-
-Before the edit, the documentation gate summarizes what still needs a human:
-
-```bash
-speccanopy doc-gate work/design/architecture.json \
-  --review work/review/architecture-review.json \
-  --source-root app --source-evidence work/intake/source-evidence.json \
-  --output work/doc-gate
-```
-
-Observed on the unedited copy: `Outcome: requires_review (15 blocking, 7 attention)`, exit `0`. Blocking items include the unlinked `FR-USER-*` requirements and root `system` component and the `incomplete_requires_review` status; see [Documentation review gate](documentation-review-gate.md).
 
 ## 6. Exit codes
 

@@ -56,6 +56,16 @@ GATE_CAVEAT = (
     "or its documentation is correct. It never upgrades any status. A human "
     "must review the findings and sign off."
 )
+NO_SOURCES = "No source evidence supplied; every factual claim is unmapped."
+NO_REVIEW = (
+    "No advisory review supplied; run `speccanopy review` on this architecture and pass "
+    "--review so its findings are considered."
+)
+NO_MANDATORY = (
+    "The brief has no mandatory requirements, so coverage cannot be judged; mark the "
+    "requirements the owner actually needs as mandatory."
+)
+INCOMPLETE = "Authored architecture status is incomplete_requires_review."
 
 
 class GateItem(SchemaModel):
@@ -90,6 +100,18 @@ class DocumentationGate(SchemaModel):
             raise ValueError("Gate outcome must be ready_for_human_signoff only with no blocking items")
         if self.caveat != GATE_CAVEAT:
             raise ValueError("Gate caveat is fixed")
+        # Header facts must be backed by the blocking items they always produce.
+        required = []
+        if not self.sources_supplied:
+            required.append(("unknown_source_mapping", NO_SOURCES))
+        if not self.review_supplied:
+            required.append(("manual_decision", NO_REVIEW))
+        if self.architecture_status == "incomplete_requires_review":
+            required.append(("manual_decision", INCOMPLETE))
+        present = {(i.category, i.message) for i in self.items
+                   if i.severity == "blocking" and i.subject_id is None}
+        if any(key not in present for key in required):
+            raise ValueError("Gate items are inconsistent with its supplied inputs or status")
         return self
 
 
@@ -123,9 +145,8 @@ def evaluate_documentation_gate(
         else:
             add("uncovered_requirement", "blocking", rid,
                 f"Mandatory requirement {rid} has no verification case linked to an owning component.")
-    for rid in sorted(spec.brief.mandatory_requirement_ids() - owned - set(cov.uncovered)):
-        add("uncovered_requirement", "blocking", rid,
-            f"Mandatory requirement {rid} is mapped to no component.")
+    if not spec.brief.mandatory_requirement_ids():
+        add("uncovered_requirement", "blocking", None, NO_MANDATORY)
     for rid in cov.planned_only:
         add("planned_only_requirement", "attention", rid,
             f"Mandatory requirement {rid} has only planned verification; no evidence is recorded.")
@@ -152,8 +173,7 @@ def evaluate_documentation_gate(
 
     # Source mapping.
     if sources is None:
-        add("unknown_source_mapping", "blocking", None,
-            "No source evidence supplied; every factual claim is unmapped.")
+        add("unknown_source_mapping", "blocking", None, NO_SOURCES)
     else:
         for rid in sources.unlinked_mandatory_requirements:
             add("unknown_source_mapping", "blocking", rid,
@@ -164,19 +184,26 @@ def evaluate_documentation_gate(
 
     # Manual decisions.
     if spec.status == "incomplete_requires_review":
-        add("manual_decision", "blocking", None,
-            "Authored architecture status is incomplete_requires_review.")
+        add("manual_decision", "blocking", None, INCOMPLETE)
     elif spec.status == "draft":
         add("manual_decision", "attention", None, "Authored architecture status is draft.")
     for decision in spec.decisions:
         if decision.status == "proposed":
             add("manual_decision", "attention", decision.id,
                 f"Decision {decision.id} ({decision.title}) is proposed; a human must accept or reject it.")
+        elif decision.status == "accepted":
+            add("manual_decision", "attention", decision.id,
+                f"Decision {decision.id} ({decision.title}) is marked accepted in authored data; "
+                "confirm a human owner accepted it.")
     for finding in spec.findings:
         if finding.status == "open":
             sev: GateSeverity = "blocking" if finding.severity in {"critical", "high"} else "attention"
             add("manual_decision", sev, finding.id,
                 f"Open {finding.severity} finding {finding.id}: {finding.description}")
+        elif finding.status == "accepted" and finding.severity in {"critical", "high"}:
+            add("manual_decision", "attention", finding.id,
+                f"{finding.severity.capitalize()} finding {finding.id} is marked accepted in "
+                "authored data; confirm a human owner accepted the risk.")
     for comp in spec.components:
         if comp.status in {"needs_decomposition", "blocked", "requires_review"}:
             add("manual_decision", "blocking", comp.id,
@@ -184,14 +211,22 @@ def evaluate_documentation_gate(
         elif comp.status == "proposed":
             add("manual_decision", "attention", comp.id,
                 f"Component {comp.id} is only proposed, not marked ready.")
-    if review is not None:
+        elif comp.status == "ready":
+            add("manual_decision", "attention", comp.id,
+                f"Component {comp.id} is marked ready on authored validation evidence; "
+                "that evidence is not independently checked.")
+    if review is None:
+        add("manual_decision", "blocking", None, NO_REVIEW)
+    else:
         if review.system != spec.brief.system or review.source_architecture_status != spec.status:
             add("manual_decision", "blocking", None,
                 "Supplied review was produced for a different system or architecture status; "
                 "it is ignored and cannot support this gate.")
         else:
             if review.overall_status == "requires_review":
-                add("manual_decision", "blocking", None,
+                # The heuristic review defaults to requires_review for every draft;
+                # its high/critical findings below block individually.
+                add("manual_decision", "attention", None,
                     "The advisory review's overall status is requires_review.")
             for rf in review.quality_review.findings:
                 sev = "blocking" if rf.severity in {"critical", "high"} else "attention"
@@ -258,7 +293,9 @@ def render_documentation_gate_markdown(gate: DocumentationGate) -> str:
             lines += ["None.", ""]
             continue
         for item in sorted(section, key=_sort_key):
-            subject = f" `{_md(item.subject_id)}`" if item.subject_id else ""
+            # Code spans render backslashes literally, so do not Markdown-escape IDs;
+            # backticks cannot occur in IDs but are neutralized defensively.
+            subject = f" `{item.subject_id.replace('`', chr(39))}`" if item.subject_id else ""
             lines.append(f"- **{item.severity.upper()}**{subject}: {_md(item.message)}")
         lines.append("")
     return "\n".join(lines).rstrip("\n") + "\n"
