@@ -7,8 +7,24 @@ name = "speccanopy"
 version = "0.8.0"
 description = "Adaptive recursive software architecture design and AI-assisted proposal review and controlled refinement and research evaluation engine"
 readme = "README.md"
+authors = [{ name = "Mohsen Seyedkazemi Ardebili" }]
+keywords = ["software-architecture", "architecture-review", "system-design", "requirements-engineering", "llm", "claude-code", "pydantic"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Design",
+]
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2.9,<3"]
+
+[project.urls]
+Homepage = "https://github.com/MSKazemi/speccanopy"
+Documentation = "https://github.com/MSKazemi/speccanopy/tree/main/docs"
+Issues = "https://github.com/MSKazemi/speccanopy/issues"
 
 [project.scripts]
 speccanopy = "speccanopy.cli:main"

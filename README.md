@@ -1,4 +1,10 @@
-# Speccanopy
+# Speccanopy — AI-assisted software architecture design engine
+
+[![Python tests](https://github.com/MSKazemi/speccanopy/actions/workflows/tests.yml/badge.svg)](https://github.com/MSKazemi/speccanopy/actions/workflows/tests.yml)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
+![Status: research prototype](https://img.shields.io/badge/status-research%20prototype-orange)
+
+Speccanopy turns software requirements into a **rooted component tree plus a typed interaction graph**, with traceable requirements, risks, assumptions and evidence. It is a Python/Pydantic research prototype for **software architecture design, review and controlled refinement**, with optional AI-proposed components (Claude, OpenAI) that always require human acknowledgement.
 
 **Repository health & remaining work:** [Full audit (2026-11-06)](docs/REPOSITORY_AUDIT_2026-11-06.md). Four issues remain open; passing tests do not indicate product completion.
 

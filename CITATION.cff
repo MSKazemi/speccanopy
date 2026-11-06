@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use Speccanopy in research, please cite it as below."
+title: "Speccanopy: an AI-assisted software architecture design engine"
+type: software
+version: 0.8.0
+abstract: >-
+  Research prototype that turns software requirements into a rooted component tree
+  plus a typed interaction graph with traceable requirements, risks, assumptions and
+  evidence, with deterministic review and human-acknowledged AI proposals.
+authors:
+  - family-names: Seyedkazemi Ardebili
+    given-names: Mohsen
+repository-code: "https://github.com/MSKazemi/speccanopy"
+keywords:
+  - software architecture
+  - architecture review
+  - system design
+  - requirements engineering
+  - large language models
