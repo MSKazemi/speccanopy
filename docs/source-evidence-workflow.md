@@ -39,6 +39,8 @@ The scanner skips symlinks, dot/hidden paths, common dependency/build/private fo
 
 Defaults: at most **2,000** allowlisted files, at most **1,000,000 bytes** per file; use `--max-files` (up to 10,000) and `--max-file-bytes` (up to 5,000,000) when authorized. Large files are skipped with a count. The scanner fails on an excessive file count rather than silently truncating selected file records. The output file must be **new**.
 
+Each inventory also records its **scan scope** — `"scope": {"max_files": …, "max_file_bytes": …, "policy_sha256": …}` — where `policy_sha256` fingerprints Speccanopy's allowlist and privacy-exclusion rules (not any project file). It contains no host path. `speccanopy source-diff` uses it to warn when two inventories were taken under different rules. Inventories made before this field existed still load, with `scope` treated as unknown.
+
 ### 2. Link source snapshots to architecture claims
 
 Ask Claude Code to inspect the source inventory and **the specific application source paths you authorize**. Ask it to create `out/myproject-inputs/source-evidence.json` in this strict format:
@@ -103,7 +105,17 @@ Using `--strict` returns exit code **2** when the architecture/review is unresol
 
 Keep the original source map. After editing the application, run `document` again with the **same source evidence JSON** and a **new empty output directory**, for example `out/myproject-docs-v2`. Existing cited file hashes will show `changed` when their bytes differ. Compare the reports, confirm implications, and only then update the source map and reviewed architecture.
 
-**Limit:** this detects changes to **cited files**, not every new/unreferenced file, architectural behavior, deployed infrastructure, deleted undocumented functionality or an entire Git revision. The inventory itself does not record the application's Git commit; matching SHA-256 records a file snapshot, **not signed provenance, consent, expert agreement, or architecture correctness**.
+To see changes in **every inventoried file**, including new files that no claim cites yet, keep the earlier `source-inventory.json`, create a new one, and compare them:
+
+```bash
+speccanopy source-inventory ~/projects/my-app --output out/myproject-inputs/source-inventory-v2.json
+speccanopy source-diff out/myproject-inputs/source-inventory.json \
+  out/myproject-inputs/source-inventory-v2.json --output out/myproject-source-diff
+```
+
+This writes `source-diff.json` and `source-diff.md` listing added, removed, changed and unchanged files. See [Compare source inventories](source-inventory-diff.md).
+
+**Limit:** `document` detects changes to **cited files**; `source-diff` detects byte changes to **inventoried files**. Neither detects architectural behavior, deployed infrastructure, renames, files excluded by the privacy filters, or an entire Git revision. The inventory itself does not record the application's Git commit; matching SHA-256 records a file snapshot, **not signed provenance, consent, expert agreement, or architecture correctness**.
 
 ### 5. Claude Code subscription workflow
 
@@ -115,8 +127,8 @@ See [the reusable full prompt](../prompts/claude-code-document-project.md).
 
 ## What remains for Issue #5
 
-Completed for this slice: allowlisted local source metadata inventory, snapshot-bound source ID references, missing/changed/invalid-line status, explicit unlinked requirement/component reporting and deterministic Markdown integration, all covered by offline tests.
+Completed for this slice: allowlisted local source metadata inventory, snapshot-bound source ID references, missing/changed/invalid-line status, explicit unlinked requirement/component reporting, deterministic Markdown integration, recorded inventory scan scope and whole-inventory `source-diff` comparison, all covered by offline tests.
 
-Still open: **semantic source-to-architecture extraction** that does not fabricate functionality; real application end-to-end validation; accurate, safe **code-change-to-documentation** reconciliation; more comprehensive runtime, data-consistency, security and deployment design views. The documented source workflow is **guided**, not a one-click architecture analyzer.
+Still open: **semantic source-to-architecture extraction** that does not fabricate functionality; real application end-to-end validation; mapping changed files to affected architecture claims and accurate, safe **code-change-to-documentation** reconciliation; more comprehensive runtime, data-consistency, security and deployment design views. The documented source workflow is **guided**, not a one-click architecture analyzer.
 
 **Research integrity:** Neither a matching file hash nor agreement among AI assistants counts as an independent professional architecture review. [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) remains a separate research milestone.

@@ -29,7 +29,10 @@ from .refinement_exporters import (
 )
 from .research import ResearchCase, ResearchSuite, evaluate_case, summarize_suite
 from .research_exporters import export_research
-from .source_evidence import SourceEvidence, assess_sources, scan_sources, save_inventory
+from .source_diff import compare_inventories, export_inventory_diff
+from .source_evidence import (
+    SourceEvidence, SourceInventory, assess_sources, scan_sources, save_inventory,
+)
 from .project_intake import prepare_project_intake, export_project_intake
 
 
@@ -79,6 +82,16 @@ def main(argv: list[str] | None = None) -> int:
     sources.add_argument("--max-files", type=int, default=2000)
     sources.add_argument("--max-file-bytes", type=int, default=1000000)
 
+    source_diff = sub.add_parser(
+        "source-diff", help="Compare two source inventories: added, removed, changed, unchanged files"
+    )
+    source_diff.add_argument("before", type=Path, help="Earlier source-inventory.json")
+    source_diff.add_argument("after", type=Path, help="Later source-inventory.json")
+    source_diff.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    source_diff.add_argument(
+        "--strict", action="store_true",
+        help="Exit 2 when files differ, coverage is not comparable or oversized files were skipped",
+    )
 
     propose_ai = sub.add_parser("propose-ai", help="Draft a component hierarchy using structured AI model proposals")
     propose_ai.add_argument("brief", type=Path)
@@ -319,6 +332,22 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Artifact: {path}")
         print("Hashes are not semantic architecture verification; keep paths private if sensitive")
         return 0
+
+    if args.command == "source-diff":
+        try:
+            before = SourceInventory.model_validate_json(args.before.read_text(encoding="utf-8"))
+            after = SourceInventory.model_validate_json(args.after.read_text(encoding="utf-8"))
+            diff = compare_inventories(before, after)
+            paths = export_inventory_diff(diff, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error comparing source inventories: {exc}", file=sys.stderr)
+            return 1
+        print(f"Source diff: {len(diff.added)} added, {len(diff.removed)} removed, "
+              f"{len(diff.changed)} changed, {len(diff.unchanged)} unchanged")
+        print(f"Coverage: {diff.coverage}; requires review: {'yes' if diff.requires_review else 'no'}")
+        print("Byte-level metadata comparison only; not semantic or architectural verification")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and diff.requires_review else 0
 
     if args.command == "document":
         try:
