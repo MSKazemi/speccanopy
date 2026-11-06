@@ -84,6 +84,10 @@ def main(argv: list[str] | None = None) -> int:
         help="Human-supplied functional requirement; repeat as needed",
     )
     intake.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    intake.add_argument(
+        "--exclude", action="append", default=None, metavar="PATH",
+        help="Project-relative directory or file to leave out (e.g. test fixtures); repeatable",
+    )
     intake.add_argument("--max-modules", type=int, default=30)
     intake.add_argument("--max-files", type=int, default=2000)
     intake.add_argument("--max-file-bytes", type=int, default=1000000)
@@ -364,7 +368,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.project, system=args.system, goal=args.goal,
                 requirements=args.requirement, max_modules=args.max_modules,
                 max_files=args.max_files, max_file_bytes=args.max_file_bytes,
-                language=args.language,
+                language=args.language, exclude=args.exclude,
             )
             paths = export_project_intake(prepared, args.output)
         except (OSError, ValidationError, ValueError) as exc:

@@ -594,16 +594,19 @@ def _clean_spec(spec: str) -> bool:
 def prepare_js_project_intake(
     project_root, *, system: str, goal: str, requirements: list[str],
     max_modules: int, max_files: int, max_file_bytes: int,
+    exclude: list[str] | None = None,
 ):
     """Lexical JS/TS intake. Called by ``prepare_project_intake(language='javascript')``."""
     from .project_intake import (  # local import: project_intake imports this module lazily
-        IntakeObservations, IntakeResult, ModuleObservation, _make_brief,
+        IntakeObservations, IntakeResult, ModuleObservation, _is_excluded, _make_brief,
+        apply_exclusions,
     )
     from pathlib import Path
 
     root = Path(project_root)
     inventory = scan_sources(root, max_files=max_files, max_bytes=max_file_bytes)
     selected = [x for x in inventory.files if x.kind == "source" and is_js_candidate(x.path)]
+    selected = apply_exclusions(selected, [f.path for f in inventory.files], exclude)
     if not selected:
         raise ValueError(
             "No JavaScript/TypeScript source modules found. This intake supports "
@@ -746,8 +749,10 @@ def prepare_js_project_intake(
         excluded_non_python_source=[
             f.path for f in inventory.files
             if f.kind in {"source", "schema"} and f.path not in files
+            and not _is_excluded(f.path, exclude)
         ],
         skipped_oversized_files=inventory.skipped_oversized,
+        excluded_by_request=exclude,
         limitations=JS_LIMITATIONS,
     )
     return IntakeResult(
@@ -816,6 +821,8 @@ def render_js_report(result) -> str:
         f"- Slashes the regex heuristic could not decide (after ) or }}): {ambiguous}",
         f"- Other allowlisted source/schema files NOT analyzed: {len(obs.excluded_non_python_source)}",
         f"- Oversized inventory files skipped: {obs.skipped_oversized_files}",
+        *([f"- Excluded by request (--exclude): {', '.join(_md(p) for p in obs.excluded_by_request)}"]
+          if obs.excluded_by_request else []),
         "",
         "| Component ID | Module | Project-relative file | Top-level symbols | Internal imports |",
         "| --- | --- | --- | --- | --- |",

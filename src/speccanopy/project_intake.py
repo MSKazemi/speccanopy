@@ -20,7 +20,9 @@ from .exporters import check_new_output_dir, prepare_new_output_dir
 from .fixtures import FixtureDesign
 from .models import Component, DesignConstraints, FunctionalRequirement, Identifier, NonEmptyText, Relationship, SchemaModel, SystemBrief
 from .proposer import ComponentProposal
-from .source_evidence import SourceClaim, SourceEvidence, SourceInventory, read_safe_source_bytes, scan_sources
+from .source_evidence import (
+    SourceClaim, SourceEvidence, SourceFile, SourceInventory, read_safe_source_bytes, scan_sources,
+)
 
 MAX_MODULES = 50
 
@@ -69,6 +71,9 @@ class IntakeObservations(SchemaModel):
     dependencies: list[Relationship]
     excluded_non_python_source: list[str]
     skipped_oversized_files: int = Field(ge=0)
+    # Project-relative path prefixes the user asked to leave out (``--exclude``).
+    # None when unused, and then omitted from JSON so earlier output is unchanged.
+    excluded_by_request: list[str] | None = None
     limitations: list[str] = Field(default_factory=lambda: [
         "No application source was imported, run, tested, or sent to a model.",
         "Static Python imports do not establish actual runtime calls.",
@@ -78,6 +83,45 @@ class IntakeObservations(SchemaModel):
         "Source hash matches prove file-byte equality, not semantic correctness.",
         "Only allowlisted bounded Python .py modules were analyzed.",
     ])
+
+
+    @model_serializer(mode="wrap")
+    def _omit_unused_exclusions(self, handler):
+        data = handler(self)
+        if data.get("excluded_by_request") is None:
+            data.pop("excluded_by_request", None)
+        return data
+
+
+def normalize_exclusions(exclude: list[str] | None) -> list[str] | None:
+    """Validate ``--exclude`` prefixes as clean project-relative paths (no globs)."""
+    if not exclude:
+        return None
+    cleaned = []
+    for raw in exclude:
+        value = (raw or "").strip().rstrip("/")
+        parts = PurePosixPath(value).parts
+        if (not value or "\\" in value or value.startswith("/") or ":" in value
+                or any(part in {"", ".", ".."} for part in parts)
+                or PurePosixPath(value).as_posix() != value or len(value) > 512):
+            raise ValueError(f"--exclude must be a clean project-relative path without traversal: {raw!r}")
+        cleaned.append(value)
+    return sorted(set(cleaned))
+
+
+def _is_excluded(path: str, prefixes: list[str] | None) -> bool:
+    return bool(prefixes) and any(path == p or path.startswith(p + "/") for p in prefixes)
+
+
+def apply_exclusions(files: list[SourceFile], all_paths: list[str],
+                     prefixes: list[str] | None) -> list[SourceFile]:
+    """Drop files under any prefix; fail if a prefix matches no inventoried file."""
+    if not prefixes:
+        return files
+    for prefix in prefixes:
+        if not any(_is_excluded(p, [prefix]) for p in all_paths):
+            raise ValueError(f"--exclude {prefix} matches no inventoried file")
+    return [f for f in files if not _is_excluded(f.path, prefixes)]
 
 
 @dataclass(frozen=True)
@@ -168,6 +212,7 @@ def prepare_project_intake(
     max_modules: int = 30, max_files: int = 2000,
     max_file_bytes: int = 1_000_000,
     language: str = "python",
+    exclude: list[str] | None = None,
 ) -> IntakeResult:
     """Produce a reviewable fixture and syntax-only evidence, never verified design.
 
@@ -176,15 +221,18 @@ def prepare_project_intake(
     if language not in {"python", "javascript"}:
         raise ValueError("Unsupported language; choose 'python' or 'javascript'")
     _check_arguments(system, goal, requirements, max_modules)
+    prefixes = normalize_exclusions(exclude)
     if language == "javascript":
         from .js_intake import prepare_js_project_intake
         return prepare_js_project_intake(
             project_root, system=system, goal=goal, requirements=requirements,
             max_modules=max_modules, max_files=max_files, max_file_bytes=max_file_bytes,
+            exclude=prefixes,
         )
     root = Path(project_root)
     inventory = scan_sources(root, max_files=max_files, max_bytes=max_file_bytes)
     selected = [x for x in inventory.files if x.path.endswith(".py") and x.kind == "source"]
+    selected = apply_exclusions(selected, [f.path for f in inventory.files], prefixes)
     if not selected:
         raise ValueError("No Python source modules found. This intake supports Python .py only.")
     if len(selected) > max_modules:
@@ -286,8 +334,10 @@ def prepare_project_intake(
         excluded_non_python_source=[
             f.path for f in inventory.files
             if f.kind in {"source", "schema"} and f.path not in files
+            and not _is_excluded(f.path, prefixes)
         ],
         skipped_oversized_files=inventory.skipped_oversized,
+        excluded_by_request=prefixes,
     )
     return IntakeResult(
         brief=brief, fixture=fixture, evidence=SourceEvidence(claims=claims),
@@ -326,6 +376,8 @@ def _report(result: IntakeResult) -> str:
         f"- Import dependencies detected: {len(obs.dependencies)}",
         f"- Non-Python source/schema files NOT analyzed: {len(obs.excluded_non_python_source)}",
         f"- Oversized inventory files skipped: {obs.skipped_oversized_files}",
+        *([f"- Excluded by request (--exclude): {', '.join(_md(p) for p in obs.excluded_by_request)}"]
+          if obs.excluded_by_request else []),
         "",
         "| Component ID | Python module | Project-relative file | Top-level symbols | Internal imports |",
         "| --- | --- | --- | --- | --- |",
