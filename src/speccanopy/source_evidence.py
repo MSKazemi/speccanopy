@@ -38,6 +38,22 @@ SENSITIVE_WORDS = (
 )
 MAX_SCAN_FILES = 10_000
 MAX_SOURCE_BYTES = 5_000_000
+# Bump when the allowlist/exclusion semantics change in a way the constants
+# above do not capture, so recorded inventory scopes stop comparing as equal.
+INVENTORY_POLICY_VERSION = 1
+
+
+def inventory_policy_digest() -> str:
+    """SHA-256 of the current allowlist/privacy-exclusion policy (not of any file)."""
+    policy = {
+        "version": INVENTORY_POLICY_VERSION,
+        "source_suffixes": sorted(SOURCE_SUFFIXES),
+        "safe_json_names": sorted(SAFE_JSON_NAMES),
+        "excluded_dirs": sorted(EXCLUDED_DIRS),
+        "sensitive_words": sorted(SENSITIVE_WORDS),
+    }
+    encoded = json.dumps(policy, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def safe_source_path(path: str) -> str:
@@ -136,10 +152,26 @@ class SourceFile(SchemaModel):
         return safe_source_path(value)
 
 
+class InventoryScope(SchemaModel):
+    """Scan bounds and policy that determined which files an inventory could see.
+
+    Recorded so that comparing two inventories can detect differing coverage.
+    It deliberately contains no host path: it cannot prove two inventories were
+    taken from the same project.
+    """
+
+    max_files: int = Field(ge=1, le=MAX_SCAN_FILES)
+    max_file_bytes: int = Field(ge=1, le=MAX_SOURCE_BYTES)
+    policy_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class SourceInventory(SchemaModel):
     schema_version: Literal[1] = 1
     files: list[SourceFile]
     skipped_oversized: int = Field(default=0, ge=0)
+    # None for inventories written before scope recording existed; coverage of
+    # such snapshots is unknown, not assumed complete.
+    scope: InventoryScope | None = None
     caveat: str = (
         "Metadata only. Files excluded by privacy filters or size limits are "
         "not inventoried. File hashes do not establish architecture semantics "
@@ -195,8 +227,14 @@ def scan_sources(
                 path=name, sha256=sha, byte_count=byte_count,
                 line_count=line_count, kind=_file_kind(name),
             ))
-    return SourceInventory(files=sorted(files, key=lambda item: item.path),
-                           skipped_oversized=skipped_oversized)
+    return SourceInventory(
+        files=sorted(files, key=lambda item: item.path),
+        skipped_oversized=skipped_oversized,
+        scope=InventoryScope(
+            max_files=max_files, max_file_bytes=max_bytes,
+            policy_sha256=inventory_policy_digest(),
+        ),
+    )
 
 
 def save_inventory(inventory: SourceInventory, destination: str | Path) -> Path:
