@@ -116,6 +116,7 @@ A standalone reusable version is also at [`prompts/claude-code-python-intake.md`
 
 | Problem or setting | Behavior |
 | --- | --- |
+| Test fixtures or examples are counted as modules | Add `--exclude examples` (repeatable; a project-relative directory or file). A prefix that matches nothing is an error, and exclusions are recorded in `module-observations.json` and `intake-review.md` |
 | No Python files in the selected folder | Command fails with a scope message. For JavaScript/TypeScript use `--language javascript` ([guide](javascript-project-intake.md)); for other languages use Claude Code-assisted manual intake |
 | Python syntax error in an allowed file | Command fails before writing partial artifacts; choose a correct subtree or fix the source separately |
 | More than 30 eligible Python modules | Command fails with an explicit count; select a smaller source folder or use `--max-modules` up to **50** |

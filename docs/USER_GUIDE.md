@@ -271,6 +271,7 @@ The output is a **proposed design**, not documentation of actual implemented com
 - [Documentation review gate (`doc-gate`)](documentation-review-gate.md)
 - [End-to-end acceptance walkthrough (synthetic example)](end-to-end-acceptance.md)
 - [Pilot on a real third-party Python package (measured, not owner-confirmed)](pilot-third-party-python.md)
+- [Owner pilot on Speccanopy itself (owner-confirmed requirements)](owner-pilot-speccanopy.md)
 - [Claude subscription versus API billing](claude-integration.md)
 - [Real-project readiness and detailed walkthrough](project-documentation-readiness.md)
 - [Architecture contract and statuses](architecture-contract.md)
