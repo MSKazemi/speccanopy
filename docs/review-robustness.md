@@ -43,7 +43,7 @@ coverage, scenario assessments, style recommendation and scores) in which positi
 ## Results
 
 Environment: `python -m pytest -q tests/test_review_robustness.py` gives
-**303 passed, 5 xfailed**. The full-suite result is in the commit/report that accompanies this file.
+**305 passed, 3 xfailed** after the two fixes below (initially 303 passed, 5 xfailed). The full-suite result is in the commit/report that accompanies this file.
 "Pass" means the stated relation held on all three examples in both config modes (not on all
 possible inputs).
 
@@ -51,7 +51,7 @@ possible inputs).
 | --- | --- | --- | --- | --- |
 | R1 ID rename, review (prefix and scramble map) | pass | pass | pass | 12 signature cases + 6 exact-reversal cases |
 | R2 neutral labels, structural results | pass | pass | pass | Only scenario-assessment descriptions (which quote scenario wording) differ |
-| R2 style / data wording | n/a | see below | n/a | Heuristics are keyword/exact-text based; 5 strict xfails |
+| R2 style / data wording | n/a | see below | n/a | Heuristics are keyword/exact-text based; 2 strict xfails remain (non-English and abbreviation style names); 2 former xfails fixed |
 | R3 reordering, review (5 seeds) | pass | pass | pass | Finding texts are also string-identical after sorting |
 | R4 remove a case: coverage, flagged requirements, scenario status, overall status, high-or-worse count | pass (4 cases) | pass (7 cases) | pass (5 cases) | Per case, both config modes |
 | R4 remove a case: raw total finding count | pass | pass | pass | **Fails on a synthetic probe**, see below |
@@ -79,10 +79,10 @@ These are observations about what the code reads, not automatically bugs.
 
 | Heuristic | Location | Concrete example | Effect |
 | --- | --- | --- | --- |
-| Style-family detection by substring | `_style_family`, `review.py` 192-206 | `"Layered design for the client portal"` -> `single_process` because `"cli" in "client"`; `"... customer portal"` -> `None`. (Also `"clinic management"` -> `single_process`) | On ecommerce (recommendation `modular_monolith`) the client wording adds one `style_tradeoff` finding (`test_r2_observation_family_change_adds_a_style_tradeoff_finding_end_to_end`). Likely false positive. Strict xfail |
+| Style-family detection by substring — **fixed** | `_style_family`, `review.py` | Was: `"Layered design for the client portal"` -> `single_process` because `"cli" in "client"` (also `"clinic management"`). Now a whole-word match; `"Python CLI utility"` still -> `single_process` | Was a false positive adding one `style_tradeoff` finding on ecommerce; now a regression test (`test_r2_client_wording_no_longer_adds_a_style_tradeoff_finding_end_to_end`). Shipped example reviews regenerate byte-identically |
 | Style-family detection by literal English words | same | `"Modularer Monolith"` and `"EDA (message-driven)"` -> `None` | Style-trade-off check silently skipped. Strict xfail (2) |
 | Style-family case/separator tolerance | same | `Modular-Monolith`, `modular_monolith`, `Event Driven architecture`, `MODULAR MONOLITH (python packages)` all resolve | Works as intended (9 passing cases) |
-| Data-ownership conflict by exact text | review.py 354-362 | Sibling claims `order RECORDS` next to `Order records` -> conflict. `Orders`, `Order record`, `Bestellungen` -> no conflict. `Order  records` (two spaces) -> no conflict (strict xfail) | Different wording of the same data is a false negative of this check; the model already strips leading/trailing whitespace. Whether the plural/translated names are "the same data" is not decidable without a labelled corpus |
+| Data-ownership conflict by exact text | `review.py` data-ownership check | Sibling claims `order RECORDS` or `Order  records` (internal whitespace — **fixed**, now normalised) next to `Order records` -> conflict. `Orders`, `Order record`, `Bestellungen` -> no conflict | Different wording of the same data is a false negative of this check. Whether plural/translated names are "the same data" is not decidable without a labelled corpus |
 | Review is ignored if `system` text differs | `doc_gate.py` 221-224 | Renaming `brief.system` in the spec only adds a blocking "different system" item | By design (stale-review guard); renaming must be applied to the spec and its review together |
 | Review text quotes authored wording | `review.py` 294-296, 343 | Open high source finding text and scenario descriptions are copied verbatim | Text changes, structure does not |
 | `REVIEW-NNN` IDs are positional | `review.py` 273-280 | On ecommerce the id->finding assignment differs for all 5 shuffle seeds | The set of findings is stable, the IDs are not; the gate's `subject_id` for review findings inherits this. Do not use `REVIEW-NNN` as a cross-run key |

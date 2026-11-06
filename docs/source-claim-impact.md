@@ -79,8 +79,8 @@ The report `requires_review` unless **all** of these hold: there is at least one
 ## 6. Limits
 
 - **No semantics.** The tool compares bytes. A whitespace edit and a redesign look identical, and an unchanged file does not prove its claim is true.
-- **No rename or move detection.** A rename is `stale_removed` for its claims plus an uncited added file. Update the evidence map by hand.
-- **No project identity.** Inventories contain no project name or commit, so the tool cannot detect that you compared inventories (or an evidence map) from different projects. A claim whose digest matches neither snapshot is flagged `not_bound_to_before`, which is the usual symptom.
+- **No rename handling here.** A rename is `stale_removed` for its claims plus an uncited added file. `source-diff` lists **possible renames** (a removed and an added path with identical bytes) in its *Possible renames* section; use it to update the evidence map by hand. A rename with edits is not paired.
+- **No verified project identity.** Inventories can optionally record a git commit (`source-inventory --record-git-revision`), which `source-diff` shows, but that is an unauthenticated hint; the tool cannot prove that the inventories (or an evidence map) come from the same project. A claim whose digest matches neither snapshot is flagged `not_bound_to_before`, which is the usual symptom.
 - **Invisible files.** Files excluded by the privacy filters, the allowlist or the size limit are not in the inventories; claims citing them are `not_in_inventory`.
 - **Line spans are not re-checked.** A line range is reported as authored; the digest, not the range, decides the status.
 - **Does not regenerate or edit documentation.** To update documentation, re-inspect the affected IDs and files, then run `speccanopy document` into a new folder with the owner's approval.

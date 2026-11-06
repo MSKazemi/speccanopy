@@ -459,17 +459,15 @@ def test_r2_style_family_abbreviation_event_driven():
     assert _family("EDA (message-driven)") == "event_driven"
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Observed false positive (review.py:_style_family, `\"cli\" in t` is a substring test): "
-    "'client portal' contains 'cli' so a layered design for a client portal is classified "
-    "single_process. The same text with 'customer portal' gives None."))
+# Regression: `"cli" in t` was a substring test, so "client portal" was classified
+# single_process (found by this suite; fixed with a whole-word match).
 def test_r2_style_family_substring_cli_matches_client():
     assert _family("Layered design for the client portal") == _family("Layered design for the customer portal")
 
 
-def test_r2_observation_family_change_adds_a_style_tradeoff_finding_end_to_end():
-    """End-to-end consequence of the 'cli'-substring sensitivity on the ecommerce example:
-    swapping one word in selected_style adds a style_tradeoff finding."""
+def test_r2_client_wording_no_longer_adds_a_style_tradeoff_finding_end_to_end():
+    """Regression for the former 'cli'-substring false positive on the ecommerce example:
+    swapping customer/client in selected_style must not change the findings."""
     spec_d, cfg_d = load_raw("ecommerce", True)
     spec_d["selected_style"] = "Layered design for the customer portal"
     _, a = run(spec_d, cfg_d)
@@ -477,10 +475,11 @@ def test_r2_observation_family_change_adds_a_style_tradeoff_finding_end_to_end()
     _, b = run(spec_d, cfg_d)
     assert a.style_comparison.recommendation == "modular_monolith"
     assert a.style_comparison.declared_style_family is None
-    assert b.style_comparison.declared_style_family == "single_process"
+    assert b.style_comparison.declared_style_family is None
     cats_a = Counter(f.category for f in a.quality_review.findings)
     cats_b = Counter(f.category for f in b.quality_review.findings)
-    assert cats_b["style_tradeoff"] == cats_a["style_tradeoff"] + 1
+    assert cats_b == cats_a
+    assert _family("Python CLI utility") == "single_process"  # whole word still matches
 
 
 def _with_sibling_data(extra: str):
@@ -503,10 +502,7 @@ def test_r2_observation_data_ownership_misses_plural_and_synonym_wording(variant
     assert _with_sibling_data(variant) == 0
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Observed R2 sensitivity (review.py data-ownership check): 'Order  records' (two spaces) "
-    "differs from 'Order records' only in internal whitespace yet is not reported as a "
-    "conflict; only leading/trailing whitespace and case are normalised."))
+# Regression: internal whitespace was not normalised (found by this suite; fixed).
 def test_r2_data_ownership_internal_whitespace():
     assert _with_sibling_data("Order  records") == 1
 
