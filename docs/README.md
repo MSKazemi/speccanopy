@@ -21,6 +21,7 @@
 | [Documentation review gate](documentation-review-gate.md) | `doc-gate`: uncovered requirements, unsupported claims, unmapped sources and open human decisions before owner sign-off |
 | [Review heuristic robustness (synthetic)](review-robustness.md) | Metamorphic tests of review/doc-gate heuristics: ID renaming, rewording, reordering, monotonicity; keyword-sensitive heuristics found. **Not** independent expert evaluation |
 | [Structural comparison of two intakes](structure-diff.md) | `structure-diff`: modules, static import edges and top-level symbols added/removed between two `project-intake` runs; separates byte churn from structural change |
+| [Owner pilot: documenting Speccanopy itself](owner-pilot-speccanopy.md) | Owner-confirmed requirements, delegated grouping, measured gate results, and the `--exclude` fix it led to |
 | [Pilot on a real third-party Python package](pilot-third-party-python.md) | Measured pipeline results on itsdangerous 2.2.0 and its real 2.1.2 → 2.2.0 release change; **not** owner-confirmed or expert evaluation |
 | [End-to-end acceptance walkthrough](end-to-end-acceptance.md) | Run intake → design → review → document → change detection on the committed **synthetic** example; what the acceptance tests check |
 | [Markdown architecture renderer](architecture-documentation-renderer.md) | Turn an existing architecture JSON into thirteen Markdown pages (including data-flow, trust-boundary, deployment and runtime views) and two Mermaid diagrams |
