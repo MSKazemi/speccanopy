@@ -63,7 +63,8 @@ DOC_FILES = {
     "README.md", "overview.md", "requirements.md", "components.md",
     "interactions.md", "data-security.md", "decisions.md", "quality-risks.md",
     "open-questions.md", "architecture.mmd", "relationships.mmd",
-    "source-evidence.md",
+    "view-data-flow.md", "view-trust-boundaries.md", "view-deployment.md",
+    "view-runtime.md", "source-evidence.md",
 }
 
 
