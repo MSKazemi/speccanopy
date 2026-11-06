@@ -267,6 +267,7 @@ The output is a **proposed design**, not documentation of actual implemented com
 - [Compare source inventories (`source-diff`)](source-inventory-diff.md)
 - [Map source changes to affected claims (`source-impact`)](source-claim-impact.md)
 - [Compare module structure between two intakes (`structure-diff`)](structure-diff.md)
+- [Group intake modules into components (`group`)](grouping-modules.md)
 - [JavaScript/TypeScript project intake (`--language javascript`)](javascript-project-intake.md)
 - [Documentation review gate (`doc-gate`)](documentation-review-gate.md)
 - [End-to-end acceptance walkthrough (synthetic example)](end-to-end-acceptance.md)

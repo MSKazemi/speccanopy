@@ -1,6 +1,6 @@
 # Speccanopy for documenting a real software project
 
-**Assessed 2026-11-05. Current readiness: usable as a guided architecture-documentation prototype, NOT a complete automatic project-documentation generator.**
+**Assessed 2026-11-06 (main after PRs #6–#9 plus `group`). Current readiness: usable as a guided architecture-documentation prototype, NOT a complete automatic project-documentation generator.**
 
 Speccanopy's product scope is **software architecture design and architecture documentation**, not implementing, compiling, testing, operating, or deploying the applications being described. It is not a replacement for a user guide, automatically extracted API reference, installation manual or full operations handbook.
 
@@ -18,6 +18,10 @@ Speccanopy's product scope is **software architecture design and architecture do
 | Generate complete, source-verified docs for arbitrary real applications | **Not built in** | Claude-assisted intake, source provenance, owner review and drift detection are still required |
 | Inventory allowlisted local source files and check citations | **Yes** | `source-inventory` and optional `document --source-root --source-evidence` compare byte hashes, not architectural meaning |
 | Draft structure from Python source modules/imports (JavaScript/TypeScript via `--language javascript`, lexical scan) | **Yes, provisional; Python and JS/TS only** | `project-intake` parses bounded Python AST, produces valid brief/fixture plus source map; user supplies real requirements, and module roles are unverified |
+| Leave test fixtures out of intake | **Yes** | `project-intake --exclude PATH`, recorded in the intake output |
+| Group modules into components without editing the fixture by hand | **Yes, one level** | `group` applies a `groups.json`; it adds no verification, interfaces, data ownership or `ready` status ([guide](grouping-modules.md)) |
+| Separate byte churn from structural change across versions | **Yes, static syntax** | `structure-diff` compares two intakes by modules, import edges and top-level symbols ([guide](structure-diff.md)) |
+| Evidence from real code | **Pilots only** | Third-party pilots (itsdangerous, commander; not owner-confirmed) and an owner pilot on Speccanopy with owner-confirmed requirements ([third-party](pilot-third-party-python.md), [owner](owner-pilot-speccanopy.md)) |
 | Automatically infer architecture semantics from source code | **Not built in** | Claude Code can inspect authorized source, but Speccanopy does not infer implemented behavior or business requirements |
 | Regenerate verified documentation after code/requirement changes | **Partial** | Changed/missing **cited** source-file bytes are flagged by `document`; `source-diff` lists added/removed/changed **inventoried** files between two snapshots ([guide](source-inventory-diff.md)); `source-impact` maps those changes onto authored claims by digest and lists possibly affected architecture IDs ([guide](source-claim-impact.md)). Semantic drift and doc updates still require owner reconciliation |
 | Report documentation gaps before owner sign-off | **Yes, deterministic** | `doc-gate` lists uncovered requirements, unsupported/self-reported claims, unmapped sources and open decisions ([guide](documentation-review-gate.md)); its strongest outcome is `ready_for_human_signoff`, never validation |
