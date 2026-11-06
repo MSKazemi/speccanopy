@@ -76,6 +76,19 @@ Read `work/intake/intake-review.md` and `work/docs/open-questions.md` first. The
 
 Continue in the same folder:
 
+First, **before editing anything**, run the documentation gate to see what still needs a human:
+
+```bash
+speccanopy doc-gate work/design/architecture.json \
+  --review work/review/architecture-review.json \
+  --source-root app --source-evidence work/intake/source-evidence.json \
+  --output work/doc-gate
+```
+
+Observed: `Outcome: requires_review (14 blocking, 8 attention)`, exit `0`. Blocking items include the unlinked `FR-USER-*` requirements, the root `system` component, the `incomplete_requires_review` status and the review's high findings; see [Documentation review gate](documentation-review-gate.md).
+
+Then edit a module and look for change detection:
+
 ```bash
 printf '\n# synthetic edit\n' >> app/src/inventory_ledger_demo/ledger.py
 
@@ -87,9 +100,13 @@ speccanopy document work/design/architecture.json \
 speccanopy source-inventory app --output work/source-inventory-v2.json
 speccanopy source-diff work/intake/source-inventory.json work/source-inventory-v2.json \
   --output work/source-diff
+speccanopy source-impact work/intake/source-inventory.json work/source-inventory-v2.json \
+  --evidence work/intake/source-evidence.json \
+  --architecture work/design/architecture.json \
+  --output work/claim-impact
 ```
 
-Observed: `document` prints `Source citations: 5/7 byte snapshots match` and exits `2` (because of `--strict`; the pack is still written); the two claims citing `ledger.py` are `changed` in `work/docs2/source-evidence.md`. `source-diff` prints `Source diff: 0 added, 0 removed, 1 changed, 5 unchanged` and exits `0`. `source-diff` also lists **new uncited files**, which `document` cannot see — see [Compare source inventories](source-inventory-diff.md).
+Observed: `document` prints `Source citations: 5/7 byte snapshots match` and exits `2` (because of `--strict`; the pack is still written); the two claims citing `ledger.py` are `changed` in `work/docs2/source-evidence.md`. `source-diff` prints `Source diff: 0 added, 0 removed, 1 changed, 5 unchanged` and exits `0`. `source-diff` also lists **new uncited files**, which `document` cannot see — see [Compare source inventories](source-inventory-diff.md). `source-impact` prints `Claim impact: 7 claims (5 unaffected, 2 stale_changed)` and exits `0` (`2` with `--strict`); the two `ledger.py` claims and their architecture IDs are listed as possibly affected in `work/claim-impact/claim-impact.md` ([guide](source-claim-impact.md)).
 
 ## 6. Exit codes
 
@@ -97,11 +114,11 @@ Observed: `document` prints `Source citations: 5/7 byte snapshots match` and exi
 | --- | --- |
 | `0` | Artifacts written |
 | `1` | Invalid/unsupported input or an existing non-empty/symlinked output folder; these are detected **before anything is written**, and a one-line `Error ...` goes to stderr. (An operating-system failure in the middle of writing, such as a full disk, can still leave a partial folder.) |
-| `2` | Only with `--strict` (`design`, `review`, `document`, `source-diff`): artifacts written but review is still required |
+| `2` | Only with `--strict` (`design`, `review`, `document`, `source-diff`, `source-impact`, `doc-gate`): artifacts written but review is still required |
 
 ## 7. What the acceptance tests check
 
-`python -m pytest -q tests/test_acceptance_pipeline.py tests/test_source_diff_cli.py` runs fully offline in temporary folders (they never write inside the repository):
+`python -m pytest -q tests/test_acceptance_pipeline.py tests/test_source_diff_cli.py tests/test_new_cli_commands.py` runs fully offline in temporary folders (they never write inside the repository):
 
 - **Exact artifacts and statuses** for every stage, through both the installed `speccanopy` console script and the in-process CLI; nothing becomes `validated_for_scope`.
 - **Repeatability:** the whole pipeline run from two different absolute locations (and with relative paths) produces byte-identical files, with no host path or username in any output.

@@ -116,7 +116,7 @@ A standalone reusable version is also at [`prompts/claude-code-python-intake.md`
 
 | Problem or setting | Behavior |
 | --- | --- |
-| No Python files in the selected folder | Command fails with a Python-only scope message; use Claude Code-assisted manual intake for other languages |
+| No Python files in the selected folder | Command fails with a scope message. For JavaScript/TypeScript use `--language javascript` ([guide](javascript-project-intake.md)); for other languages use Claude Code-assisted manual intake |
 | Python syntax error in an allowed file | Command fails before writing partial artifacts; choose a correct subtree or fix the source separately |
 | More than 30 eligible Python modules | Command fails with an explicit count; select a smaller source folder or use `--max-modules` up to **50** |
 | Too many files | Max 2,000 allowlisted files by default; `--max-files` up to 10,000 |

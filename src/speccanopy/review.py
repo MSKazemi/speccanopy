@@ -7,6 +7,8 @@ quality rules inspect the structural draft; they do not run application code.
 
 from __future__ import annotations
 
+import re
+
 from collections import defaultdict
 from typing import Literal
 
@@ -201,7 +203,8 @@ def _style_family(text: str | None) -> StyleId | None:
         return "serverless"
     if "modular monolith" in t:
         return "modular_monolith"
-    if "single process" in t or "cli" in t:
+    # Whole word only: a substring test classified e.g. "client portal" as a CLI.
+    if "single process" in t or re.search(r"\bcli\b", t):
         return "single_process"
     return None
 
@@ -355,7 +358,7 @@ def review_quality(spec: ArchitectureSpec, config: ReviewConfig) -> QualityRevie
     owners_by_data: dict[tuple[str | None, str], list[str]] = defaultdict(list)
     for c in spec.components:
         for datum in set(c.owned_data):
-            owners_by_data[(c.parent_id, datum.strip().casefold())].append(c.id)
+            owners_by_data[(c.parent_id, " ".join(datum.split()).casefold())].append(c.id)
     for (parent_id, datum), owners in sorted(owners_by_data.items(), key=lambda item: str(item[0])):
         if len(owners) > 1:
             finding("data_ownership", "medium", f"Sibling components claim the same data '{datum}': {sorted(owners)}.",

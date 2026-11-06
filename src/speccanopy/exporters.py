@@ -10,7 +10,7 @@ from .models import ArchitectureSpec
 
 
 def _escape_mermaid_label(value: str) -> str:
-    return value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
+    return value.replace("\"", "#quot;").replace("\r", " ").replace("\n", " ")
 
 
 def to_mermaid(spec: ArchitectureSpec) -> str:

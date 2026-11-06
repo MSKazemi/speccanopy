@@ -16,6 +16,7 @@ from .ai import (
 from .ai_exporters import export_ai_draft, export_approved
 from .claude import ClaudeMessagesClient
 from .decomposer import generate_architecture
+from .doc_gate import evaluate_documentation_gate, export_documentation_gate
 from .documentation import export_documentation
 from .exporters import check_new_output_dir, export_generation
 from .fixtures import FixtureDesign
@@ -30,6 +31,10 @@ from .refinement_exporters import (
 from .research import ResearchCase, ResearchSuite, evaluate_case, summarize_suite
 from .research_exporters import export_research
 from .source_diff import compare_inventories, export_inventory_diff
+from .structure_diff import (
+    compare_module_observations, export_structure_diff, load_module_observations,
+)
+from .source_impact import assess_claim_impact, export_claim_impact
 from .source_evidence import (
     SourceEvidence, SourceInventory, assess_sources, scan_sources, save_inventory,
 )
@@ -62,9 +67,16 @@ def main(argv: list[str] | None = None) -> int:
     document.add_argument("--max-source-bytes", type=int, default=1000000)
 
     intake = sub.add_parser(
-        "project-intake", help="Draft Python module architecture inputs from bounded offline AST analysis"
+        "project-intake",
+        help="Draft module architecture inputs from bounded offline static analysis "
+             "(Python AST, or JavaScript/TypeScript lexical scan)",
     )
-    intake.add_argument("project", type=Path, help="Authorized local Python application root")
+    intake.add_argument("project", type=Path, help="Authorized local application root")
+    intake.add_argument(
+        "--language", choices=("python", "javascript"), default="python",
+        help="Source language to analyze: python (.py, AST; default) or javascript "
+             "(.js .jsx .mjs .cjs .ts .tsx, lexical scan; nothing is executed)",
+    )
     intake.add_argument("--system", required=True, help="Human-supplied system name")
     intake.add_argument("--goal", required=True, help="Human-supplied project goal")
     intake.add_argument(
@@ -81,6 +93,11 @@ def main(argv: list[str] | None = None) -> int:
     sources.add_argument("--output", type=Path, required=True, help="New JSON metadata file")
     sources.add_argument("--max-files", type=int, default=2000)
     sources.add_argument("--max-file-bytes", type=int, default=1000000)
+    sources.add_argument(
+        "--record-git-revision", action="store_true",
+        help="Also record the commit/branch read from <project>/.git files (no git is run; "
+             "working-tree cleanliness is not recorded)",
+    )
 
     source_diff = sub.add_parser(
         "source-diff", help="Compare two source inventories: added, removed, changed, unchanged files"
@@ -92,6 +109,45 @@ def main(argv: list[str] | None = None) -> int:
         "--strict", action="store_true",
         help="Exit 2 when files differ, coverage is not comparable or oversized files were skipped",
     )
+
+    structure_diff = sub.add_parser(
+        "structure-diff",
+        help="Compare two project-intake outputs by static module/import structure (not bytes)",
+    )
+    structure_diff.add_argument("before", type=Path,
+                                help="Earlier project-intake directory or module-observations.json")
+    structure_diff.add_argument("after", type=Path,
+                                help="Later project-intake directory or module-observations.json")
+    structure_diff.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    structure_diff.add_argument(
+        "--strict", action="store_true",
+        help="Exit 2 when the static module/import structure changed",
+    )
+
+    source_impact = sub.add_parser(
+        "source-impact", help="Map source inventory changes onto authored source-evidence claims"
+    )
+    source_impact.add_argument("before", type=Path, help="Earlier source-inventory.json")
+    source_impact.add_argument("after", type=Path, help="Later source-inventory.json")
+    source_impact.add_argument("--evidence", type=Path, required=True,
+                               help="Authored source-evidence.json claims to check")
+    source_impact.add_argument("--architecture", type=Path,
+                               help="Optional ArchitectureSpec JSON: check IDs and mandatory requirements")
+    source_impact.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    source_impact.add_argument("--strict", action="store_true",
+                               help="Exit 2 when any claim or file change requires review")
+
+    doc_gate = sub.add_parser(
+        "doc-gate", help="Check a documentation pack's inputs for gaps that need human decisions"
+    )
+    doc_gate.add_argument("architecture", type=Path, help="Existing ArchitectureSpec JSON")
+    doc_gate.add_argument("--review", type=Path, help="Optional matching architecture-review.json")
+    doc_gate.add_argument("--source-root", type=Path, help="Authorized local application root")
+    doc_gate.add_argument("--source-evidence", type=Path, help="Authored source-evidence.json claims")
+    doc_gate.add_argument("--max-source-bytes", type=int, default=1000000)
+    doc_gate.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    doc_gate.add_argument("--strict", action="store_true",
+                          help="Exit 2 when the gate outcome is requires_review")
 
     propose_ai = sub.add_parser("propose-ai", help="Draft a component hierarchy using structured AI model proposals")
     propose_ai.add_argument("brief", type=Path)
@@ -308,14 +364,17 @@ def main(argv: list[str] | None = None) -> int:
                 args.project, system=args.system, goal=args.goal,
                 requirements=args.requirement, max_modules=args.max_modules,
                 max_files=args.max_files, max_file_bytes=args.max_file_bytes,
+                language=args.language,
             )
             paths = export_project_intake(prepared, args.output)
         except (OSError, ValidationError, ValueError) as exc:
             print(f"Error preparing project intake: {exc}", file=sys.stderr)
             return 1
+        label = "JavaScript/TypeScript" if args.language == "javascript" else "Python"
+        kind = "lexical" if args.language == "javascript" else "static"
         print(
-            f"Python source intake: {len(prepared.observations.modules)} modules, "
-            f"{len(prepared.observations.dependencies)} static import edges"
+            f"{label} source intake: {len(prepared.observations.modules)} modules, "
+            f"{len(prepared.observations.dependencies)} {kind} import edges"
         )
         print("PROVISIONAL: owner must check module boundaries and map requirements; no code executed")
         print(f"Artifacts: {', '.join(str(path) for path in paths.values())}")
@@ -324,13 +383,21 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "source-inventory":
         try:
             inventory = scan_sources(args.project, max_files=args.max_files,
-                                     max_bytes=args.max_file_bytes)
+                                     max_bytes=args.max_file_bytes,
+                                     record_revision=args.record_git_revision)
             path = save_inventory(inventory, args.output)
         except (OSError, ValidationError, ValueError) as exc:
             print(f"Error inventorying sources: {exc}", file=sys.stderr)
             return 1
         print(f"Source inventory: {len(inventory.files)} metadata-only file records; "
               f"{inventory.skipped_oversized} oversized excluded")
+        if inventory.revision is not None:
+            rev = inventory.revision
+            if rev.status == "recorded":
+                where = rev.ref or "detached HEAD"
+                print(f"Git revision: {rev.commit[:12]} ({where}); working-tree state is not recorded")
+            else:
+                print(f"Git revision: unknown ({rev.reason}); working-tree state is not recorded")
         print(f"Artifact: {path}")
         print("Hashes are not semantic architecture verification; keep paths private if sensitive")
         return 0
@@ -350,6 +417,76 @@ def main(argv: list[str] | None = None) -> int:
         print("Byte-level metadata comparison only; not semantic or architectural verification")
         print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
         return 2 if args.strict and diff.requires_review else 0
+
+    if args.command == "structure-diff":
+        try:
+            before = load_module_observations(args.before)
+            after = load_module_observations(args.after)
+            check_new_output_dir(args.output, "Structure diff")
+            sdiff = compare_module_observations(before, after)
+            paths = export_structure_diff(sdiff, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error comparing project structure: {exc}", file=sys.stderr)
+            return 1
+        print(f"Structure diff: modules {len(sdiff.added_modules)} added, "
+              f"{len(sdiff.removed_modules)} removed, {len(sdiff.kept_modules)} kept; "
+              f"import edges {len(sdiff.edges_added)} added, {len(sdiff.edges_removed)} removed, "
+              f"{len(sdiff.edges_kept)} kept")
+        print(f"Structure changed: {'yes' if sdiff.structure_changed else 'no'}")
+        print("Static syntax only; renames not inferred; not behavioural or architectural verification")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and sdiff.structure_changed else 0
+
+    if args.command == "source-impact":
+        try:
+            before = SourceInventory.model_validate_json(args.before.read_text(encoding="utf-8"))
+            after = SourceInventory.model_validate_json(args.after.read_text(encoding="utf-8"))
+            claims = SourceEvidence.model_validate_json(args.evidence.read_text(encoding="utf-8"))
+            spec = (ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
+                    if args.architecture else None)
+            check_new_output_dir(args.output, "Claim impact")
+            impact = assess_claim_impact(compare_inventories(before, after), claims, spec)
+            paths = export_claim_impact(impact, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error assessing source claim impact: {exc}", file=sys.stderr)
+            return 1
+        counts = ", ".join(f"{n} {status}" for status, n in impact.status_counts.items() if n)
+        print(f"Claim impact: {len(impact.entries)} claims ({counts or 'none'})")
+        print(f"Possibly affected architecture IDs: {len(impact.affected_architecture_ids)}; "
+              f"uncited added files: {len(impact.uncited_added_paths)}")
+        print(f"Requires review: {'yes' if impact.requires_review else 'no'}")
+        print("Byte digests only; no claim verified and no documentation edited")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and impact.requires_review else 0
+
+    if args.command == "doc-gate":
+        try:
+            spec = ArchitectureSpec.model_validate_json(args.architecture.read_text(encoding="utf-8"))
+            review = (ArchitectureReview.model_validate_json(args.review.read_text(encoding="utf-8"))
+                      if args.review else None)
+            if (args.source_root is None) != (args.source_evidence is None):
+                raise ValueError("--source-root and --source-evidence must be provided together")
+            check_new_output_dir(args.output, "Documentation gate")
+            sources_report = None
+            if args.source_evidence is not None:
+                claims = SourceEvidence.model_validate_json(
+                    args.source_evidence.read_text(encoding="utf-8")
+                )
+                sources_report = assess_sources(
+                    spec, claims, args.source_root, max_bytes=args.max_source_bytes
+                )
+            gate = evaluate_documentation_gate(spec, review=review, sources=sources_report)
+            paths = export_documentation_gate(gate, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error evaluating documentation gate: {exc}", file=sys.stderr)
+            return 1
+        print(f"Documentation gate: {spec.brief.system}")
+        print(f"Outcome: {gate.outcome} ({gate.blocking_count} blocking, "
+              f"{gate.attention_count} attention)")
+        print("Deterministic completeness check of authored data; not expert review or "
+              "certification. A human must sign off.")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and gate.outcome == "requires_review" else 0
 
     if args.command == "document":
         try:

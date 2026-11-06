@@ -76,7 +76,7 @@ def test_mermaid_escapes_labels_and_uses_opaque_ids():
     fixture.root.name = 'A "quoted" app'
     architecture = generate_architecture(brief, fixture).architecture
     tree = to_mermaid(architecture)
-    assert 'N0["A \\"quoted\\" app [ready]"]' in tree
+    assert 'N0["A #quot;quoted#quot; app [ready]"]' in tree
     assert 'system --> input' not in tree
     assert len(relationships_mermaid(architecture).splitlines()) > 3
 
