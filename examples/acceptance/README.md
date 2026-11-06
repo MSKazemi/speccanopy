@@ -48,3 +48,15 @@ To see stale-source detection, edit a module in `app/src/inventory_ledger_demo/`
 and run `document` again into a NEW output directory (for example `work/docs2`):
 the affected claims become `changed` in `source-evidence.md` and
 `open-questions.md`.
+
+To see changes to **every** inventoried file (including new files no claim
+cites), compare the intake inventory with a fresh one:
+
+```bash
+speccanopy source-inventory app --output work/source-inventory-v2.json
+speccanopy source-diff work/intake/source-inventory.json work/source-inventory-v2.json \
+  --output work/source-diff
+```
+
+Full walkthrough with observed output, exit codes and test coverage:
+[`docs/end-to-end-acceptance.md`](../../docs/end-to-end-acceptance.md).

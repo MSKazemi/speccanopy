@@ -124,7 +124,7 @@ A standalone reusable version is also at [`prompts/claude-code-python-intake.md`
 | Symlinks/private-looking paths | Symlinks, dot/hidden paths and known sensitive directories/filenames are excluded or rejected, best effort |
 | Existing nonempty output | Rejected rather than silently overwriting previous or approved docs |
 | Duplicate resolved module names | Fails closed instead of guessing which module is meant |
-| Changed/removed file after intake | The subsequent `source-evidence.md` reports changed/missing hashes; regenerate to a **new empty output folder** |
+| Changed/removed file after intake | The subsequent `source-evidence.md` reports changed/missing hashes; regenerate to a **new empty output folder**. To list every added/removed/changed file (not only cited ones), compare `<intake-output>/source-inventory.json` with a new inventory using `speccanopy source-diff` ([guide](source-inventory-diff.md)) |
 | Unsupported JavaScript/TypeScript/etc. | Listed under non-Python sources not analyzed; do not infer them as missing runtime components |
 | Want production certification | Source syntax and matching hashes **do not** authenticate behavior, safety, expert agreement or production quality |
 

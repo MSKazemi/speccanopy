@@ -7,6 +7,7 @@ semantic or architectural verification, and these tests do not claim it is.
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -122,6 +123,46 @@ def test_source_diff_cli_never_overwrites_existing_output(tmp_path, capsys):
     link.symlink_to(tmp_path / "elsewhere", target_is_directory=True)
     assert main(["source-diff", str(before), str(after), "--output", str(link)]) == 1
     assert not (tmp_path / "elsewhere").exists()
+
+
+ACCEPTANCE_APP = (
+    Path(__file__).resolve().parents[1] / "examples" / "acceptance" / "synthetic-inventory-app"
+)
+
+
+def test_intake_inventory_then_change_is_visible_in_diff_and_stale_document(tmp_path):
+    """Synthetic committed fixture; integration of intake, source-diff and document."""
+    app = tmp_path / "app"
+    shutil.copytree(ACCEPTANCE_APP, app)
+    intake, design = tmp_path / "intake", tmp_path / "design"
+    assert main([
+        "project-intake", str(app), "--system", "Synthetic Inventory Ledger",
+        "--goal", "SYNTHETIC: document module boundaries",
+        "--requirement", "SYNTHETIC: the demo ledger records stock movements",
+        "--output", str(intake),
+    ]) == 0
+    assert main(["design", str(intake / "brief.json"), "--fixture",
+                 str(intake / "design.json"), "--output", str(design)]) == 0
+    ledger = app / "src" / "inventory_ledger_demo" / "ledger.py"
+    ledger.write_text(ledger.read_text() + "\n# synthetic edit\n", encoding="utf-8")
+    (app / "src" / "inventory_ledger_demo" / "audit.py").write_text("LOG = []\n", encoding="utf-8")
+    after = tmp_path / "inventory-v2.json"
+    assert main(["source-inventory", str(app), "--output", str(after)]) == 0
+    diff_dir = tmp_path / "diff"
+    assert main(["source-diff", str(intake / "source-inventory.json"), str(after),
+                 "--output", str(diff_dir), "--strict"]) == 2
+    diff = InventoryDiff.model_validate_json((diff_dir / "source-diff.json").read_text())
+    assert diff.changed == ["src/inventory_ledger_demo/ledger.py"]
+    assert diff.added == ["src/inventory_ledger_demo/audit.py"]
+    assert diff.removed == [] and diff.coverage == "comparable"
+    docs = tmp_path / "docs"
+    assert main(["document", str(design / "architecture.json"), "--source-root", str(app),
+                 "--source-evidence", str(intake / "source-evidence.json"),
+                 "--output", str(docs), "--strict"]) == 2
+    evidence = (docs / "source-evidence.md").read_text()
+    assert "| changed |" in evidence and "ledger.py" in evidence
+    # The new, uncited module is only visible through source-diff, not document.
+    assert "audit" not in evidence
 
 
 def test_installed_console_script_exit_codes(tmp_path):

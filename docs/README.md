@@ -15,6 +15,8 @@
 | [Project documentation readiness](project-documentation-readiness.md) | Detailed existing-repository workflow and missing product features |
 | [Claude Code vs Anthropic API](claude-integration.md) | Subscription workflow vs separate API billing |
 | [Source inventory and evidence mapping](source-evidence-workflow.md) | Inventory local source metadata, check SHA-256-backed citations, report changed/missing files |
+| [Compare source inventories](source-inventory-diff.md) | `source-diff`: added/removed/changed/unchanged files between two inventories, coverage warnings, exit codes |
+| [End-to-end acceptance walkthrough](end-to-end-acceptance.md) | Run intake → design → review → document → change detection on the committed **synthetic** example; what the acceptance tests check |
 | [Markdown architecture renderer](architecture-documentation-renderer.md) | Turn an existing architecture JSON into nine Markdown pages and two Mermaid diagrams |
 | [CLI design engine](phase2-engine.md) | JSON/Mermaid outputs and structural readiness |
 | [Architecture review](phase3-review.md) | Rule-based design and quality review |
