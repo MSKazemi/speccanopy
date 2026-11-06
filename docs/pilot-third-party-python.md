@@ -79,8 +79,17 @@ speccanopy source-impact intake-212/source-inventory.json inv-220.json \
 | Removed path | `itsdangerous-2.1.2.dist-info/LICENSE.rst` (2.2.0 ships `LICENSE.txt`, which is not on the inventory allowlist) |
 | `source-impact` | `29 claims (29 stale_changed)`, all 29 IDs possibly affected; exit 0 |
 | Static import structure | 21 edges in both versions, **identical set** |
+| `structure-diff` | modules `0 added, 0 removed, 8 kept`; edges `0 added, 0 removed, 21 kept`; **3** kept modules gained top-level symbols; **5** of 8 byte-changed modules are structurally unchanged; `Structure changed: yes` (exit 2 with `--strict`) |
 
-All eight modules changed bytes in this release (for example `typing` modernisation in `signer.py`), so every digest-bound claim is correctly reported as stale. The module-import structure did not change. **Digest-level impact therefore flags every claim even though the structure is unchanged.** It never misses a changed cited file, but on whole-release diffs most flags are likely false alarms for structural claims. Re-running `project-intake` on the new version and comparing `module-observations.json` gives a structural comparison; Speccanopy does not automate that comparison yet.
+All eight modules changed bytes in this release (for example `typing` modernisation in `signer.py`), so every digest-bound claim is correctly reported as stale. The module-import graph did not change. **Digest-level impact therefore flags every claim, including the 21 import-edge claims whose edges are still present.** It never misses a changed cited file, but on whole-release diffs many flags are false alarms for structural claims.
+
+`speccanopy structure-diff` separates the two. Run `project-intake` on each version, then:
+
+```bash
+speccanopy structure-diff intake-212 intake-220 --output structure
+```
+
+It reports three kept modules with new top-level symbols: `__getattr__` in `itsdangerous`, class `_PDataSerializer` in `itsdangerous.serializer`, and `_lazy_sha1` in `itsdangerous.signer`. Each was confirmed absent in 2.1.2 and present in 2.2.0 by a separate `grep`. The other five modules changed bytes only. An earlier draft of this report said the structure was unchanged; that was true of the import graph only. See [Structural comparison](structure-diff.md).
 
 `--architecture` must be the generated `architecture.json`. Passing `brief.json` fails cleanly with exit 1.
 

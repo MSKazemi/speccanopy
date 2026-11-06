@@ -336,3 +336,15 @@ def test_cli_invalid_input_and_unsafe_output_write_nothing(tmp_path, capsys):
     link.symlink_to(taken)
     assert main(["structure-diff", str(before), str(after), "--output", str(link)]) == 1
     assert "Error comparing project structure" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("before_kw,after_kw", [
+    ({"funcs": ["a"]}, {"funcs": ["a", "b"]}),        # function added only
+    ({"funcs": ["a", "b"]}, {"funcs": ["a"]}),        # function removed only
+    ({"classes": ["A"]}, {"classes": ["A", "B"]}),    # class added only
+    ({"classes": ["A", "B"]}, {"classes": ["A"]}),    # class removed only
+])
+def test_each_single_symbol_change_alone_is_structural(before_kw, after_kw):
+    diff = compare_module_observations(_obs([_mod("m", **before_kw)]),
+                                       _obs([_mod("m", sha=SHA_B, **after_kw)]))
+    assert diff.structure_changed is True

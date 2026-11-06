@@ -266,6 +266,7 @@ The output is a **proposed design**, not documentation of actual implemented com
 - [Short inputs/outputs quick start](claude-code-quickstart.md)
 - [Compare source inventories (`source-diff`)](source-inventory-diff.md)
 - [Map source changes to affected claims (`source-impact`)](source-claim-impact.md)
+- [Compare module structure between two Python intakes (`structure-diff`)](structure-diff.md)
 - [Documentation review gate (`doc-gate`)](documentation-review-gate.md)
 - [End-to-end acceptance walkthrough (synthetic example)](end-to-end-acceptance.md)
 - [Pilot on a real third-party Python package (measured, not owner-confirmed)](pilot-third-party-python.md)
