@@ -55,6 +55,14 @@ def check_new_output_dir(destination: str | Path, label: str) -> Path:
     return out
 
 
+def check_new_output_file(destination: str | Path, label: str) -> Path:
+    """Raise if ``destination`` already exists or is a symlink (dangling included). No side effects."""
+    out = Path(destination)
+    if out.is_symlink() or out.exists():
+        raise ValueError(f"{label} output must be a new file; existing files not overwritten")
+    return out
+
+
 def prepare_new_output_dir(destination: str | Path, label: str) -> Path:
     """Check with :func:`check_new_output_dir`, then create the directory."""
     out = check_new_output_dir(destination, label)

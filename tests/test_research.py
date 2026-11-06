@@ -265,7 +265,10 @@ def test_suite_cli_snapshots_and_strict(tmp_path):
     actual = json.loads((destination/'research-suite.json').read_text())
     assert actual == expected
     assert (destination/'research-suite.md').read_text().strip() == (RESEARCH/'generated/research-suite.md').read_text().strip()
-    assert main(['research-suite',str(path),'--output',str(destination),'--strict']) == 2
+    first = (destination/'research-suite.json').read_bytes()
+    assert main(['research-suite',str(path),'--output',str(destination),'--strict']) == 1
+    assert (destination/'research-suite.json').read_bytes() == first
+    assert main(['research-suite',str(path),'--output',str(tmp_path/'suite-strict'),'--strict']) == 2
 
 
 def test_suite_ignores_external_data_and_rejects_invalid_paths(tmp_path):
