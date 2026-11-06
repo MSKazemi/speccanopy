@@ -21,6 +21,13 @@
 | [Component proposals with AI](phase4-ai-proposals.md) | Optional direct model API and human acknowledgement |
 | [Architecture contract](architecture-contract.md) | Source-of-truth schemas, requirement traceability, statuses |
 
+## Developing Speccanopy in parallel
+
+- [Claude Code parallel-development guide](parallel-development.md) — model selection, subscription use, isolated worktrees, file ownership and review boundaries.
+- [Ready-to-run Issue #5 implementation prompt](../prompts/claude-code-parallel-issue5.md) — one integration lead and two scoped workers, tested code changes, clear usage docs, no direct pushes to main or artificial closure of research issues.
+
+These are handoff instructions, not a claim that parallel workers have been launched or their tasks completed.
+
 ## Research and development
 
 - [Vision and goal](vision-and-goal.md)
