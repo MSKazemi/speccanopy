@@ -78,7 +78,7 @@ speccanopy document out/my-app-architecture/architecture.json \
   --output out/my-app-docs
 ```
 
-This is **Python-only structural intake**, not complete software understanding. For TypeScript, Go, other languages, private requirements, or a complex system, continue with the [Claude Code guided intake](docs/USER_GUIDE.md) and check the produced claims yourself.
+This is **structural intake**, not complete software understanding. JavaScript/TypeScript projects can use `--language javascript`, a bounded lexical import scan ([guide](docs/javascript-project-intake.md)). For Go, other languages, private requirements, or a complex system, continue with the [Claude Code guided intake](docs/USER_GUIDE.md) and check the produced claims yourself.
 
 
 

@@ -99,3 +99,27 @@ It reports three kept modules with new top-level symbols: `__getattr__` in `itsd
 - No owner confirmed any fact, requirement or module role; the requirements are a paraphrase of public README text.
 - Intake accuracy was checked only for static import edges, against a regex count by the same operator, not a labelled corpus.
 - Nothing here is expert validation, and the architecture status was never promoted.
+
+## JavaScript pilot — commander 12.1.0
+
+Same method, with `project-intake --language javascript`, on [commander](https://github.com/tj/commander.js) 12.1.0 (MIT), from the official npm tarball (SHA-256 `56affc6ddafe486f94b428ae2823d059cf60d4dae2f33eaaf1b1ec4306f73173`), extracted with Python's `tarfile` `data` filter; nothing installed or executed. Requirements were paraphrased from the README by the pilot operator.
+
+```bash
+speccanopy project-intake package --language javascript --system "commander 12.1.0 (third-party pilot)" \
+  --goal "PILOT: document module boundaries of a real CLI-parsing library" \
+  --requirement "Parse command-line options and arguments into a program's configuration (from the project README)" \
+  --requirement "Generate help text for commands and options (from the project README)" \
+  --output work/intake
+```
+
+| Check | Observed |
+| --- | --- |
+| Modules | 8 of 8 (`esm`, `index`, `lib/argument`, `lib/command`, `lib/error`, `lib/help`, `lib/option`, `lib/suggestSimilar`); `typings/index.d.ts` listed as not analysed |
+| Internal import edges vs. a separate `grep` of every `require(`/`import` line | **14 of 14**, 0 extra, including the extension-less `require('./suggestSimilar')` |
+| External imports | exactly the five `node:` built-ins in `lib/command.js`, none treated as edges |
+| JSDoc text such as `require.main.filename` | not counted |
+| Top-level classes and functions | match a `grep` of `^class `/`^function ` in every module |
+| Lexer diagnostics | 1 ambiguous `/` in `lib/suggestSimilar.js` (reported, not guessed); 0 lexical anomalies |
+| Rest of pipeline | `design`, `review`, `document` exit 0; `22/22` byte snapshots match; `doc-gate` `requires_review (18 blocking, 12 attention)` |
+
+`typings/esm.d.mts` does not appear at all: `.mts`/`.cts` are not on the shared inventory allowlist yet. As with the Python pilot, this checks static import syntax on one small CommonJS library; it says nothing about behaviour, larger TypeScript code bases with path aliases, or JSX-heavy front ends.

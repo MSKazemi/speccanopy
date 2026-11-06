@@ -9,6 +9,7 @@
 | Guide | Purpose |
 | --- | --- |
 | [Python project intake — start here for Python](python-project-intake.md) | Complete input → offline AST draft → design/review/document with source hashes and Claude Code |
+| [JavaScript/TypeScript project intake](javascript-project-intake.md) | `project-intake --language javascript`: offline lexical import scan of JS/TS sources; same artifacts as Python intake; no code executed |
 | [Claude Code prompt for Python](../prompts/claude-code-python-intake.md) | Copy-paste guided project documentation instructions for Python source |
 | [User guide — start here](USER_GUIDE.md) | Complete existing/new-project walkthrough, Claude Code subscription, JSON inputs, output files, troubleshooting |
 | [Short quick start](claude-code-quickstart.md) | Minimal copy/paste terminal and prompt instructions |
