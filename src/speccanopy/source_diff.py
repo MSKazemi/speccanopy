@@ -36,6 +36,7 @@ from typing import Literal
 from pydantic import Field, field_validator, model_validator
 
 from .documentation import _md
+from .exporters import check_new_output_dir, prepare_new_output_dir
 from .models import SchemaModel
 from .source_evidence import InventoryScope, SourceInventory, safe_source_path
 
@@ -175,6 +176,11 @@ def _coverage_notes(before: SourceInventory, after: SourceInventory) -> list[str
                 f"{af.max_files}); this does not change coverage because a scan fails "
                 "rather than truncating when the limit is reached.")
     for label, inv in (("before", before), ("after", after)):
+        if not inv.files:
+            notes.append(
+                f"The {label} inventory lists no files; check that it was taken from the "
+                "intended project root and that its files are not all excluded.")
+    for label, inv in (("before", before), ("after", after)):
         if inv.skipped_oversized > 0:
             notes.append(
                 f"The {label} inventory skipped {inv.skipped_oversized} oversized "
@@ -300,15 +306,12 @@ def render_inventory_diff_markdown(diff: InventoryDiff) -> str:
 
 def export_inventory_diff(diff: InventoryDiff, destination: str | Path) -> dict[str, Path]:
     """Write source-diff.json and source-diff.md into a new or empty real directory."""
-    out = Path(destination)
-    if out.is_symlink() or (out.exists() and (not out.is_dir() or any(out.iterdir()))):
-        raise ValueError(
-            "Source diff output must be a new or empty directory; existing files not overwritten")
+    check_new_output_dir(destination, "Source diff")
     contents = {
         "source-diff.json": json.dumps(diff.model_dump(mode="json"), indent=2, sort_keys=True) + "\n",
         "source-diff.md": render_inventory_diff_markdown(diff),
     }
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Source diff")
     paths: dict[str, Path] = {}
     for name, content in contents.items():
         path = out / name

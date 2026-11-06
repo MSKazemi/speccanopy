@@ -96,7 +96,7 @@ Observed: `document` prints `Source citations: 5/7 byte snapshots match` and exi
 | Code | Meaning |
 | --- | --- |
 | `0` | Artifacts written |
-| `1` | Invalid/unsupported input or an existing non-empty/symlinked output folder; **nothing is written** and a one-line `Error ...` goes to stderr |
+| `1` | Invalid/unsupported input or an existing non-empty/symlinked output folder; these are detected **before anything is written**, and a one-line `Error ...` goes to stderr. (An operating-system failure in the middle of writing, such as a full disk, can still leave a partial folder.) |
 | `2` | Only with `--strict` (`design`, `review`, `document`, `source-diff`): artifacts written but review is still required |
 
 ## 7. What the acceptance tests check
@@ -108,7 +108,7 @@ Observed: `document` prints `Source citations: 5/7 byte snapshots match` and exi
 - **Stale and missing sources:** edited files → `changed`; deleted → `missing`; all deleted → all `missing`; symlinked → `unreadable`; out-of-range line spans; `--strict` exit `2` with output still written.
 - **Unsupported inputs:** non-Python-only projects, binary/non-UTF-8/NUL-byte `.py` files, empty requirements, malformed briefs, fixtures, architectures, reviews and evidence, unknown IDs, mismatched systems — each exits `1` with no traceback and no output folder.
 - **Privacy exclusions:** `.env`, `.git/`, `private/`, `secrets/`, credential/token-named files, `id_rsa`, `node_modules/` and an outside symlink — none of their marker contents or paths appear in any stage's output, and they cannot be cited.
-- **Protection of existing documentation:** each stage refuses a non-empty, symlinked or file output path and leaves owner files byte-identical. These tests found that `design` and `review` previously overwrote such folders; that is fixed in this release.
+- **Protection of existing documentation:** each stage refuses a non-empty, symlinked or file output path and leaves owner files byte-identical. These tests found that `design` and `review` (and therefore `propose-ai`) previously overwrote such folders; that is fixed in this release, and `propose-ai` now refuses before making any model request. The guard is best-effort: it checks the final path component for a symlink and cannot exclude a concurrent local writer.
 - **No execution:** modules that write marker files or raise at import time are never executed.
 
 ## 8. Troubleshooting

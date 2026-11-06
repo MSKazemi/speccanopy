@@ -17,7 +17,7 @@ from .ai_exporters import export_ai_draft, export_approved
 from .claude import ClaudeMessagesClient
 from .decomposer import generate_architecture
 from .documentation import export_documentation
-from .exporters import export_generation
+from .exporters import check_new_output_dir, export_generation
 from .fixtures import FixtureDesign
 from .models import ArchitectureSpec, SystemBrief
 from .review import ArchitectureReview, ReviewConfig, assess_architecture
@@ -236,6 +236,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "propose-ai":
         try:
+            # Refuse an unusable output folder BEFORE any (possibly billed) model call.
+            check_new_output_dir(args.output, "Architecture")
             brief = SystemBrief.model_validate_json(args.brief.read_text(encoding="utf-8"))
             if args.backend == "scripted":
                 if not args.responses:

@@ -183,6 +183,11 @@ class SourceInventory(SchemaModel):
         names = [item.path for item in self.files]
         if names != sorted(set(names)):
             raise ValueError("Source inventory paths must be unique and sorted")
+        if self.scope is not None and (
+            len(self.files) > self.scope.max_files or
+            any(item.byte_count > self.scope.max_file_bytes for item in self.files)
+        ):
+            raise ValueError("Source inventory files exceed its recorded scan scope")
         return self
 
 

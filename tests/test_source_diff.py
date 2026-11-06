@@ -125,7 +125,7 @@ def test_empty_inventories_on_one_or_both_sides():
     assert other.removed == ["a.py"]
 
 
-def test_only_metadata_is_compared_and_kind_comes_from_after_side():
+def test_changed_entry_keeps_path_derived_kind():
     diff = compare_inventories(
         _inv([_file("a.py", "1\n")]), _inv([_file("a.py", "2\n")]))
     assert diff.changed == ["a.py"] and diff.entries[0].kind == "source"
@@ -433,3 +433,11 @@ def test_requires_review_property_truth_table():
     assert compare_inventories(_inv(), _inv([_file("a.py")])).requires_review
     assert compare_inventories(_inv([_file("a.py")]), _inv()).requires_review
     assert compare_inventories(_inv([_file("a.py", "1")]), _inv([_file("a.py", "2")])).requires_review
+
+
+def test_empty_inventory_is_called_out_in_notes():
+    diff = compare_inventories(_inv(), _inv([_file("a.py")]))
+    assert any("before inventory lists no files" in n for n in diff.coverage_notes)
+    assert not any("after inventory lists no files" in n for n in diff.coverage_notes)
+    both = compare_inventories(_inv(), _inv())
+    assert sum("lists no files" in n for n in both.coverage_notes) == 2

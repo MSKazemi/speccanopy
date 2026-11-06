@@ -16,12 +16,12 @@ Use it when an application has changed since you generated its architecture docu
 | --- | --- |
 | `BEFORE` | Earlier inventory JSON (positional) |
 | `AFTER` | Later inventory JSON (positional) |
-| `--output DIR` | **New or empty** directory; an existing non-empty directory, a file or a symlink is refused and nothing is written |
+| `--output DIR` | **New or empty** directory; an existing non-empty directory, a file or a symlink is refused before anything is written (best-effort: the final path component is checked for a symlink) |
 | `--strict` | Exit `2` when the result requires review (see §5) |
 
 Both inventories are validated with the same rules as everywhere else: canonical project-relative POSIX paths, sorted and unique, 64-character lowercase SHA-256 digests, no excluded/private paths. A hand-edited inventory whose digest matches but whose byte count, line count or kind disagrees is rejected as `inconsistent inventory metadata`.
 
-Inventories written since this release record a **scan scope**: `max_files`, `max_file_bytes` and `policy_sha256` (a SHA-256 of Speccanopy's file allowlist and privacy-exclusion rules — not of any project file). Older inventories without `scope` still load; their coverage is reported as `scope_unknown`.
+Inventories written since this release record a **scan scope**: `max_files`, `max_file_bytes` and `policy_sha256` (a SHA-256 of Speccanopy's file allowlist and privacy-exclusion rules — not of any project file). Older inventories without `scope` still load; their coverage is reported as `scope_unknown`. An inventory whose files exceed its own recorded scope (more files than `max_files`, or a file larger than `max_file_bytes`) is rejected as edited or corrupt.
 
 ## 3. Copyable walkthrough
 
@@ -91,14 +91,14 @@ Neither file contains file contents, absolute host paths or timestamps.
 | `scope_differs` | The size limit or policy differs, so an added/removed file may reflect the scan rules rather than the project |
 | `scope_unknown` | At least one inventory predates scope recording |
 
-A different `--max-files` alone is noted but keeps `comparable`: `source-inventory` fails instead of truncating at the file limit, so a completed inventory lists every eligible file.
+An inventory with **no files** gets a note asking you to check the project root and exclusions; an empty-versus-empty comparison is otherwise `comparable` and does not require review. A different `--max-files` alone is noted but keeps `comparable`: `source-inventory` fails instead of truncating at the file limit, so a completed inventory lists every eligible file.
 
 ## 5. Exit codes
 
 | Code | When |
 | --- | --- |
 | `0` | Diff written (with or without differences, unless `--strict`) |
-| `1` | Missing/unreadable/malformed inventory, inconsistent inventory metadata, or unsafe/non-empty output. **Nothing is written.** |
+| `1` | Missing/unreadable/malformed inventory, inconsistent inventory metadata, or unsafe/non-empty output. These are detected **before anything is written**; only an operating-system failure in the middle of writing (such as a full disk) could leave a partial folder. |
 | `2` | Only with `--strict`: diff written and it **requires review** — any file added, removed or changed, coverage not `comparable`, or either inventory skipped oversized files |
 
 ## 6. Troubleshooting
@@ -129,6 +129,7 @@ With Claude Code you can ask: *"Run `speccanopy source-diff` on these two invent
 - **Byte equality only.** `changed` means different bytes — a whitespace edit and a redesign look the same. `unchanged` means identical bytes, not that behaviour or deployment is unchanged.
 - **Invisible to the diff:** files excluded by the privacy filters, the extension allowlist, symlinks, oversized files, and file mode/owner/timestamp changes.
 - **No rename or move detection;** no Git integration — inventories record neither a commit nor a project identity, so the tool cannot confirm both describe the same project.
+- `requires_review` is reported on stdout and through the `--strict` exit code; it is not stored as a field in `source-diff.json` (scripts can recompute it from `added`/`removed`/`changed`, `coverage` and the skipped-oversized counts, or use `--strict`).
 - **No automatic documentation update or conflict detection.** Mapping changed files to affected architecture claims remains a human/Claude-assisted step.
 - Language-independent: works for any allowlisted file kind, not only Python.
 - Tested with synthetic temporary projects only (`tests/test_source_diff.py`, `tests/test_source_diff_cli.py`); no externally permissioned real-world application has been evaluated.

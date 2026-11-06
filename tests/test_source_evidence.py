@@ -321,3 +321,17 @@ def test_evidence_claim_text_escaped_from_markdown_injection(tmp_path):
     assert "&lt;script&gt;" in text
     assert "Bad # heading" in text
     assert "\n# heading\n" not in text
+
+
+def test_inventory_files_must_fit_recorded_scope(tmp_path):
+    raw = json.loads(scan_sources(_project(tmp_path)).model_dump_json())
+    largest = max(f["byte_count"] for f in raw["files"])
+    raw["scope"]["max_file_bytes"] = largest
+    SourceInventory.model_validate(raw)
+    raw["scope"]["max_file_bytes"] = largest - 1
+    with pytest.raises(ValidationError, match="recorded scan scope"):
+        SourceInventory.model_validate(raw)
+    raw["scope"]["max_file_bytes"] = largest
+    raw["scope"]["max_files"] = len(raw["files"]) - 1
+    with pytest.raises(ValidationError, match="recorded scan scope"):
+        SourceInventory.model_validate(raw)
