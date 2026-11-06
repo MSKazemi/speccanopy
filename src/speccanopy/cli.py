@@ -31,6 +31,9 @@ from .refinement_exporters import (
 from .research import ResearchCase, ResearchSuite, evaluate_case, summarize_suite
 from .research_exporters import export_research
 from .source_diff import compare_inventories, export_inventory_diff
+from .structure_diff import (
+    compare_module_observations, export_structure_diff, load_module_observations,
+)
 from .source_impact import assess_claim_impact, export_claim_impact
 from .source_evidence import (
     SourceEvidence, SourceInventory, assess_sources, scan_sources, save_inventory,
@@ -98,6 +101,20 @@ def main(argv: list[str] | None = None) -> int:
     source_diff.add_argument(
         "--strict", action="store_true",
         help="Exit 2 when files differ, coverage is not comparable or oversized files were skipped",
+    )
+
+    structure_diff = sub.add_parser(
+        "structure-diff",
+        help="Compare two project-intake outputs by static module/import structure (not bytes)",
+    )
+    structure_diff.add_argument("before", type=Path,
+                                help="Earlier project-intake directory or module-observations.json")
+    structure_diff.add_argument("after", type=Path,
+                                help="Later project-intake directory or module-observations.json")
+    structure_diff.add_argument("--output", type=Path, required=True, help="New or empty output directory")
+    structure_diff.add_argument(
+        "--strict", action="store_true",
+        help="Exit 2 when the static module/import structure changed",
     )
 
     source_impact = sub.add_parser(
@@ -390,6 +407,25 @@ def main(argv: list[str] | None = None) -> int:
         print("Byte-level metadata comparison only; not semantic or architectural verification")
         print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
         return 2 if args.strict and diff.requires_review else 0
+
+    if args.command == "structure-diff":
+        try:
+            before = load_module_observations(args.before)
+            after = load_module_observations(args.after)
+            check_new_output_dir(args.output, "Structure diff")
+            sdiff = compare_module_observations(before, after)
+            paths = export_structure_diff(sdiff, args.output)
+        except (OSError, ValidationError, ValueError) as exc:
+            print(f"Error comparing project structure: {exc}", file=sys.stderr)
+            return 1
+        print(f"Structure diff: modules {len(sdiff.added_modules)} added, "
+              f"{len(sdiff.removed_modules)} removed, {len(sdiff.kept_modules)} kept; "
+              f"import edges {len(sdiff.edges_added)} added, {len(sdiff.edges_removed)} removed, "
+              f"{len(sdiff.edges_kept)} kept")
+        print(f"Structure changed: {'yes' if sdiff.structure_changed else 'no'}")
+        print("Static syntax only; renames not inferred; not behavioural or architectural verification")
+        print(f"Artifacts: {', '.join(str(p) for p in paths.values())}")
+        return 2 if args.strict and sdiff.structure_changed else 0
 
     if args.command == "source-impact":
         try:
