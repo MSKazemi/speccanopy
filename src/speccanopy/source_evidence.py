@@ -4,6 +4,10 @@ An inventory only lists allowlisted local file paths, sizes, line counts and
 SHA-256 digests. A source citation proves only that the *bytes* match the
 cited snapshot; it does NOT prove that an authored architecture claim is true.
 No source bytes, secrets, or absolute host paths are exported.
+
+An inventory may optionally carry a :class:`SourceRevision`: the commit hash and
+branch ref read straight from `.git` files (no git executable is run). It is an
+unauthenticated hint and says nothing about whether the working tree is clean.
 """
 
 from __future__ import annotations
@@ -11,6 +15,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
+import stat
 from pathlib import Path, PurePosixPath
 from typing import Literal
 
@@ -165,6 +171,154 @@ class InventoryScope(SchemaModel):
     policy_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
+_COMMIT_PATTERN = r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+_COMMIT_RE = re.compile(_COMMIT_PATTERN)
+_REF_PART_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9._+-]{0,99}$")
+MAX_GIT_META_BYTES = 65_536
+MAX_PACKED_REFS_BYTES = 5_000_000
+
+
+def _valid_ref_name(ref: str) -> bool:
+    """A conservative `refs/...` name: no traversal, no URL, no whitespace."""
+    parts = ref.split("/")
+    return (
+        len(ref) <= 200 and len(parts) >= 3 and parts[0] == "refs"
+        and all(_REF_PART_RE.match(p) and ".." not in p and not p.endswith(".lock")
+                for p in parts[1:])
+    )
+
+
+class SourceRevision(SchemaModel):
+    """Optional, unauthenticated git revision hint for an inventory.
+
+    Read from `.git` files only (no git executable, no network). It records the
+    commit and branch ref at scan time. It does NOT state whether the working
+    tree is clean or dirty: the per-file SHA-256 digests are the content binding.
+    Remote URLs, user names and absolute paths are never recorded.
+    """
+
+    status: Literal["recorded", "unknown"]
+    commit: str | None = Field(default=None, pattern=_COMMIT_PATTERN)
+    ref: str | None = None
+    reason: str | None = Field(default=None, min_length=1, max_length=300)
+    caveat: str = (
+        "Read from .git metadata files only; no git command was run. Working-tree "
+        "clean or dirty state is NOT recorded: the file SHA-256 digests are the "
+        "content binding. The commit is an unauthenticated hint, not proof of "
+        "project identity or provenance."
+    )
+
+    @field_validator("ref")
+    @classmethod
+    def safe_ref(cls, value: str | None) -> str | None:
+        if value is not None and not _valid_ref_name(value):
+            raise ValueError("Revision ref must be a safe refs/... name")
+        return value
+
+    @model_validator(mode="after")
+    def status_matches_fields(self) -> SourceRevision:
+        if self.status == "recorded":
+            if self.commit is None or self.reason is not None:
+                raise ValueError("A recorded revision needs a commit and no reason")
+        elif self.commit is not None or self.ref is not None or self.reason is None:
+            raise ValueError("An unknown revision needs a reason and no commit or ref")
+        return self
+
+
+class _RevisionUnknown(Exception):
+    pass
+
+
+def _read_git_file(git_dir: Path, parts: list[str], limit: int, *, missing_ok: bool = False) -> bytes | None:
+    """Read a regular, non-symlink file below `git_dir` with a size bound."""
+    current = git_dir
+    for index, part in enumerate(parts):
+        current = current / part
+        try:
+            st = os.lstat(current)
+        except FileNotFoundError:
+            if missing_ok:
+                return None
+            raise _RevisionUnknown("a required .git file was not found") from None
+        except OSError:
+            raise _RevisionUnknown("a .git file could not be read") from None
+        if stat.S_ISLNK(st.st_mode):
+            raise _RevisionUnknown("a .git path is a symbolic link; not followed")
+        last = index == len(parts) - 1
+        if (last and not stat.S_ISREG(st.st_mode)) or (not last and not stat.S_ISDIR(st.st_mode)):
+            raise _RevisionUnknown("a .git path is not a regular file")
+    try:
+        fd = os.open(current, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    except OSError:
+        raise _RevisionUnknown("a .git file could not be opened") from None
+    try:
+        data = os.read(fd, limit + 1)
+    finally:
+        os.close(fd)
+    if len(data) > limit:
+        raise _RevisionUnknown("a .git file exceeds the size limit")
+    return data
+
+
+def _text(data: bytes) -> str:
+    try:
+        return data.decode("ascii")
+    except UnicodeDecodeError:
+        raise _RevisionUnknown("a .git file is not plain ASCII") from None
+
+
+def _resolve_revision(root: Path) -> SourceRevision:
+    git = root / ".git"
+    if git.is_symlink():
+        raise _RevisionUnknown("the .git entry is a symbolic link; not followed")
+    if not git.exists():
+        raise _RevisionUnknown("no .git entry at the project root")
+    if git.is_file():
+        raise _RevisionUnknown(
+            "the .git entry is a file (gitdir pointer, e.g. a worktree or submodule); not followed")
+    if not git.is_dir():
+        raise _RevisionUnknown("the .git entry is not a directory")
+    head = _text(_read_git_file(git, ["HEAD"], MAX_GIT_META_BYTES) or b"").strip()
+    if _COMMIT_RE.match(head):
+        return SourceRevision(status="recorded", commit=head)
+    if not head.startswith("ref: "):
+        raise _RevisionUnknown("HEAD is neither a commit hash nor a branch reference")
+    ref = head[5:].strip()
+    if not _valid_ref_name(ref):
+        raise _RevisionUnknown("HEAD names an unsupported or unsafe reference")
+    loose = _read_git_file(git, ref.split("/"), MAX_GIT_META_BYTES, missing_ok=True)
+    if loose is not None:
+        commit = _text(loose).strip()
+        if not _COMMIT_RE.match(commit):
+            raise _RevisionUnknown("the branch reference file does not hold a valid commit hash")
+        return SourceRevision(status="recorded", commit=commit, ref=ref)
+    packed = _read_git_file(git, ["packed-refs"], MAX_PACKED_REFS_BYTES, missing_ok=True)
+    for line in _text(packed or b"").splitlines():
+        if line.startswith(("#", "^")):
+            continue
+        commit, _, name = line.partition(" ")
+        if name == ref:
+            if not _COMMIT_RE.match(commit):
+                raise _RevisionUnknown("packed-refs holds an invalid commit hash for the branch")
+            return SourceRevision(status="recorded", commit=commit, ref=ref)
+    raise _RevisionUnknown("the branch reference has no commit (unborn branch or missing ref)")
+
+
+def read_git_revision(project_root: str | Path) -> SourceRevision:
+    """Record the commit/ref from `<root>/.git` files; never executes git.
+
+    Anything unusual (symlink, gitdir pointer file, malformed content, missing
+    ref) yields an `unknown` revision with a generic reason; it never follows
+    links and never includes host paths or file contents in the reason.
+    """
+    try:
+        return _resolve_revision(Path(project_root))
+    except _RevisionUnknown as exc:
+        return SourceRevision(status="unknown", reason=str(exc))
+    except OSError:
+        return SourceRevision(status="unknown", reason="the .git metadata could not be read")
+
+
 class SourceInventory(SchemaModel):
     schema_version: Literal[1] = 1
     files: list[SourceFile]
@@ -172,6 +326,9 @@ class SourceInventory(SchemaModel):
     # None for inventories written before scope recording existed; coverage of
     # such snapshots is unknown, not assumed complete.
     scope: InventoryScope | None = None
+    # None unless the scan was asked to record it (`--record-git-revision`) and
+    # for inventories written before revision recording existed.
+    revision: SourceRevision | None = None
     caveat: str = (
         "Metadata only. Files excluded by privacy filters or size limits are "
         "not inventoried. File hashes do not establish architecture semantics "
@@ -193,6 +350,7 @@ class SourceInventory(SchemaModel):
 
 def scan_sources(
     project_root: str | Path, *, max_files: int = 2000, max_bytes: int = 1_000_000,
+    record_revision: bool = False,
 ) -> SourceInventory:
     if not 1 <= max_files <= MAX_SCAN_FILES:
         raise ValueError("max_files must be between 1 and 10000")
@@ -239,6 +397,7 @@ def scan_sources(
             max_files=max_files, max_file_bytes=max_bytes,
             policy_sha256=inventory_policy_digest(),
         ),
+        revision=read_git_revision(root) if record_revision else None,
     )
 
 

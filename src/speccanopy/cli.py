@@ -83,6 +83,11 @@ def main(argv: list[str] | None = None) -> int:
     sources.add_argument("--output", type=Path, required=True, help="New JSON metadata file")
     sources.add_argument("--max-files", type=int, default=2000)
     sources.add_argument("--max-file-bytes", type=int, default=1000000)
+    sources.add_argument(
+        "--record-git-revision", action="store_true",
+        help="Also record the commit/branch read from <project>/.git files (no git is run; "
+             "working-tree cleanliness is not recorded)",
+    )
 
     source_diff = sub.add_parser(
         "source-diff", help="Compare two source inventories: added, removed, changed, unchanged files"
@@ -351,13 +356,21 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "source-inventory":
         try:
             inventory = scan_sources(args.project, max_files=args.max_files,
-                                     max_bytes=args.max_file_bytes)
+                                     max_bytes=args.max_file_bytes,
+                                     record_revision=args.record_git_revision)
             path = save_inventory(inventory, args.output)
         except (OSError, ValidationError, ValueError) as exc:
             print(f"Error inventorying sources: {exc}", file=sys.stderr)
             return 1
         print(f"Source inventory: {len(inventory.files)} metadata-only file records; "
               f"{inventory.skipped_oversized} oversized excluded")
+        if inventory.revision is not None:
+            rev = inventory.revision
+            if rev.status == "recorded":
+                where = rev.ref or "detached HEAD"
+                print(f"Git revision: {rev.commit[:12]} ({where}); working-tree state is not recorded")
+            else:
+                print(f"Git revision: unknown ({rev.reason}); working-tree state is not recorded")
         print(f"Artifact: {path}")
         print("Hashes are not semantic architecture verification; keep paths private if sensitive")
         return 0

@@ -41,6 +41,16 @@ Defaults: at most **2,000** allowlisted files, at most **1,000,000 bytes** per f
 
 Each inventory also records its **scan scope** — `"scope": {"max_files": …, "max_file_bytes": …, "policy_sha256": …}` — where `policy_sha256` fingerprints Speccanopy's allowlist and privacy-exclusion rules (not any project file). It contains no host path. `speccanopy source-diff` uses it to warn when two inventories were taken under different rules. Inventories made before this field existed still load, with `scope` treated as unknown.
 
+**Optional revision binding.** Add `--record-git-revision` to also store the project's commit and branch ref in the inventory:
+
+```bash
+speccanopy source-inventory ~/projects/my-app \
+  --output out/myproject-inputs/source-inventory.json --record-git-revision
+# Git revision: 0123456789ab (refs/heads/main); working-tree state is not recorded
+```
+
+The commit is read directly from `<project>/.git/HEAD` and the ref file or `packed-refs` — no `git` command is executed, and no remote URL, user name or absolute path is recorded (the branch name is). If `.git` is a symlink, a `gitdir:` pointer file (worktree/submodule), missing or malformed, the inventory records `"status": "unknown"` and a reason instead of following anything. Without the flag the field is `null`. The revision is an unauthenticated hint: it does **not** say whether the working tree was clean or dirty (the per-file SHA-256 digests are the content binding) and does not prove that two inventories belong to the same project.
+
 ### 2. Link source snapshots to architecture claims
 
 Ask Claude Code to inspect the source inventory and **the specific application source paths you authorize**. Ask it to create `out/myproject-inputs/source-evidence.json` in this strict format:
@@ -113,9 +123,9 @@ speccanopy source-diff out/myproject-inputs/source-inventory.json \
   out/myproject-inputs/source-inventory-v2.json --output out/myproject-source-diff
 ```
 
-This writes `source-diff.json` and `source-diff.md` listing added, removed, changed and unchanged files. See [Compare source inventories](source-inventory-diff.md).
+This writes `source-diff.json` and `source-diff.md` listing added, removed, changed and unchanged files, any **possible renames** (a removed and an added path with identical bytes; ambiguous matches are left unpaired and a rename with edits is not detected) and, when both inventories carry a revision, the two commits — with a note when the commit is the same but files differ (uncommitted changes) or a revision is missing. See [Compare source inventories](source-inventory-diff.md).
 
-**Limit:** `document` detects changes to **cited files**; `source-diff` detects byte changes to **inventoried files**. Neither detects architectural behavior, deployed infrastructure, renames, files excluded by the privacy filters, or an entire Git revision. The inventory itself does not record the application's Git commit; matching SHA-256 records a file snapshot, **not signed provenance, consent, expert agreement, or architecture correctness**.
+**Limit:** `document` detects changes to **cited files**; `source-diff` detects byte changes to **inventoried files**. Neither detects architectural behavior, deployed infrastructure, rename-with-edit, or files excluded by the privacy filters. The inventory records the application's Git commit only when you pass `--record-git-revision` (an unauthenticated hint; dirty state is never recorded); matching SHA-256 records a file snapshot, **not signed provenance, consent, expert agreement, or architecture correctness**.
 
 ### 5. Claude Code subscription workflow
 
@@ -127,7 +137,7 @@ See [the reusable full prompt](../prompts/claude-code-document-project.md).
 
 ## What remains for Issue #5
 
-Completed for this slice: allowlisted local source metadata inventory, snapshot-bound source ID references, missing/changed/invalid-line status, explicit unlinked requirement/component reporting, deterministic Markdown integration, recorded inventory scan scope and whole-inventory `source-diff` comparison, all covered by offline tests.
+Completed for this slice: allowlisted local source metadata inventory, snapshot-bound source ID references, missing/changed/invalid-line status, explicit unlinked requirement/component reporting, deterministic Markdown integration, recorded inventory scan scope, whole-inventory `source-diff` comparison, identical-byte rename observations and an optional file-based git revision binding (`--record-git-revision`), all covered by offline tests.
 
 Still open: **semantic source-to-architecture extraction** that does not fabricate functionality; real application end-to-end validation; mapping changed files to affected architecture claims and accurate, safe **code-change-to-documentation** reconciliation; more comprehensive runtime, data-consistency, security and deployment design views. The documented source workflow is **guided**, not a one-click architecture analyzer.
 
