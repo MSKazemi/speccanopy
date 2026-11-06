@@ -56,7 +56,15 @@ cites), compare the intake inventory with a fresh one:
 speccanopy source-inventory app --output work/source-inventory-v2.json
 speccanopy source-diff work/intake/source-inventory.json work/source-inventory-v2.json \
   --output work/source-diff
+speccanopy source-impact work/intake/source-inventory.json work/source-inventory-v2.json \
+  --evidence work/intake/source-evidence.json \
+  --architecture work/design/architecture.json --output work/claim-impact
 ```
+
+`source-impact` lists which authored claims (and architecture IDs) cite changed
+files. `speccanopy doc-gate work/design/architecture.json --output work/doc-gate`
+summarizes what still needs a human decision; its best outcome is
+`ready_for_human_signoff`, never validation.
 
 Full walkthrough with observed output, exit codes and test coverage:
 [`docs/end-to-end-acceptance.md`](../../docs/end-to-end-acceptance.md).

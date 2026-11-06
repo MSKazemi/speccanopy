@@ -1020,3 +1020,43 @@ def test_no_stage_imports_or_executes_analyzed_sources(tmp_path):
     # Both execution modes produce identical architecture artifacts.
     assert read_tree(pl.design) == read_tree(scripted.design)
     assert read_tree(pl.intake) == read_tree(scripted.intake)
+
+
+def test_doc_gate_and_source_impact_on_pipeline_outputs(pipeline):
+    """Gate and change-impact on the synthetic pipeline: never stronger than authored."""
+    from speccanopy.doc_gate import DocumentationGate
+    from speccanopy.source_impact import ClaimImpactReport
+
+    evidence = pipeline.intake / "source-evidence.json"
+    gate_dir = pipeline.base / "doc-gate"
+    gate_result = run_inproc(["doc-gate", pipeline.design / "architecture.json",
+                              "--review", pipeline.review / "architecture-review.json",
+                              "--source-root", pipeline.project, "--source-evidence", evidence,
+                              "--output", gate_dir, "--strict"])
+    assert gate_result.rc == 2 and gate_result.err == ""
+    gate = DocumentationGate.model_validate_json((gate_dir / "documentation-gate.json").read_text())
+    assert gate.outcome == "requires_review" and gate.sources_supplied and gate.review_supplied
+    unlinked = {i.subject_id for i in gate.items if i.category == "unknown_source_mapping"}
+    assert "system" in unlinked  # root component has no observed source claim
+    assert not any(i.category == "unsupported_claim" and i.severity == "blocking"
+                   for i in gate.items)  # all 7 snapshots still match
+
+    ledger = pipeline.project / "src" / PACKAGE / "ledger.py"
+    ledger.write_text(ledger.read_text() + "\n# edited after intake\n", encoding="utf-8")
+    after = pipeline.base / "source-inventory-v2.json"
+    assert run_inproc(["source-inventory", pipeline.project, "--output", after]).rc == 0
+    impact_dir = pipeline.base / "claim-impact"
+    impact_result = run_inproc(["source-impact", pipeline.intake / "source-inventory.json", after,
+                                "--evidence", evidence,
+                                "--architecture", pipeline.design / "architecture.json",
+                                "--output", impact_dir])
+    assert impact_result.rc == 0 and impact_result.err == ""
+    assert "Claim impact: 7 claims (5 unaffected, 2 stale_changed)" in impact_result.out
+    report = ClaimImpactReport.model_validate_json((impact_dir / "claim-impact.json").read_text())
+    stale = {e.source_path for e in report.entries if e.status == "stale_changed"}
+    assert stale == {f"src/{PACKAGE}/ledger.py"}
+    assert module_ids(pipeline.intake)[f"{PACKAGE}.ledger"] in report.affected_architecture_ids
+    assert report.uncited_added_paths == [] and report.requires_review
+    # Neither command changes the authored architecture status.
+    assert ArchitectureSpec.model_validate_json(
+        (pipeline.design / "architecture.json").read_text()).status == "incomplete_requires_review"

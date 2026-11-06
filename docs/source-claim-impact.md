@@ -4,7 +4,7 @@
 
 It is a **metadata comparison of file paths and SHA-256 digests**. It does **not** read source files, does **not** decide whether the architecture or the meaning of a claim changed, does **not** mark any claim verified and does **not** edit or regenerate documentation.
 
-> **CLI status — wired by the lead.** The command-line form in section 3 is the planned interface. The module `speccanopy.source_impact` (`assess_claim_impact`, `render_claim_impact_markdown`, `export_claim_impact`) is the tested part; check `speccanopy source-impact --help` for the shipped flags and correct this guide if they differ.
+> **CLI status.** `speccanopy source-impact` is available; `speccanopy source-impact --help` lists the flags in section 3. The module API is `speccanopy.source_impact` (`assess_claim_impact`, `render_claim_impact_markdown`, `export_claim_impact`).
 
 Use it after [`source-diff`](source-inventory-diff.md): the diff tells you which *files* differ, this report tells you which *claims and IDs* depended on them.
 
@@ -35,7 +35,7 @@ A claim whose digest already equals the new bytes has *probably* been updated, b
 
 Nothing is ever marked verified: even `unaffected` only says the cited bytes match.
 
-## 3. CLI (wired by the lead)
+## 3. CLI
 
 ```bash
 speccanopy source-impact BEFORE.json AFTER.json \

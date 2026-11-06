@@ -32,9 +32,9 @@ print(render_documentation_gate_markdown(gate))
 export_documentation_gate(gate, "out/doc-gate")   # NEW or empty directory only
 ```
 
-## Planned command (wired by the lead)
+## Command
 
-This section describes the CLI that will be wired against the functions above. It is not part of this module.
+The CLI wraps the functions above; `speccanopy doc-gate --help` lists the flags.
 
 ```bash
 speccanopy doc-gate architecture.json \
@@ -44,6 +44,7 @@ speccanopy doc-gate architecture.json \
 ```
 
 - Exit code `0` after writing the report, whatever the outcome.
+- Exit code `1` for unreadable or malformed inputs, `--source-root` without `--source-evidence` (or the reverse), a source claim with an unknown architecture ID, or an unsafe/non-empty output. Nothing is written in these cases.
 - With `--strict`, exit code `2` when the outcome is `requires_review`.
 - `--output` must be a new or empty directory; existing files are never overwritten (same guard as `document`).
 

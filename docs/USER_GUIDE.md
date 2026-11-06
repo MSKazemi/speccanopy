@@ -134,6 +134,30 @@ speccanopy source-diff out/myproject-inputs/source-inventory.json \
 
 It writes `source-diff.json` and `source-diff.md`; exit `0`, or `2` with `--strict` when anything differs. It compares file bytes only and never edits documentation. [Inventory comparison guide](source-inventory-diff.md).
 
+To see **which authored source claims — and therefore which architecture IDs — may now be out of date**, run `source-impact` with the same two inventories and your evidence map:
+
+```bash
+speccanopy source-impact out/myproject-inputs/source-inventory.json \
+  out/myproject-inputs/source-inventory-v2.json \
+  --evidence out/myproject-inputs/source-evidence.json \
+  --architecture out/myproject/architecture.json \
+  --output out/myproject-claim-impact
+```
+
+It writes `claim-impact.json` and `claim-impact.md`, classifying every claim as `unaffected`, `stale_changed`, `stale_removed`, `not_bound_to_before`, `rebound_to_after` or `not_in_inventory`, and lists added/changed files no claim cites. Exit `0`, or `2` with `--strict` when anything requires review. It compares digests only, marks nothing verified and never edits documentation. [Claim impact guide](source-claim-impact.md).
+
+**Before you hand the pack to the owner**, run the documentation review gate. It lists uncovered requirements, unsupported or self-reported claims, unmapped sources and decisions that still need a human:
+
+```bash
+speccanopy doc-gate out/myproject/architecture.json \
+  --review out/myproject-review/architecture-review.json \
+  --source-root ~/projects/my-app \
+  --source-evidence out/myproject-inputs/source-evidence.json \
+  --output out/myproject-doc-gate
+```
+
+It writes `documentation-gate.json` and `documentation-gate.md`. The strongest outcome is `ready_for_human_signoff` (no blocking items); there is no "validated" outcome, and the gate never changes the architecture status. Exit `0`, or `2` with `--strict` when the outcome is `requires_review`. [Documentation gate guide](documentation-review-gate.md).
+
 An optional `review --config out/myproject-inputs/review.json` adds scenario and style assumptions. Without supplied style drivers, Speccanopy may abstain from recommending a style. This is legitimate rather than a failure.
 
 **Smoke test without Claude or a real project:**
@@ -231,9 +255,9 @@ The output is a **proposed design**, not documentation of actual implemented com
 
 ## 8. Current limitations and next development work
 
-**Available as prototypes:** validated architecture schemas; fixture-driven recursive decomposition; Claude Code-assisted input drafting; JSON + Mermaid exports; requirement coverage; heuristic review; explicit uncertain statuses; offline Python `project-intake`; the `document` Markdown pack; allowlisted `source-inventory` with SHA-256-bound source claims; and `source-diff` comparison of two inventories. An offline acceptance suite exercises intake → design → review → document on a committed **synthetic** example ([walkthrough](end-to-end-acceptance.md)).
+**Available as prototypes:** validated architecture schemas; fixture-driven recursive decomposition; Claude Code-assisted input drafting; JSON + Mermaid exports; requirement coverage; heuristic review; explicit uncertain statuses; offline Python `project-intake`; the `document` Markdown pack; allowlisted `source-inventory` with SHA-256-bound source claims; `source-diff` comparison of two inventories; `source-impact` mapping of file changes onto authored source claims; and the `doc-gate` documentation review gate. An offline acceptance suite exercises intake → design → review → document on a committed **synthetic** example ([walkthrough](end-to-end-acceptance.md)).
 
-**Not built in:** semantic (behavioural) architecture extraction, intake for languages other than Python, automatic mapping of changed files to affected architecture claims or documentation synchronization with source changes, rename detection, complete runtime/deployment/data views, an acceptance test on an externally permissioned real application, and independently expert-validated architecture quality. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks documentation product readiness; [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) tracks human-review evidence. You do **not** need external expert reviewers merely to draft your own project documentation, but you must not imply AI/heuristics provide independent certification.
+**Not built in:** semantic (behavioural) architecture extraction, intake for languages other than Python, semantic judgement of whether a changed file invalidates a claim (`source-impact` maps changes by digest only), automatic documentation synchronization with source changes, rename detection, complete runtime/deployment/data views, an acceptance test on an externally permissioned real application, and independently expert-validated architecture quality. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks documentation product readiness; [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) tracks human-review evidence. You do **not** need external expert reviewers merely to draft your own project documentation, but you must not imply AI/heuristics provide independent certification.
 
 **Recommended first run:** start with one small existing project, inspect the draft and traceability outputs, and have Claude Code write source-linked `docs/architecture/` pages for your approval.
 
@@ -241,6 +265,8 @@ The output is a **proposed design**, not documentation of actual implemented com
 
 - [Short inputs/outputs quick start](claude-code-quickstart.md)
 - [Compare source inventories (`source-diff`)](source-inventory-diff.md)
+- [Map source changes to affected claims (`source-impact`)](source-claim-impact.md)
+- [Documentation review gate (`doc-gate`)](documentation-review-gate.md)
 - [End-to-end acceptance walkthrough (synthetic example)](end-to-end-acceptance.md)
 - [Claude subscription versus API billing](claude-integration.md)
 - [Real-project readiness and detailed walkthrough](project-documentation-readiness.md)

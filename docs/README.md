@@ -16,6 +16,8 @@
 | [Claude Code vs Anthropic API](claude-integration.md) | Subscription workflow vs separate API billing |
 | [Source inventory and evidence mapping](source-evidence-workflow.md) | Inventory local source metadata, check SHA-256-backed citations, report changed/missing files |
 | [Compare source inventories](source-inventory-diff.md) | `source-diff`: added/removed/changed/unchanged files between two inventories, coverage warnings, exit codes |
+| [Map source changes to affected claims](source-claim-impact.md) | `source-impact`: which authored claims and architecture IDs may be stale after files change; uncited new files |
+| [Documentation review gate](documentation-review-gate.md) | `doc-gate`: uncovered requirements, unsupported claims, unmapped sources and open human decisions before owner sign-off |
 | [End-to-end acceptance walkthrough](end-to-end-acceptance.md) | Run intake → design → review → document → change detection on the committed **synthetic** example; what the acceptance tests check |
 | [Markdown architecture renderer](architecture-documentation-renderer.md) | Turn an existing architecture JSON into nine Markdown pages and two Mermaid diagrams |
 | [CLI design engine](phase2-engine.md) | JSON/Mermaid outputs and structural readiness |
