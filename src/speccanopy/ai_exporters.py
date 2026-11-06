@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .ai import AIProposalBundle, ApprovalReceipt
 from .decomposer import GenerationResult
-from .exporters import export_generation
+from .exporters import check_new_output_file, export_generation
 from .fixtures import FixtureDesign
 
 
@@ -93,9 +93,9 @@ def export_ai_draft(result: GenerationResult, bundle: AIProposalBundle, destinat
 
 
 def export_approved(fixture: FixtureDesign, receipt: ApprovalReceipt, target: str | Path) -> dict[str, Path]:
-    file = Path(target)
+    file = check_new_output_file(target, "Approved fixture")
+    approval = check_new_output_file(file.with_suffix(".approval.json"), "Approval receipt")
     file.parent.mkdir(parents=True, exist_ok=True)
-    approval = file.with_suffix(".approval.json")
     file.write_text(json.dumps(fixture.model_dump(mode="json"), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     approval.write_text(json.dumps(receipt.model_dump(mode="json"), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return {"approved_fixture": file, "approval_receipt": approval}

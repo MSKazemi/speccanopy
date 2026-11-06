@@ -9,7 +9,7 @@ from __future__ import annotations
 import html
 from pathlib import Path
 
-from .exporters import relationships_mermaid, to_mermaid
+from .exporters import prepare_new_output_dir, relationships_mermaid, to_mermaid
 from .models import ArchitectureSpec
 from .review import ArchitectureReview
 from .source_evidence import SourceAssessment
@@ -497,10 +497,7 @@ def export_documentation(
 ) -> dict[str, Path]:
     """Refuse silent replacement of hand-edited or pre-existing documentation."""
     rendered = render_documentation(spec, review, sources)
-    out = Path(destination)
-    if out.is_symlink() or (out.exists() and (not out.is_dir() or any(out.iterdir()))):
-        raise ValueError("Documentation output must be an empty directory; existing files not overwritten")
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Documentation")
     paths: dict[str, Path] = {}
     for name, content in rendered.items():
         path = out / name

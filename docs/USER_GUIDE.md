@@ -122,6 +122,18 @@ speccanopy document out/myproject/architecture.json \
 
 This adds `source-evidence.md` and source questions; byte-matching does not prove the author's claim. [Full source evidence guide](source-evidence-workflow.md).
 
+**After the application changes**, keep the old inventory, make a new one and compare them. This lists every added, removed, changed and unchanged allowlisted file — including new files no source claim cites yet:
+
+```bash
+speccanopy source-inventory ~/projects/my-app \
+  --output out/myproject-inputs/source-inventory-v2.json
+speccanopy source-diff out/myproject-inputs/source-inventory.json \
+  out/myproject-inputs/source-inventory-v2.json \
+  --output out/myproject-source-diff
+```
+
+It writes `source-diff.json` and `source-diff.md`; exit `0`, or `2` with `--strict` when anything differs. It compares file bytes only and never edits documentation. [Inventory comparison guide](source-inventory-diff.md).
+
 An optional `review --config out/myproject-inputs/review.json` adds scenario and style assumptions. Without supplied style drivers, Speccanopy may abstain from recommending a style. This is legitimate rather than a failure.
 
 **Smoke test without Claude or a real project:**
@@ -212,20 +224,24 @@ The output is a **proposed design**, not documentation of actual implemented com
 | `requires_review`, `planned_only`, `uncovered` | These indicate uncertainty or lack of verification, not necessarily an error. Keep them visible until supported by real evidence. |
 | Review abstains on architecture style | Add an explicit `review.json` with style drivers, then pass `--config`. |
 | Return code `2` from `--strict` | The command intentionally flags unresolved review work; artifacts may still have been written. |
+| `output must be a new or empty directory; existing files not overwritten` | Every `speccanopy` and `speccanopy-experts` command that writes output refuses an existing non-empty folder, a file or a symlink before writing anything (`source-inventory` and `approve-ai` write files and refuse existing ones, including the `.approval.json` receipt). Re-run into a new path such as `out/myproject-v2`. Since this release `design`, `review`, `propose-ai`, `refine-plan`, `refine-apply`, `benchmark`, `research-case`, `research-suite`, `approve-ai` and `speccanopy-experts aggregate` enforce this too (previously they silently replaced files), and `propose-ai` refuses before any model request. The check is best-effort: it inspects the final path component and cannot exclude a concurrent local writer. |
+| `source-diff` reports `scope_differs` or `scope_unknown` | The two inventories used different size limits/privacy rules, or one predates scope recording. Re-inventory both states the same way; see the [inventory comparison guide](source-inventory-diff.md#6-troubleshooting). |
 | Worried about direct API charges | Use Claude Code with subscription authentication; leave `ANTHROPIC_API_KEY` unset, and avoid the separate `propose-ai --backend claude` HTTP client. |
 | Claude cannot see your app folder | Check the path and access permissions; restart with `claude --add-dir PATH_TO_APP` if appropriate. |
 
 ## 8. Current limitations and next development work
 
-**Available as prototypes:** validated architecture schemas; fixture-driven recursive decomposition; Claude Code-assisted input drafting; JSON + Mermaid exports; requirement coverage; heuristic review; explicit uncertain statuses.
+**Available as prototypes:** validated architecture schemas; fixture-driven recursive decomposition; Claude Code-assisted input drafting; JSON + Mermaid exports; requirement coverage; heuristic review; explicit uncertain statuses; offline Python `project-intake`; the `document` Markdown pack; allowlisted `source-inventory` with SHA-256-bound source claims; and `source-diff` comparison of two inventories. An offline acceptance suite exercises intake → design → review → document on a committed **synthetic** example ([walkthrough](end-to-end-acceptance.md)).
 
-**Not built in:** automatic repo-to-brief intake, one-command complete Markdown handbook, documentation synchronization with source changes, complete runtime/deployment/data views, and independently expert-validated architecture quality. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks documentation product readiness; [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) tracks human-review evidence. You do **not** need external expert reviewers merely to draft your own project documentation, but you must not imply AI/heuristics provide independent certification.
+**Not built in:** semantic (behavioural) architecture extraction, intake for languages other than Python, automatic mapping of changed files to affected architecture claims or documentation synchronization with source changes, rename detection, complete runtime/deployment/data views, an acceptance test on an externally permissioned real application, and independently expert-validated architecture quality. [Issue #5](https://github.com/MSKazemi/speccanopy/issues/5) tracks documentation product readiness; [Issue #2](https://github.com/MSKazemi/speccanopy/issues/2) tracks human-review evidence. You do **not** need external expert reviewers merely to draft your own project documentation, but you must not imply AI/heuristics provide independent certification.
 
 **Recommended first run:** start with one small existing project, inspect the draft and traceability outputs, and have Claude Code write source-linked `docs/architecture/` pages for your approval.
 
 ## 9. Related documentation
 
 - [Short inputs/outputs quick start](claude-code-quickstart.md)
+- [Compare source inventories (`source-diff`)](source-inventory-diff.md)
+- [End-to-end acceptance walkthrough (synthetic example)](end-to-end-acceptance.md)
 - [Claude subscription versus API billing](claude-integration.md)
 - [Real-project readiness and detailed walkthrough](project-documentation-readiness.md)
 - [Architecture contract and statuses](architecture-contract.md)

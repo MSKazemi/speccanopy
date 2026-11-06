@@ -92,10 +92,16 @@ def test_cli_evaluation_and_comparison(tmp_path):
     args=['benchmark',str(original),'--config',str(config_file),'--rubric',str(rubric_file),'--output',str(out)]
     assert main(args)==0
     assert json.loads((out/'reference-benchmark.json').read_text())['score']<100
-    assert main(args+['--candidate',str(candidate_file)])==0
-    report=json.loads((out/'reference-benchmark.json').read_text())
+    first=(out/'reference-benchmark.json').read_bytes()
+    # A second report must go to a new folder; the first one is never replaced.
+    assert main(args+['--candidate',str(candidate_file)])==1
+    assert (out/'reference-benchmark.json').read_bytes()==first
+    compared=tmp_path/'benchmark-compare'
+    compare_args=args[:-1]+[str(compared),'--candidate',str(candidate_file)]
+    assert main(compare_args)==0
+    report=json.loads((compared/'reference-benchmark.json').read_text())
     assert report['delta_points']>0
-    assert 'not an expert architecture certificate' in (out/'reference-benchmark.md').read_text()
+    assert 'not an expert architecture certificate' in (compared/'reference-benchmark.md').read_text()
 
 
 def test_cli_fails_for_bad_benchmark_files(tmp_path):

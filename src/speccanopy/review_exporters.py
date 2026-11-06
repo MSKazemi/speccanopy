@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from .exporters import prepare_new_output_dir
 from .review import ArchitectureReview
 
 
@@ -57,8 +58,7 @@ def review_markdown(report: ArchitectureReview) -> str:
 
 
 def export_review(report: ArchitectureReview, destination: str | Path) -> dict[str, Path]:
-    out = Path(destination)
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Review")
     content = {
         "architecture-review.json": report.model_dump(mode="json"),
         "style-comparison.json": report.style_comparison.model_dump(mode="json"),

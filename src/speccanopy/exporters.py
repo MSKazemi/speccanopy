@@ -39,13 +39,43 @@ def relationships_mermaid(spec: ArchitectureSpec) -> str:
     return "\n".join(lines) + "\n"
 
 
+def check_new_output_dir(destination: str | Path, label: str) -> Path:
+    """Raise unless ``destination`` is absent or an empty real directory. No side effects.
+
+    Refuses symlinks (including dangling ones), regular files and non-empty
+    directories, so hand-edited owner files are never replaced or mixed with
+    generated artifacts. Best-effort: only the final path component is checked
+    for a symlink, and a concurrent local writer could still race the check.
+    """
+    out = Path(destination)
+    if out.is_symlink() or (out.exists() and (not out.is_dir() or any(out.iterdir()))):
+        raise ValueError(
+            f"{label} output must be a new or empty directory; existing files not overwritten"
+        )
+    return out
+
+
+def check_new_output_file(destination: str | Path, label: str) -> Path:
+    """Raise if ``destination`` already exists or is a symlink (dangling included). No side effects."""
+    out = Path(destination)
+    if out.is_symlink() or out.exists():
+        raise ValueError(f"{label} output must be a new file; existing files not overwritten")
+    return out
+
+
+def prepare_new_output_dir(destination: str | Path, label: str) -> Path:
+    """Check with :func:`check_new_output_dir`, then create the directory."""
+    out = check_new_output_dir(destination, label)
+    out.mkdir(parents=True, exist_ok=True)
+    return out
+
+
 def export_generation(
     result: GenerationResult, destination: str | Path, *,
     generator: str = "deterministic-fixture",
     note: str = "Curated proposals and design-level verification plans; not AI-generated or independently validated.",
 ) -> dict[str, Path]:
-    out = Path(destination)
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Architecture")
     spec = result.architecture
     report = spec.coverage_report()
     owners = {rid: sorted(c.id for c in spec.components if rid in c.requirement_ids)

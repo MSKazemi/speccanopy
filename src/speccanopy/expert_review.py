@@ -232,7 +232,7 @@ def prepare(study_path: Path, output: Path) -> ReviewManifest:
     if case.provenance.usage_rights.strip() == "":
         raise ValueError("Research case is missing usage rights")
     case_sha = case.subject_digest()
-    if output.exists() and any(output.iterdir()):
+    if output.is_symlink() or (output.exists() and (not output.is_dir() or any(output.iterdir()))):
         raise ValueError("Review packet output directory must be empty to avoid mixing study runs")
     all_items: list[ManifestItem] = []
     packets: list[tuple[Packet, dict]] = []
@@ -302,6 +302,9 @@ def _stats(rows: list[ReviewerSubmission], dimension_ids: list[str]) -> tuple[di
 
 
 def aggregate(manifest_path: Path, submissions_dir: Path, output: Path) -> dict:
+    # Never replace an earlier summary: an aggregation run is an auditable record.
+    from .exporters import check_new_output_dir
+    check_new_output_dir(output, "Expert review summary")
     manifest = ReviewManifest.model_validate_json(manifest_path.read_text(encoding="utf-8"))
     packet_dir = manifest_path.parent.parent / "packets"
     items = {item.label: item for item in manifest.packets}

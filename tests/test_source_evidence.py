@@ -13,11 +13,13 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+from speccanopy import source_evidence
 from speccanopy.cli import main
 from speccanopy.models import ArchitectureSpec
 from speccanopy.source_evidence import (
-    SourceClaim, SourceEvidence, SourceFile, SourceInventory,
-    assess_sources, safe_source_path, scan_sources, save_inventory,
+    InventoryScope, SourceClaim, SourceEvidence, SourceFile, SourceInventory,
+    assess_sources, inventory_policy_digest, safe_source_path, scan_sources,
+    save_inventory,
 )
 
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
@@ -122,6 +124,39 @@ def test_inventory_skips_symlinks_and_oversized_files(tmp_path):
     assert all("secret" not in x.path for x in result.files)
     with pytest.raises(ValueError, match="not a symlink"):
         scan_sources(root / "linked-dir")
+
+
+def test_inventory_records_scan_scope_and_policy_digest(tmp_path):
+    root = _project(tmp_path)
+    inventory = scan_sources(root, max_files=50, max_bytes=4096)
+    assert inventory.scope == InventoryScope(
+        max_files=50, max_file_bytes=4096, policy_sha256=inventory_policy_digest(),
+    )
+    assert inventory_policy_digest() == inventory_policy_digest()
+    assert len(inventory_policy_digest()) == 64
+    assert scan_sources(root).scope.max_files == 2000
+    assert str(tmp_path) not in inventory.model_dump_json()
+
+
+def test_inventory_policy_digest_changes_with_privacy_policy(monkeypatch):
+    original = inventory_policy_digest()
+    monkeypatch.setattr(
+        source_evidence, "EXCLUDED_DIRS", source_evidence.EXCLUDED_DIRS | {"extra"},
+    )
+    assert inventory_policy_digest() != original
+    monkeypatch.undo()
+    monkeypatch.setattr(source_evidence, "INVENTORY_POLICY_VERSION", 99)
+    assert inventory_policy_digest() != original
+
+
+def test_legacy_inventory_without_scope_still_loads_with_unknown_scope(tmp_path):
+    raw = json.loads(scan_sources(_project(tmp_path)).model_dump_json())
+    del raw["scope"]
+    legacy = SourceInventory.model_validate(raw)
+    assert legacy.scope is None
+    raw["scope"] = {"max_files": 1, "max_file_bytes": 1, "policy_sha256": "bad"}
+    with pytest.raises(ValidationError):
+        SourceInventory.model_validate(raw)
 
 
 def test_inventory_file_limit_fails_closed(tmp_path):
@@ -286,3 +321,17 @@ def test_evidence_claim_text_escaped_from_markdown_injection(tmp_path):
     assert "&lt;script&gt;" in text
     assert "Bad # heading" in text
     assert "\n# heading\n" not in text
+
+
+def test_inventory_files_must_fit_recorded_scope(tmp_path):
+    raw = json.loads(scan_sources(_project(tmp_path)).model_dump_json())
+    largest = max(f["byte_count"] for f in raw["files"])
+    raw["scope"]["max_file_bytes"] = largest
+    SourceInventory.model_validate(raw)
+    raw["scope"]["max_file_bytes"] = largest - 1
+    with pytest.raises(ValidationError, match="recorded scan scope"):
+        SourceInventory.model_validate(raw)
+    raw["scope"]["max_file_bytes"] = largest
+    raw["scope"]["max_files"] = len(raw["files"]) - 1
+    with pytest.raises(ValidationError, match="recorded scan scope"):
+        SourceInventory.model_validate(raw)

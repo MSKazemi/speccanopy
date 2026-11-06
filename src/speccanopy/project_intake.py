@@ -16,6 +16,7 @@ from typing import Literal
 
 from pydantic import Field
 
+from .exporters import check_new_output_dir, prepare_new_output_dir
 from .fixtures import FixtureDesign
 from .models import Component, DesignConstraints, FunctionalRequirement, Identifier, NonEmptyText, Relationship, SchemaModel, SystemBrief
 from .proposer import ComponentProposal
@@ -310,9 +311,7 @@ def _report(result: IntakeResult) -> str:
 
 def export_project_intake(result: IntakeResult, destination: str | Path) -> dict[str, Path]:
     """Only create new/empty destination; never silently replace edited documents."""
-    out = Path(destination)
-    if out.is_symlink() or (out.exists() and (not out.is_dir() or any(out.iterdir()))):
-        raise ValueError("Intake output must be a new or empty directory")
+    check_new_output_dir(destination, "Intake")
     content = {
         "brief.json": result.brief.model_dump_json(indent=2) + "\n",
         "design.json": result.fixture.model_dump_json(indent=2) + "\n",
@@ -321,7 +320,7 @@ def export_project_intake(result: IntakeResult, destination: str | Path) -> dict
         "module-observations.json": result.observations.model_dump_json(indent=2) + "\n",
         "intake-review.md": _report(result),
     }
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Intake")
     saved: dict[str, Path] = {}
     for name, text in content.items():
         path = out / name

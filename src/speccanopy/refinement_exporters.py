@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from .benchmark import BenchmarkAssessment, BenchmarkComparison
+from .exporters import prepare_new_output_dir
 from .models import ArchitectureSpec
 from .refinement import RefinementPlan, RefinementReceipt
 from .review import ArchitectureReview
@@ -51,8 +52,7 @@ def plan_markdown(plan: RefinementPlan) -> str:
 def export_refinement_plan(plan: RefinementPlan, candidate: ArchitectureSpec,
                            before: ArchitectureReview, after: ArchitectureReview,
                            destination: str | Path) -> dict[str, Path]:
-    out = Path(destination)
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Refinement plan")
     paths = {
         "refinement-plan.json": _write_json(out, "refinement-plan.json", plan),
         "candidate-preview.json": _write_json(out, "candidate-preview.json", candidate),
@@ -67,8 +67,7 @@ def export_refinement_plan(plan: RefinementPlan, candidate: ArchitectureSpec,
 
 def export_refinement_approved(candidate: ArchitectureSpec, receipt: RefinementReceipt,
                                after: ArchitectureReview, destination: str | Path) -> dict[str, Path]:
-    out = Path(destination)
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Refined architecture")
     return {
         "architecture.json": _write_json(out, "architecture.json", candidate),
         "refinement-receipt.json": _write_json(out, "refinement-receipt.json", receipt),
@@ -100,8 +99,7 @@ def benchmark_markdown(result: BenchmarkAssessment | BenchmarkComparison) -> str
 
 def export_benchmark(result: BenchmarkAssessment | BenchmarkComparison,
                      destination: str | Path) -> dict[str, Path]:
-    out = Path(destination)
-    out.mkdir(parents=True, exist_ok=True)
+    out = prepare_new_output_dir(destination, "Benchmark")
     report = _write_json(out, "reference-benchmark.json", result)
     md = out / "reference-benchmark.md"
     md.write_text(benchmark_markdown(result), encoding="utf-8")

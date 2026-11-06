@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from .exporters import prepare_new_output_dir
 from .research import ResearchAssessment, SuiteAssessment
 
 
@@ -59,8 +60,8 @@ def suite_markdown(result: SuiteAssessment) -> str:
 
 
 def export_research(result: ResearchAssessment | SuiteAssessment, destination: Path) -> dict[str, Path]:
-    destination.mkdir(parents=True, exist_ok=True)
     is_suite = isinstance(result, SuiteAssessment)
+    destination = prepare_new_output_dir(destination, "Research suite" if is_suite else "Research case")
     stem = "research-suite" if is_suite else "research-case"
     report_path = destination / f"{stem}.json"
     report_path.write_text(json.dumps(result.model_dump(mode="json"), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

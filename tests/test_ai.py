@@ -364,3 +364,27 @@ def test_live_client_uses_env_key_and_no_key_appears_in_provenance(monkeypatch):
     assert client.provider == "openai-responses"
     # The public transport adapter is not meant to serialize the secret.
     assert "only-in-environment" not in str(client)
+
+
+def test_propose_ai_refuses_unusable_output_before_any_model_call(tmp_path, monkeypatch, capsys):
+    """A refused output folder must not cost (possibly billed) model requests."""
+    from speccanopy import cli
+
+    def no_model_calls(*args, **kwargs):
+        raise AssertionError("draft_architecture must not run when output is unusable")
+
+    monkeypatch.setattr(cli, "draft_architecture", no_model_calls)
+    examples = Path(__file__).resolve().parents[1] / "examples"
+    owned = tmp_path / "owned"
+    owned.mkdir()
+    (owned / "notes.md").write_text("OWNER", encoding="utf-8")
+    argv = ["propose-ai", str(examples / "cli-utility.json"), "--backend", "scripted",
+            "--responses", str(examples / "ai-scripted-cli.json"), "--output"]
+    assert cli.main(argv + [str(owned)]) == 1
+    assert sorted(p.name for p in owned.iterdir()) == ["notes.md"]
+    assert (owned / "notes.md").read_text() == "OWNER"
+    assert "existing files not overwritten" in capsys.readouterr().err
+    link = tmp_path / "link"
+    link.symlink_to(tmp_path / "elsewhere", target_is_directory=True)
+    assert cli.main(argv + [str(link)]) == 1
+    assert not (tmp_path / "elsewhere").exists()
